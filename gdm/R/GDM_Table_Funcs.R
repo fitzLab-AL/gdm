@@ -562,33 +562,33 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   ##Output Variables:
   ##outTable = the fully calculated site-pair table for GDM
   ###########################
-  #bioData <- commM
+  #bioData <- spp
   #bioFormat <- 1
   #dist <- "bray"
-  #abundance <- F
-  #siteColumn <- "ID"
-  #XColumn <- "lon"
-  #YColumn <- "lat"
+  #abundance <- T
+  #siteColumn <- "cellNums"
+  #XColumn <- "x"
+  #YColumn <- "y"
   #sppColumn <- NULL
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- clim
+  #predData <- env
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeightVect <- NULL
   #samples <- NULL
   #################
-  #bioData <- testData1a
-  #bioFormat <- 1
+  #bioData <- sppData
+  #bioFormat <- 2
   #dist <- "bray"
   #abundance <- F
   #siteColumn <- "site"
   #XColumn <- "Long"
   #YColumn <- "Lat"
-  #sppColumn <- NULL
+  #sppColumn <- "species"
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- envTab
+  #predData <- envRast
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeightVect <- NULL
@@ -703,8 +703,6 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       predData <- predData[order(predData$cellName),]
       
       ##aggregates bioData data into classes by raster cells
-      newDataTable <- bioData[-c(siteNum, x, y)]
-      modDataTable <- cbind(cellID, newDataTable)
       bioData <- cbind(cellID, bioData[-c(siteNum)])
       bioData <- bioData[order(bioData$cellName),]
       
@@ -741,21 +739,16 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       predData <- predData[which(bioData$cellName %in% predData$cellName),]
       colnames(bioData)[colnames(bioData)=="cellName"] <- siteColumn
       colnames(predData)[colnames(predData)=="cellName"] <- siteColumn
-      #uniqueCells = unique(cellID$cellName)
-      if(abundance==T){
-        ##compress by cell
-        byCell <- aggregate(modDataTable, modDataTable[1], FUN=mean)
-        ##removes unneeded columns
-        inDataTable <- byCell[-c(1, 2)]
-      }else{
-        ##compress by cell
-        byCell <- aggregate(modDataTable, modDataTable[1], FUN=sum)
-        ##transforms data to binary
-        byCell <- byCell[-c(1, 2)]
-        byCell[byCell>=1] <- 1
-        inDataTable <- byCell
-      }
       
+      ##makes sure data in same order
+      predSite <- which(names(predData) == siteColumn)
+      siteNum <- which(names(bioData)==siteColumn)
+      predData <- predData[order(predData[,predSite]),]
+      bioData <- bioData[order(bioData[,siteNum]),]
+      ##remove data from bio to not affect distance matrix
+      bx <- which(names(bioData)==XColumn)
+      by <- which(names(bioData)==YColumn)
+      inDataTable <- bioData[-c(siteNum, bx, by)]      
     }else{
       ##Table data
       ##filters out sites with low species count
@@ -796,11 +789,14 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       ##rename for results
       colnames(bioData)[colnames(bioData)=="gettingCoolSiteColumn"] <- siteColumn
       colnames(predData)[colnames(predData)=="gettingCoolSiteColumn"] <- siteColumn
-      #predSite <- which(names(predData)==siteColumn)
-      #predData <- predData[-predSite]
+      ##makes sure data in same order
+      predSite <- which(names(predData) == siteColumn)
+      siteNum <- which(names(bioData)==siteColumn)
+      predData <- predData[order(predData[,predSite]),]
+      bioData <- bioData[order(bioData[,siteNum]),]
+      ##remove data from bio to not affect distance matrix
       bx <- which(names(bioData)==XColumn)
       by <- which(names(bioData)==YColumn)
-      siteNum <- which(names(bioData)==siteColumn)
       inDataTable <- bioData[-c(siteNum, bx, by)]
     }
     ##creates distance matrix
@@ -809,13 +805,12 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     }else{
       distData <- vegdist(inDataTable, dist, binary=F)
     }
-    
-    ########################################################################
-    ##species data as x,y,species list
+  ########################################################################
+  ##species data as x,y,species list
   }else if(bioFormat==2){
     ##insert data if not available
     if(is.null(abundColumn)){
-      warning("No abundance column specified, assuming biological data are presence")
+      warning("No abundance column specified, assuming species data are presence/absence")
       bioData["reallysupercoolawesomedata"] <- 1
       abundColumn <- "reallysupercoolawesomedata"
     }
@@ -962,6 +957,11 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       predData <- predData[order(predData$cellName),]
       colnames(bioData)[colnames(bioData)=="cellName"] <- siteColumn
       colnames(predData)[colnames(predData)=="cellName"] <- siteColumn
+      
+      bx <- which(names(bioData)==XColumn)
+      by <- which(names(bioData)==YColumn)
+      siteNum <- which(names(bioData)==siteColumn)
+      inDataTable <- bioData[-c(siteNum, bx, by)]
     }else{
       ##if environmental data is a table
       ##remove coords if needed
@@ -1022,6 +1022,10 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       colnames(bioData)[colnames(bioData)=="siteUltimateCoolness"] <- siteColumn
       colnames(predData)[colnames(predData)=="siteUltimateCoolness"] <- siteColumn
       
+      ##get coordinates from bio table
+      bx <- which(names(bioData)==XColumn)
+      by <- which(names(bioData)==YColumn)
+      
       if(!XColumn %in% colnames(predData)){
         thy <- which(colnames(predData)==paste(XColumn, ".y", sep=""))
         the <- which(colnames(predData)==paste(YColumn, ".y", sep=""))
@@ -1030,23 +1034,26 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         XColumn <- paste(XColumn, ".x", sep="")
         YColumn <- paste(YColumn, ".x", sep="") 
       }
-      
-      inDataTable <- bioData[-c(1,2,3)]
+      ##makes sure data in same order
+      predSite <- which(names(predData) == siteColumn)
+      siteNum <- which(names(bioData)==siteColumn)
+      predData <- predData[order(predData[,predSite]),]
+      bioData <- bioData[order(bioData[,siteNum]),]
+      ##remove data from bio to not affect distance matrix
+      inDataTable <- bioData[-c(siteNum, bx, by)]
     }
     
     ##creates distance matrix
-    ##another line of filtering...... don't remember why it is here
+    ##turns NAs to zeros, for raster extraction
     inDataTable[is.na(inDataTable)] <- 0
-    #inDataTableB <- inDataTable[apply(inDataTable, 1, function(x){sum(x)>=sppFilter}),]
     
     if(abundance==F){
       distData <- vegdist(inDataTable, dist, binary=T)
     }else{
       distData <- vegdist(inDataTable, dist, binary=F)
     }
-    ########################################################################
-    
-    ##species data as site-site distance matrix
+  ########################################################################
+  ##species data as site-site distance matrix
   }else if(bioFormat==3){
     ##site-site distance already calculated
     #castData = bioData
@@ -1054,13 +1061,12 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     distData <- as.vector(bioData[distData])
     predData <- unique(predData)
     predData <- predData[order(predData[siteColumn]),]
-    ########################################################################
-    
-    ##site pair table, already preped 
+  ########################################################################
+  ##site pair table, already preped 
   }else if(bioFormat==4){
     ##site-pair distance value
     outTable <- bioData
-    ########################################################################
+  ########################################################################
     
   }else{
     ##return error, bioFormat argument out of bounds

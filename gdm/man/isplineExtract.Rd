@@ -3,7 +3,7 @@
 
 \title{
 Extract I-spline values from a gdm object}.
-}
+
 \description{
 Extracts the I-spline values from a gdm object. There is one I-spline for each predictor that has at least one non-zero coefficient in the fitted model.
 }
