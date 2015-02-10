@@ -62,15 +62,24 @@ Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilari
 \link[gdm]{plot.gdm}, \link[gdm]{predict.gdm}, \link[gdm]{gdm.transform}} }
 
 \examples{
-##sets up site-pair table
+##sets up site-pair table, environmental tabular data
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
 
+##environmental raster data
+worldDat <- getData('worldclim', var='bio', res=2.5)
+envRast <- worldDat[[c(5,6,15,18,19)]]
+sitePairRast <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envRast)
+##sometimes raster data returns NA in the site-pair table, these rows will have to be removed before fitting gdm
+sitePairRast <- na.omit(sitePairRast)
+
 ##fit GDM
-gdmMod <- gdm(sitePairTab, geo=TRUE)
-summary(gdmMod)
+gdmTabMod <- gdm(sitePairTab, geo=TRUE)
+gdmRastMod <- gdm(sitePairRast, geo=TRUE)
+summary(gdmTabMod)
+summary(gdmRastMod)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
