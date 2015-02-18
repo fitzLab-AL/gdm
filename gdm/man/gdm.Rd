@@ -32,10 +32,8 @@ An optional vector of the number of I-spline basis functions to be used for each
 An optional vector of knots in  \emph{units of the predictor variables} to be used in the fitting process. If knots are supplied and splines=NULL, then the knots argument must have the same length as the number of predictors * 3. If both knots and the number of splines are supplied, then the length of the knots argument must be the same as the sum of the values in the splines vector. Note that the default values for knots when the default three I-spline basis functions are 0 (minimum), 50 (median), and 100 (maximum) quantiles.  
 }
 }
-\details{
-}
 \value{
-gdm returns a gdm model object. The function \code{\link{summary.gdm}} can be used to obtain or print a summary of the results. A gdm model object is a list containing at least the following components:
+gdm returns a gdm model object. The function \code{\link{summary.gdm}} can be used to obtain or print a synopsis of the results. A gdm model object is a list containing at least the following components:
 \item{}{}
 
 \item{dataname}{ The name of the table used as the data argument to the model.}
@@ -54,7 +52,7 @@ gdm returns a gdm model object. The function \code{\link{summary.gdm}} can be us
 \item{ecological}{ The linear predictor (ecological distance) for each site pair, from the fitted model (before applying the link function).}
 }
 \references{
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252–264.
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 }
 
 
@@ -62,23 +60,29 @@ Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilari
 \link[gdm]{plot.gdm}, \link[gdm]{predict.gdm}, \link[gdm]{gdm.transform}} }
 
 \examples{
+##Fit table environmental data
 ##sets up site-pair table, environmental tabular data
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
 
+##fit table GDM
+gdmTabMod <- gdm(sitePairTab, geo=TRUE)
+summary(gdmTabMod)
+
+##Fit raster environmental data
+##sets up site-pair table
+rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+envRast <- stack(rastFile)
+
 ##environmental raster data
-worldDat <- getData('worldclim', var='bio', res=2.5)
-envRast <- worldDat[[c(5,6,15,18,19)]]
 sitePairRast <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envRast)
 ##sometimes raster data returns NA in the site-pair table, these rows will have to be removed before fitting gdm
 sitePairRast <- na.omit(sitePairRast)
 
-##fit GDM
-gdmTabMod <- gdm(sitePairTab, geo=TRUE)
+##fit raster GDM
 gdmRastMod <- gdm(sitePairRast, geo=TRUE)
-summary(gdmTabMod)
 summary(gdmRastMod)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

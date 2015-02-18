@@ -7,7 +7,7 @@ Converts Common Biological (Response) and Environmental (Predictor) Data Formats
 \description{
 This function takes input biological and environmental data in various formats and builds a site-pair formatted table required for fitting a Generalized Dissimilarity Model using the \code{\link{gdm}} function. NOTE: Sample site x-y coordinates MUST be present in either the biological or the environmental data.
 
-The input biological data can be in one of the following four formats (note that "species" can optionally be replaced by any other classification of biological entities – e.g. “functional types”, “haplotypes”):
+The input biological data can be in one of the following four formats (note that "species" can optionally be replaced by any other classification of biological entities - e.g. "functional types", "haplotypes"):
 
   1. site-species matrix
 
@@ -92,28 +92,17 @@ NOTE: The function assumes that the x-y coordinates and the raster stack (if use
 \value{
 A site-pair formatted table containing the response (biological distance or dissimilarity), predictors, and weights as required for fitting Generalized Dissimilarity Models. 
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
 
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
+
 ##table data, species and environmental
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
 
 ##environmental raster data
-worldDat <- getData('worldclim', var='bio', res=2.5)
-envRast <- worldDat[[c(5,6,15,18,19)]]
+rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+envRast <- stack(rastFile)
 
 #########table type 1
 ##site-species table without coordinates

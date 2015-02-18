@@ -19,20 +19,13 @@ A gdm model object resulting from a call to \code{\link{gdm}}.
 A data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN. If geographic distance was not used as a predictor in model fitting, the first two columns (X, Y) need to be removed. Note that the order of the predictor columns MUST be the same as the order of the predictors in the site-pair table used in model fitting. There is currently no checking to ensure that the order of the variables to be transformed are the same as those in the site-pair table used in model fitting.
 }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
 \value{
 gdm.transform returns a matrix with the same number of rows as the input data frame. If the model uses geographic distance as a predictor the output table will have the first and second columns set to the transformed X and Y values for each site in the input table. The transformed predictor data will be in the remaining columns. Values of the predictors can be taken from a set of rasters, that once transformed, can be mapped to reveal spatial biological variation. 
 }
 \references{
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252–264.
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 
 Fitzpatrick MC, Keller SR (2015) Ecological genomics meets community-level modeling of biodiversity: Mapping the genomic landscape of current and future environmental adaptation. \emph{Ecology Letters} 18: 1-16
-}
-
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -49,7 +42,7 @@ sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColu
 ##create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)
 
-##reordering environmental data to create table fro transform function
+##reordering environmental data to create table for transform function
 envTrans <- envTab[, c(13,12,2:11)] # same order as sitePairTab
 
 ##tranform geo & env to biological importance

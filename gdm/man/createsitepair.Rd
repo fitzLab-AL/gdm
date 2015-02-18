@@ -35,14 +35,8 @@ The method of determining the site-pair weights.
 Custom wieghts, as a vector, if given by the user.
 }
 }
-\details{
-
-}
 \value{
 A site-pair table with appropriate distance (dissimilarity) and weight columns used for fitting GDM.
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 \note{
 This function is called from the \code{\link{formatsitepair}} function and the user should not need to access directly.
@@ -51,7 +45,6 @@ This function is called from the \code{\link{formatsitepair}} function and the u
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{\code{\link[gdm]{formatsitepair}}}
-\examples{}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ gdm }

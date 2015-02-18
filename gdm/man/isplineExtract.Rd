@@ -2,7 +2,7 @@
 \alias{isplineExtract}
 
 \title{
-Extract I-spline values from a gdm object}.
+Extract I-spline values from a gdm object.}
 
 \description{
 Extracts the I-spline values from a gdm object. There is one I-spline for each predictor that has at least one non-zero coefficient in the fitted model.
@@ -16,25 +16,15 @@ isplineExtract(gdmModel)
 A gdm object from \code{\link{gdm}}.
 }
 }
-\details{
-
-}
 \value{
 A list with two items. The first item contains the x-values (actual values of the predictors) of the I-splines and the second item contains the y-values (partial ecological distances) of the fitted I-splines.
 }
 \references{
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252–264.
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 
 Fitzpatrick MC, Sanders NJ, Normand S, Svenning J-C, Ferrier S, Gove AD, Dunn RR (2013). Environmental and historical imprints on beta diversity: insights from variation in rates of species turnover along gradients. Proceedings of the Royal Society: Series B 280, art. 1768
 }
 
-\note{
-%%  ~~further notes~~
-}
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
 ##sets up site-pair table
 load(system.file("./data/gdm.RData", package="gdm"))

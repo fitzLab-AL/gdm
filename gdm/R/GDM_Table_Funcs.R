@@ -1,4 +1,5 @@
 
+
 gdm <- 
 function (data, geo=FALSE, splines=NULL, knots=NULL) 
 {
@@ -310,7 +311,7 @@ function (data, geo=FALSE, splines=NULL, knots=NULL)
 
 
 plot.gdm <- 
-function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0) 
+function (x, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0, ...) 
 {
       	options(warn.FPU = FALSE)
       	PSAMPLE <- 200
@@ -330,14 +331,14 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
       	##
       	## apply the link function and plot.....
       	##
-      	plot( model$ecological, 
-              model$observed, 
+      	plot( x$ecological, 
+      	      x$observed, 
               xlab="Predicted Ecological Distance", 
               ylab="Observed Compositional Dissimilarity", type="n" )
 
-        points( model$ecological, model$observed, pch=20, cex=0.25, col=plot.color )
+        points( x$ecological, x$observed, pch=20, cex=0.25, col=plot.color )
 
-        overlayX <- seq( from=min(model$ecological), to=max(model$ecological), length=PSAMPLE )
+        overlayX <- seq( from=min(x$ecological), to=max(x$ecological), length=PSAMPLE )
         overlayY <- 1 - exp( - overlayX )
         lines( overlayX, overlayY, lwd=plot.linewidth ) 
 	thisplot <- thisplot + 1
@@ -351,14 +352,14 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
       		dev.new()
         	dev.next()
 	}
-        plot( model$predicted, 
-              model$observed, 
+        plot( x$predicted, 
+              x$observed, 
               xlab="Predicted Compositional Dissimilarity", 
               ylab="Observed Compositional Dissimilarity", type="n" )
 
-        points( model$predicted, model$observed, pch=20, cex=0.25, col=plot.color )
+        points( x$predicted, x$observed, pch=20, cex=0.25, col=plot.color )
 
-        overlayX <- overlayY <- seq( from=min(model$predicted), to=max(model$predicted), length=PSAMPLE )
+        overlayX <- overlayY <- seq( from=min(x$predicted), to=max(x$predicted), length=PSAMPLE )
         lines( overlayX, overlayY, lwd=plot.linewidth ) 
 	thisplot <- thisplot + 1
 
@@ -366,21 +367,21 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
         ##
         ## determine the max of all the predictor data
         ##
-        preds <- length(model$predictors)
+        preds <- length(x$predictors)
         predmax <- 0
         splineindex <- 1
         for ( i in 1:preds ) 
         {  
             ## only if the sum of the coefficients associated with this predictor is > 0.....
-            numsplines <- model$splines[i]
-            if ( sum(model$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
+            numsplines <- x$splines[i]
+            if ( sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
             {
 	        ## get predictor plot Y-data                            
                 z <- .C( "GetPredictorPlotData", 
                          pdata = as.double(preddata),
                          as.integer(PSAMPLE),
-                         as.double(model$coefficients[splineindex:(splineindex+numsplines-1)]),
-                         as.double(model$knots[splineindex:(splineindex+numsplines-1)]),
+                         as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
+                         as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
                          as.integer(numsplines), 
                          PACKAGE = "gdm"
                        )
@@ -399,8 +400,8 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
 	for ( i in 1:preds ) 
         {  
             ## only if the sum of the coefficients associated with this predictor is > 0.....
-            numsplines <- model$splines[i]
-            if ( sum(model$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
+            numsplines <- x$splines[i]
+            if ( sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
             {
 		if (one_page_per_plot)
                 {
@@ -424,17 +425,17 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
                  z <- .C( "GetPredictorPlotData", 
                            pdata = as.double(preddata),
                            as.integer(PSAMPLE),
-                           as.double(model$coefficients[splineindex:(splineindex+numsplines-1)]),
-                           as.double(model$knots[splineindex:(splineindex+numsplines-1)]),
+                           as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
+                           as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
                            as.integer(numsplines),
                            PACKAGE = "gdm"
                         )
 
                         
-                  plot( seq(from=model$knots[[(i*3)-2]],to=model$knots[[(i*3)]], length=PSAMPLE),
+                  plot( seq(from=x$knots[[(i*3)-2]],to=x$knots[[(i*3)]], length=PSAMPLE),
                   	z$pdata, 
-                        xlab=model$predictors[i], 
-                        ylab=paste("f(", model$predictors[i], ")", sep="" ), 
+                        xlab=x$predictors[i], 
+                        ylab=paste("f(", x$predictors[i], ")", sep="" ), 
             	  	ylim=c(0,predmax), type="l" )
       	    }
 	      	splineindex <- splineindex + numsplines
@@ -443,7 +444,7 @@ function (model, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0)
 
 
 predict.gdm <- 
-function (model, data) 
+function (object, data, ...) 
 {
     options(warn.FPU = FALSE)
 
@@ -453,12 +454,12 @@ function (model, data)
     predicted <- rep(0,times=nrow(data))
     z <- .C( "GDM_PredictFromTable",
              as.matrix(data),
-             as.integer(model$geo),
-             as.integer(length(model$predictors)), 
+             as.integer(object$geo),
+             as.integer(length(object$predictors)), 
              as.integer(nrow(data)), 
-             as.double(model$knots),
-             as.integer(model$splines),
-             as.double(c(model$intercept,model$coefficients)),
+             as.double(object$knots),
+             as.integer(object$splines),
+             as.double(c(object$intercept,object$coefficients)),
              preddata = as.double(predicted),
              PACKAGE = "gdm"
            )
@@ -492,43 +493,43 @@ function (model, data)
 
 
 summary.gdm <- 
-function (model) 
+function (object, ...) 
 {
         print( "", quote=F )    
         print( "", quote=F )    
         print( "GDM Modelling Summary", quote=F );
-        print( paste( "Creation Date: ", model$creationdate ), quote=F );
+        print( paste( "Creation Date: ", object$creationdate ), quote=F );
         print( "", quote=F )    
 ##        call <- match.call()
         m <- match.call(expand.dots = F)
         print( paste( "Name: ", m[[2]] ), quote=F )
         print( "", quote=F )    
-        print( paste( "Data: ", model$dataname ), quote=F )
+        print( paste( "Data: ", object$dataname ), quote=F )
         print( "", quote=F )    
-        print( paste( "Samples: ", model$sample ), quote=F )
+        print( paste( "Samples: ", object$sample ), quote=F )
         print( "", quote=F )    
-        print( paste( "Geographical distance used in model fitting? ", model$geo ), quote=F )
+        print( paste( "Geographical distance used in model fitting? ", object$geo ), quote=F )
         print( "", quote=F )    
-        print( paste( "NULL Deviance: ", model$nulldeviance ), quote=F )
-        print( paste( "GDM Deviance: ", model$gdmdeviance ), quote=F )  
-        print( paste( "Deviance Explained: ", model$explained ), quote=F )
+        print( paste( "NULL Deviance: ", object$nulldeviance ), quote=F )
+        print( paste( "GDM Deviance: ", object$gdmdeviance ), quote=F )  
+        print( paste( "Deviance Explained: ", object$explained ), quote=F )
         print( "", quote=F )    
-        print( paste( "Intercept: ", model$intercept ), quote=F )
+        print( paste( "Intercept: ", object$intercept ), quote=F )
         print( "", quote=F )    
         thiscoeff <- 1
         thisquant <- 1
-        for ( i in 1:length(model$predictors) ) {
-        print( paste( "Predictor ",i,": ",model$predictors[[i]], sep="" ), quote=F )            
-        print( paste( "Splines: ",model$splines[[i]], sep="" ), quote=F )
-        numsplines <- model$splines[[i]]
+        for ( i in 1:length(object$predictors) ) {
+        print( paste( "Predictor ",i,": ",object$predictors[[i]], sep="" ), quote=F )            
+        print( paste( "Splines: ",object$splines[[i]], sep="" ), quote=F )
+        numsplines <- object$splines[[i]]
         for ( j in 1:numsplines ) {
-                if ( j == 1 ) print( paste( "Min Knot: ",model$knots[[thisquant]], sep="" ), quote=F )          
-                else if ( j == numsplines ) print( paste( "Max Knot: ",model$knots[[thisquant]], sep="" ), quote=F )
-                else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ",model$knots[[thisquant]], sep="" ), quote=F )
+                if ( j == 1 ) print( paste( "Min Knot: ",object$knots[[thisquant]], sep="" ), quote=F )          
+                else if ( j == numsplines ) print( paste( "Max Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
+                else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
                 thisquant <- thisquant + 1
         }
         for ( j in 1:numsplines ) {
-            print( paste( "Coefficient[",j,"]: ",model$coefficients[[thiscoeff]], sep="" ), quote=F )
+            print( paste( "Coefficient[",j,"]: ",object$coefficients[[thiscoeff]], sep="" ), quote=F )
             thiscoeff <- thiscoeff + 1
         }
         print( "", quote=F )                
@@ -562,17 +563,17 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   ##Output Variables:
   ##outTable = the fully calculated site-pair table for GDM
   ###########################
-  #bioData <- spp
+  #bioData <- testData1b2
   #bioFormat <- 1
   #dist <- "bray"
-  #abundance <- T
-  #siteColumn <- "cellNums"
-  #XColumn <- "x"
-  #YColumn <- "y"
+  #abundance <- F
+  #siteColumn <- "site"
+  #XColumn <- "Long"
+  #YColumn <- "Lat"
   #sppColumn <- NULL
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- env
+  #predData <- envRast
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeightVect <- NULL
@@ -581,7 +582,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   #bioData <- sppData
   #bioFormat <- 2
   #dist <- "bray"
-  #abundance <- F
+  #abundance <- T
   #siteColumn <- "site"
   #XColumn <- "Long"
   #YColumn <- "Lat"
@@ -705,6 +706,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       ##aggregates bioData data into classes by raster cells
       bioData <- cbind(cellID, bioData[-c(siteNum)])
       bioData <- bioData[order(bioData$cellName),]
+      siteNum <- which(colnames(bioData)=="cellName")
       
       ##filters out sites with low species count
       ##prep for filtering
@@ -908,7 +910,11 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         }
         
         ##removes unneeded columns
-        inDataTable <- bioData[-c(1,2,3)]
+        bioData <- bioData[order(bioData$cellName),]
+        bx <- which(names(bioData)=="x")
+        by <- which(names(bioData)=="y")
+        siteNum <- which(names(bioData)=="cellName")
+        inDataTable <- bioData[-c(siteNum,bx,by)]
       }else{
         ##compress by cell
         cellName <- which(names(castData)=="cellName")
@@ -928,8 +934,6 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         cellXY <- xyFromCell(siteRaster, spSiteCol$cellName)
         spSiteCol <- cbind(spSiteCol, cellXY)
         bioData <- merge(spSiteCol, byCell, by=cellName)
-        #XColumn <- "x"
-        #YColumn <- "y"
         ##identifies what to remove from distpred matrix data based on spp filter
         filterOut <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] < sppFilter)
         toRemove <- which(headDat$cellName %in% filterOut$cellName)
@@ -948,20 +952,18 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         }
         
         ##transforms data to binary
-        transBio <- bioData[-c(1,2,3)]
+        bioData <- bioData[order(bioData$cellName),]
+        bx <- which(names(bioData)=="x")
+        by <- which(names(bioData)=="y")
+        siteNum <- which(names(bioData)=="cellName")
+        transBio <- bioData[-c(siteNum, bx, by)]
         transBio[transBio>=1] <- 1
         inDataTable <- transBio
       }
       predData <- predData[which(bioData$cellName %in% predData$cellName),]
-      bioData <- bioData[order(bioData$cellName),]
       predData <- predData[order(predData$cellName),]
       colnames(bioData)[colnames(bioData)=="cellName"] <- siteColumn
       colnames(predData)[colnames(predData)=="cellName"] <- siteColumn
-      
-      bx <- which(names(bioData)==XColumn)
-      by <- which(names(bioData)==YColumn)
-      siteNum <- which(names(bioData)==siteColumn)
-      inDataTable <- bioData[-c(siteNum, bx, by)]
     }else{
       ##if environmental data is a table
       ##remove coords if needed
@@ -1077,7 +1079,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   ##With the dissim distance calculated, creates and fills the table in gdm format
   if(bioFormat!=4){
     ##creates base site-pair table
-    outTable <- as.data.frame(createSitePair(dist=distData, spdata=bioData, envInfo=predData, dXCol=XColumn, dYCol=YColumn, siteCol=siteColumn, weightsType=weightType, custWeights=custWeightVect))
+    outTable <- as.data.frame(createsitepair(dist=distData, spdata=bioData, envInfo=predData, dXCol=XColumn, dYCol=YColumn, siteCol=siteColumn, weightsType=weightType, custWeights=custWeightVect))
   }else{
     outTable <- bioData
   }
@@ -1151,7 +1153,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
 
 
 ##########################################################################
-createSitePair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol, 
+createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol, 
                            weightsType, custWeights){
   ##Used in formatGDMData to transform data from a site-site distance matrix into
   ##a site pair format

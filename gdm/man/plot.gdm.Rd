@@ -1,5 +1,6 @@
-\name{plot}
+\name{plot.gdm}
 \alias{plot}
+\alias{plot.gdm}
 \title{
 Plot model fit and I-splines from a Generalized Dissimilarity Model
 }
@@ -7,11 +8,12 @@ Plot model fit and I-splines from a Generalized Dissimilarity Model
 plot is used to plot the I-splines and fit of a generalized dissimilarity model created using the \code{\link{gdm}} function.
 }
 \usage{
-plot(model, plot.layout = c(2, 2), plot.color = "blue", plot.linewidth = 2.0)
+## S3 method for class 'gbm'
+\method{plot}{gdm}(x, plot.layout = c(2, 2), plot.color = "blue", plot.linewidth = 2.0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
+  \item{x}{
 A gdm model object returned from \code{\link{gdm}}.
 }
   \item{plot.layout}{
@@ -23,19 +25,15 @@ Color of the data points that are plotted for the overall plots.
   \item{plot.linewidth}{
 The line width for the regression line over-plotted in the two overall plots to optimize the display of the line over the data points.
 }
+  \item{...}{
+Ignored.
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-plot returns NULL. Use \code{\link{summary.gdm}} to obtain a summary of the model object.
+plot returns NULL. Use \code{\link{summary.gdm}} to obtain a synopsis of the model object.
 }
 \references{
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252–264.
-}
-
-\note{
-%%  ~~further notes~~
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

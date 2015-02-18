@@ -1,5 +1,6 @@
-\name{summary}
+\name{summary.gdm}
 \alias{summary}
+\alias{summary.gdm}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Summarize a Fitted Generalized Dissimilarity Model
@@ -8,25 +9,19 @@ Summarize a Fitted Generalized Dissimilarity Model
 This function summarizes the model object returned from \code{\link{gdm}}.
 }
 \usage{
-summary.gdm(model)
+\method{summary}{gdm}(object, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
+  \item{object}{
 A gdm model object resulting from a call to \code{\link{gdm}}.
 }
+  \item{...}{
+Ignored.
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
 summary prints its output to the R Console window and returns no value.
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -40,7 +35,7 @@ envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
 
 ##create GDM
-gdmMod <- gdm(sitePairTab, geo=T)
+gdmMod <- gdm(sitePairTab, geo=TRUE)
 
 ##summary of GDM
 summary(gdmMod)
