@@ -26,7 +26,9 @@ Environmental (predictor) data can be provided in three formats:
   - one or more site-site distance predictor matrices using the "distPreds" argument (see below).
 }
 \usage{
-formatsitepair(bioData, bioFormat, dist="bray", abundance=F, siteColumn=NULL, XColumn, YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData, distPreds=NULL, weightType="equal", custWeightVect=NULL, samples=NULL)
+formatsitepair(bioData, bioFormat, dist="bray", abundance=F, siteColumn=NULL, XColumn,
+	YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData, distPreds=NULL,
+	weightType="equal", custWeightVect=NULL, samples=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -111,23 +113,28 @@ testData1a <- dcast(sppData, site~species)
 coords <- unique(sppData[2:ncol(sppData)])
 testData1b <- merge(testData1a, coords, by="site")
 ##site-species, table-table
-exFormat1a <- formatsitepair(testData1a, 1, siteColumn="site", XColumn="Long", YColumn="Lat", predData=envTab)
+exFormat1a <- formatsitepair(testData1a, 1, siteColumn="site", XColumn="Long", YColumn="Lat",
+	predData=envTab)
 ##site-species, table-raster
-exFormat1b <- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long", YColumn="Lat", predData=envRast)
+exFormat1b <- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long", YColumn="Lat",
+	predData=envRast)
 
 #########table type 2
 ##site xy spp list, table-table
-exFormat2a <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
+exFormat2a <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
+	siteColumn="site", predData=envTab)
 ##site xy spp list, table-raster
-exFormat2b <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envRast)
+exFormat2b <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
+	siteColumn="site", predData=envRast)
 
 #########table type 3
 ##dissim matrix model
-exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat", predData=envTab, siteColumn="site")
+exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat", predData=envTab,
+	siteColumn="site")
 
 #########table type 4
-##adds a predictor matrix to an existing site-pair table, in this case, predData needs to be filled,
-##but is not actually used
+##adds a predictor matrix to an existing site-pair table, in this case, predData needs to be
+##filled, but is not actually used
 exFormat4 <- formatsitepair(exFormat2a, 4, predData=envTab, distPreds=list(as.matrix(gdmDissim)))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -37,7 +37,8 @@ Fitzpatrick MC, Keller SR (2015) Ecological genomics meets community-level model
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[, c(1,2,13,14)]
 envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
+sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
+	siteColumn="site", predData=envTab)
 
 ##create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)

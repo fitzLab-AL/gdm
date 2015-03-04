@@ -39,7 +39,8 @@ predict returns a response vector with the same length as the number of rows in 
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[, c(1,2,14,13)]
 envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
+sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
+	siteColumn="site", predData=envTab)
 
 ##create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)

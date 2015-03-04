@@ -44,7 +44,8 @@ Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilari
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
+sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
+	siteColumn="site", predData=envTab)
 
 ##create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)

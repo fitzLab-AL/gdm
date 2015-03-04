@@ -65,7 +65,8 @@ Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilari
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envTab)
+sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
+	siteColumn="site", predData=envTab)
 
 ##fit table GDM
 gdmTabMod <- gdm(sitePairTab, geo=TRUE)
@@ -77,8 +78,10 @@ rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
 envRast <- stack(rastFile)
 
 ##environmental raster data
-sitePairRast <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", siteColumn="site", predData=envRast)
-##sometimes raster data returns NA in the site-pair table, these rows will have to be removed before fitting gdm
+sitePairRast <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
+	siteColumn="site", predData=envRast)
+##sometimes raster data returns NA in the site-pair table, these rows will have to be removed 
+##before fitting gdm
 sitePairRast <- na.omit(sitePairRast)
 
 ##fit raster GDM
