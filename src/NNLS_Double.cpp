@@ -54,7 +54,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-	int nCurrent = 0;
+	
+	// Modified by DNL:
+	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
 
 	{
@@ -68,7 +70,8 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	double *pCoeff = NULL;
 	double dOldDev = 0.0;
 	double dNewDev = 0.0;
-	nCurrent = 0;
+	// Modified by DNL:
+	//nCurrent = 0;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
 		for ( i=0; i<nRows; i++ ) 
@@ -108,7 +111,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		}
 
 		double *pTmp = pEnvDataMatrix;
-		for ( int i=0; i<nCols; i++ )
+		// Modified by DNL:
+		//for ( int i=0; i<nCols; i++ )
+		for ( int j=0; j<nCols; j++ )
 		{
 			_read( h, pTmp, nRows * sizeof( double ) );
 			pTmp += nRows;
@@ -132,18 +137,24 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 			dOldDev = dNewDev;
 
 			// apply the new transformation to vector pNN
-			for ( i=0; i<nRows; i++ )
+			// Modified by DNL:
+			//for ( i=0; i<nRows; i++ )
+			for ( h=0; h<nRows; h++ )
 			{
 				double dVal = 0.0;
 
 				for ( int j=0; j<nCols; j++ )
 				{
 					// do calculation for this term
-					dVal += pCoeff[j] * pEnvDataMatrix[ ( j * nRows ) + i ];
+					// Modified by DNL:
+					//dVal += pCoeff[j] * pEnvDataMatrix[ ( j * nRows ) + i ];
+					dVal += pCoeff[j] * pEnvDataMatrix[ ( j * nRows ) + h ];
 				}
 
 				// set final solution for this row item
-				pNN[i] = dVal;				
+				// Modified by DNL:
+				//pNN[i] = dVal;				
+				pNN[h] = dVal;				
 			}
 		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
@@ -452,7 +463,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-	int nCurrent = 0;
+	
+	// Modified by DNL:
+	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
 	{
 		pNN[i] = -(log( 1.0 - ( ( ( pRespVector[i] * pWeights[i] ) + 0.5 ) / ( pWeights[i] + 1.0 ) ) ) );
@@ -465,7 +478,8 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	double *pCoeff = NULL;
 	double dOldDev = 0.0;
 	double dNewDev = 0.0;
-	nCurrent = 5;
+	// Modified by DNL:
+	//nCurrent = 5;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
 		for ( i=0; i<nRows; i++ ) 
@@ -776,7 +790,9 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 	// show results
 	//
 	double *pCoeffs = NULL;
-	char buff[64];
+	
+	// Modified by DNL:
+	//char buff[64];
 	if ( mode == 1 )
 	{
 		//sprintf( buff, "THE SOLUTION HAS BEEN COMPUTED SUCCESSFULLY." );
@@ -847,7 +863,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-	int nCurrent = 0;
+	
+	// Modified by DNL:
+	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
 	{
 		pNN[i] = -(log( 1.0 - ( ( ( pRespVector[i] * pWeights[i] ) + 0.5 ) / ( pWeights[i] + 1.0 ) ) ) );
@@ -860,7 +878,8 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	double *pCoeff = NULL;
 	double dOldDev = 0.0;
 	double dNewDev = 0.0;
-	nCurrent = 5;
+	// Modified by DNL:
+	//nCurrent = 5;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
 		for ( i=0; i<nRows; i++ ) 

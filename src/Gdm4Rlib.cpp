@@ -294,7 +294,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 	// Everything passed from R needs to be dereferenced...
 	//
 	int nRows = *pRows;
-	int nCols = *pCols;
+	// Modified by DNL:
+	//	int nCols = *pCols;
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 
@@ -728,7 +729,10 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
-			sprintf( buff, "%s %lf ", buff, *pTmp);			
+
+			// Modified by DNL:
+			//sprintf( buff, "%s %lf ", buff, *pTmp);			
+			sprintf( buff, "%s %f ", buff, *pTmp);			
 			++pTmp;
 		}
 		//Message(buff);
@@ -766,7 +770,9 @@ void DebugPredMatrix(char *pPath, double *pPredData, long long nRows, int nPreds
 	{
 		for ( int j=0; j<nCols; j++ )
 		{
-			fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
+			// Modified by DNL:
+			//fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
+			fprintf( fp, "%f", pPredData[(j*nRows)+i]);
 
 			if ( j < nCols-1 ) 
 				fprintf(fp, "," );
@@ -1043,7 +1049,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 	// Everything passed from R needs to be dereferenced...
 	//
 	int nRows = *pRows;
-	int nCols = *pCols;
+	// Modified by DNL:
+	//int nCols = *pCols;
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 
@@ -1478,7 +1485,9 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
-			sprintf( buff, "%s %lf ", buff, *pTmp);			
+			// Modified by DNL:
+			//sprintf( buff, "%s %lf ", buff, *pTmp);			
+			sprintf( buff, "%s %f ", buff, *pTmp);			
 			++pTmp;
 		}
 		//Message(buff);
@@ -1516,7 +1525,9 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 	{
 		for ( int j=0; j<nCols; j++ )
 		{
-			fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
+			// Modified by DNL:
+			//fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
+			fprintf( fp, "%f", pPredData[(j*nRows)+i]);
 
 			if ( j < nCols-1 ) 
 				fprintf(fp, "," );

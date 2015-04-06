@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include "Message.h"
 
-#pragma warning( disable : 4996 )
+// Modified by DNL:
+//#pragma warning( disable : 4996 )
 
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -36,7 +37,9 @@ void Message( char *message, char *title )
 void Message( long long value )
 {
 	char *p = new char [256];
-	sprintf( p, "%1.0lf", (double)value );
+	// Modified by DNL:
+	//sprintf( p, "%1.0lf", (double)value );
+	sprintf( p, "%1.0f", (double)value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)"", MB_OK );
 #endif	
@@ -47,7 +50,9 @@ void Message( long long value )
 void Message( char *name, long long value )
 {
 	char *p = new char [256];
-	sprintf( p, "%s = %1.0lf", name, (double)value );
+	// Modified by DNL:
+	//sprintf( p, "%s = %1.0lf", name, (double)value );
+	sprintf( p, "%s = %1.0f", name, (double)value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)"", MB_OK );
 #endif	
@@ -58,7 +63,9 @@ void Message( char *name, long long value )
 void Message( long value, char *title )
 {
 	char *p = new char [256];
-	sprintf( p, "%1.0lf", (double)value );
+	// Modified by DNL:
+	//sprintf( p, "%1.0lf", (double)value );
+	sprintf( p, "%1.0f", (double)value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)title, MB_OK );
 #endif	
@@ -69,7 +76,9 @@ void Message( long value, char *title )
 void Message( char *name, long long value, char *title )
 {
 	char *p = new char [256];
-	sprintf( p, "%s = %1.0lf", name, (double)value );
+	// Modified by DNL:
+	//sprintf( p, "%s = %1.0lf", name, (double)value );
+	sprintf( p, "%s = %1.0f", name, (double)value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)title, MB_OK );
 #endif	
@@ -183,7 +192,9 @@ void Message( char *name, float value, char *title )
 void Message( double value )
 {
 	char *p = new char [256];
-	sprintf( p, "%lf", value );
+	// Modified by DNL:
+	//sprintf( p, "%lf", value );
+	sprintf( p, "%f", value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)"", MB_OK );
 #endif	
@@ -194,7 +205,9 @@ void Message( double value )
 void Message( char *name, double value )
 {
 	char *p = new char [256];
-	sprintf( p, "%s = %lf", name, value );
+	// Modified by DNL:
+	//sprintf( p, "%s = %lf", name, value );
+	sprintf( p, "%s = %f", name, value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)"", MB_OK );
 #endif	
@@ -206,7 +219,9 @@ void Message( char *name, double value )
 void Message( double value, char *title )
 {
 	char *p = new char [256];
-	sprintf( p, "%lf", value );
+	// Modified by DNL:
+	//sprintf( p, "%lf", value );
+	sprintf( p, "%f", value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)title, MB_OK );
 #endif	
@@ -218,7 +233,9 @@ void Message( double value, char *title )
 void Message( char *name, double value, char *title )
 {
 	char *p = new char [256];
-	sprintf( p, "%s = %lf", name, value );
+	// Modified by DNL:
+	//sprintf( p, "%s = %lf", name, value );
+	sprintf( p, "%s = %f", name, value );
 #ifdef _WIN32
 	MessageBox( NULL, (LPCSTR)p, (LPCSTR)title, MB_OK );
 #endif	
