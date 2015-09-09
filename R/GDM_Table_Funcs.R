@@ -1,543 +1,667 @@
 
-
-gdm <- 
-function (data, geo=FALSE, splines=NULL, knots=NULL) 
-{
-	options(warn.FPU = FALSE)
-##
-##	sanity check on the data table
-##
-	if ( ncol(data) < 6 )
-	    stop("Not enough columns in data. (At minimum need: Observed, weights, X0, Y0, X1, Y1) ")
-	if ( nrow(data) < 1 )
-	    stop("Not enough rows in data")
-
-
-##
-##	check that the response data is [0..1]
-##
-	rtmp <- data[,1]
-	if (length(rtmp[rtmp<0]) > 0)
- 	    stop("Response data has negative values. Must be between 0 - 1.")
-	if (length(rtmp[rtmp>1]) > 0)
-	    stop("Response data has values greater than 1. Must be between 0 - 1.")
-
-
-##
-##	current data format is response,weights,X0,Y0,X1,Y1 before any predictor data (thus 6 leading columns)
-##
-	LEADING_COLUMNS <- 6
-	if ( geo ) 
-        {
-	    nPreds <- ( ncol(data) - LEADING_COLUMNS ) / 2 + 1		
-	}
-	else 
-        {
-	    nPreds <- ( ncol(data) - LEADING_COLUMNS ) / 2
-	}
-
-	if ( nPreds < 1 )
-	    stop("Data has NO predictors")
-
-
-##
-## 	setup the predictor name list
-##
-	if ( geo ) 
-        {
-	    if ( nPreds > 1 )
-		predlist <- c("Geographic", names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds-1)])
-	    else
-		predlist <- c("Geographic")
-	}
-	else 
-        {
-  	    predlist <- names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds)]
-	}
-
-
-##
-##	deal with the splines and knots
-##
-	if (is.null(knots))
-	{
-	    ##
-	    ## generate knots internally from the data
-	    ##
-	    if ( is.null(splines) ) 
-            {
-		nSplines <- 3
-		quantvec <- rep(0, nPreds * nSplines)
-		splinvec <- rep(nSplines, nPreds)
-
-		if ( geo ) 
-                {
-      		    ## get knots for the geographic distance
-            	    v <- sqrt((data[,3]-data[,5])^2 + (data[,4]-data[,6])^2)
-		    quantvec[1] <- min(v)
-      		    quantvec[2] <- median(v)
-            	    quantvec[3] <- max(v)
-
-		    if ( nPreds > 1 ) 
-                    {
-		        ## get knots for the environmental predictors
-			for (i in seq(from = 1, to = nPreds-1, by = 1)) 
-                        {
-            		    v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds-1])                 
-      	            	    index = i * nSplines
-		            quantvec[index+1] <- min(v)
-		      	    quantvec[index+2] <- median(v)
-      	      	      	    quantvec[index+3] <- max(v)
-	      	      	}
-		    }
-    		}
-		
-		else 
-                {
-		    ## get knots for the environmental predictors after skipping geographic preds
-	      	    for (i in seq(from = 1, to = nPreds, by = 1)) 
-                    {
-			v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds])                   
-            	      	index = (i-1) * nSplines
-	            	quantvec[index+1] <- min(v)
-	      	        quantvec[index+2] <- median(v)
-            	      	quantvec[index+3] <- max(v)
-		    }
-		}
-	    }
-		
-	    else 
-            {
-		##
-		##	otherwise check that the supplied splines vector has enough data and minumum spline values of 3
-		##
-		if ( length(splines) != nPreds ) 
-                {
-		    stop(paste("Number of splines does not equal the number of predictors. 
-                   Splines argument has", length(splines), "items but needs", nPreds, "items."))
-		}
-
-  		## count the total number of user defined splines to dimension the knots vector
-		quantvec <- rep(0, sum(splines))
-		splinvec <- splines
-
-		if ( geo ) 
-                {
-		    if ( splines[1] < 3 )
-			stop("Must have at least 3 splines per predictor")
-
-                    ## get knots for the geographic distance
-      	      	    v <- sqrt((data[,3]-data[,5])^2 + (data[,4]-data[,6])^2)
-		    quantvec[1] <- min(v)		## 0% knot
-      	      	    quantvec[splines[1]] <- max(v)	## 100% knot
-
-		    quant_increment <- 1.0 / (splines[1]-1)
-		    this_increment <- 1
-		    for (i in seq(from = 2, to = (splines[1]-1), by = 1)) 
-                    {  
-		        ## mid % knots
-			quantvec[i] <- quantile(v,quant_increment*this_increment)
-			this_increment <- this_increment + 1
-		    }
-
-		    if ( nPreds > 1 ) 
-                    {
-			## get knots for the environmental predictors
-			current_quant_index <- splines[1]
-			for (i in seq(from = 1, to = nPreds-1, by = 1)) 
-                        {
-      	      		    num_splines <- splines[i+1]
-			    if ( num_splines < 3 )
-			        stop("Must have at least 3 splines per predictor")
-
-			    v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds-1])                 
-			    quantvec[current_quant_index+1] <- min(v)	            ## 0% knot
-	      		    quantvec[current_quant_index+num_splines] <- max(v)	    ## 100% knot
-
-			    quant_increment <- 1.0 / (num_splines-1)
-			    this_increment <- 1
-			    for (i in seq(from = 2, to = (num_splines-1), by = 1)) 
-                            {  
-				## mid % knots
-				quantvec[current_quant_index+i] <- quantile(v,quant_increment*this_increment)
-				this_increment <- this_increment + 1
-			    }
-			
-			    current_quant_index <- current_quant_index + num_splines
-			}
-		    }
-                }
-
-		else 
-                {
-		    ## get knots for the environmental predictors
-		    current_quant_index <- 0
-		    for (i in seq(from = 1, to = nPreds, by = 1)) 
-                    {
-      	      	        num_splines <- splines[i]
-			if ( num_splines < 3 )
-			    stop("Must have at least 3 splines per predictor")
-
-                        v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds])          
-			quantvec[current_quant_index+1] <- min(v)	        ## 0% knot
-	      		quantvec[current_quant_index+num_splines] <- max(v)	## 100% knot
-
-			quant_increment <- 1.0 / (num_splines-1)
-			this_increment <- 1
-			for (i in seq(from = 2, to = (num_splines-1), by = 1)) 
-                        {  
-			    ## mid % knots
-			    quantvec[current_quant_index+i] <- quantile(v,quant_increment*this_increment)
-			    this_increment <- this_increment + 1
-			}
-			current_quant_index <- current_quant_index + num_splines
-		    }
-		}
-	    }
-	}
-
-	else
-	{
-	    ##
-	    ## user defined knots supplied as an argument
-	    ##
-	    if ( is.null(splines) ) 
-            {
-	        ## check that there are nPreds * 3 knots in the user defined vector
-		if ( length(knots) != (nPreds * 3) ) 
-                {
-		    stop(paste("When knots are supplied by the user, there should be", (nPreds * 3), "items in the knots argument, not", length(knots), "items."))
-		}
-
-		## now check that each of the three knots for each predictor are in ascending order
-		for (i in seq(from = 1, to = nPreds, by = 1)) 
-                {
-                    index = i * 3
-		    if ((knots[index-1] < knots[index-2] ) || 
-                        (knots[index] < knots[index-2]) || 
-                        (knots[index] < knots[index-1])) 
-                    {
-			stop(paste("Knots for ", predlist[i], "are not in ascending order."))
-		    }
-		}
-
-                nSplines <- 3
-		quantvec <- knots
-		splinvec <- rep(nSplines, nPreds)
-	    }
-		
-	    else 
-            {
-		## check that there are sum(splines) knots in the user defined vector
-		if ( length(knots) != sum(splines) ) 
-                {
-		    stop(paste("When knots are supplied by the user, there should be", sum(splines), "items in the knots argument, not", length(knots), "items."))
-		}
-				
-		## now check that each of the knots for each predictor are in ascending order
-		index = 0
-		for (i in seq(from = 1, to = nPreds, by = 1)) 
-                {
-		    for (j in seq(from = 2, to = splines[i], by = 1)) 
-                    {
-                        if (knots[index+j] < knots[index+j-1]) 
-                        {
-			    stop(paste("Knots for ", predlist[i], "are not in ascending order."))
-			}
-		    }
-		    index <- index + splines[i]
-		}
-
-		quantvec <- knots
-		splinvec <- splines
-	    }
-	}
-
-      	p1 <- 0
-	p2 <- 0
-    	p3 <- 0
-    	p4 <- 0
-    	p5 <- rep(0,times=length(quantvec))
-      	p6 <- rep(0,times=nrow(data))
-      	p7 <- rep(0,times=nrow(data))
-      	p8 <- rep(0,times=nrow(data))
-	
-##
-##  Call the dll function
-##
-	z <- .C( "GDM_FitFromTable",
-                 paste(getwd()),
-                 as.matrix(data),
-                 as.integer(geo),
-                 as.integer(nPreds), 
-                 as.integer(nrow(data)), 
-                 as.integer(ncol(data)),
-                 as.integer(splinvec),
-                 as.double(quantvec),                 
-                 gdmdev = as.double(p1),
-                 nulldev = as.double(p2),
-                 expdev = as.double(p3),
-                 intercept = as.double(p4),         
-                 coeffs = as.double(p5),
-                 response = as.double(p6),
-                 preddata = as.double(p7),
-                 ecodist = as.double(p8), 
-                 PACKAGE = "gdm"
-               )
-
-##	call <- match.call()
-        m <- match.call(expand.dots = F)
-        
-    	gdmModOb <- structure(list(dataname = m[[2]],
-                       geo = geo,
-                       sample = nrow(data),
-                       gdmdeviance = z$gdmdev,
-                       nulldeviance = z$nulldev,
-                       explained = z$expdev,
-                       intercept = z$intercept,
-                       predictors = predlist,
-                       coefficients = z$coeffs,
-                       knots = quantvec,
-                       splines = splinvec,
-                       creationdate = date(),
-                       observed = z$response,
-                       predicted = z$preddata,
-                       ecological = z$ecodist))
-
-        class(gdmModOb) <- c("gdm", "list")
-        return(gdmModOb)
-}
-
-
-
-plot.gdm <- 
-function (x, plot.layout = c(2,2), plot.color = "blue", plot.linewidth=2.0, ...) 
-{
-      	options(warn.FPU = FALSE)
-      	PSAMPLE <- 200
-      	preddata <- rep(0,times=PSAMPLE)
-			
-	##
-	## establish what plot layout to use
-	##  
-	thisplot <- 0
-	one_page_per_plot <- FALSE
-	if ((plot.layout[1]==1) && (plot.layout[2]==1)) 
-		one_page_per_plot <- TRUE
-	else
-	  par(mfrow=plot.layout)	
-
-
-      	##
-      	## apply the link function and plot.....
-      	##
-      	plot( x$ecological, 
-      	      x$observed, 
-              xlab="Predicted Ecological Distance", 
-              ylab="Observed Compositional Dissimilarity", type="n" )
-
-        points( x$ecological, x$observed, pch=20, cex=0.25, col=plot.color )
-
-        overlayX <- seq( from=min(x$ecological), to=max(x$ecological), length=PSAMPLE )
-        overlayY <- 1 - exp( - overlayX )
-        lines( overlayX, overlayY, lwd=plot.linewidth ) 
-	thisplot <- thisplot + 1
-
-
-        ##
-        ## use the raw data and plot.....
-        ##
-	if (one_page_per_plot)
-        {
-      		dev.new()
-        	dev.next()
-	}
-        plot( x$predicted, 
-              x$observed, 
-              xlab="Predicted Compositional Dissimilarity", 
-              ylab="Observed Compositional Dissimilarity", type="n" )
-
-        points( x$predicted, x$observed, pch=20, cex=0.25, col=plot.color )
-
-        overlayX <- overlayY <- seq( from=min(x$predicted), to=max(x$predicted), length=PSAMPLE )
-        lines( overlayX, overlayY, lwd=plot.linewidth ) 
-	thisplot <- thisplot + 1
-
-
-        ##
-        ## determine the max of all the predictor data
-        ##
-        preds <- length(x$predictors)
-        predmax <- 0
-        splineindex <- 1
-        for ( i in 1:preds ) 
-        {  
-            ## only if the sum of the coefficients associated with this predictor is > 0.....
-            numsplines <- x$splines[i]
-            if ( sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
-            {
-	        ## get predictor plot Y-data                            
-                z <- .C( "GetPredictorPlotData", 
-                         pdata = as.double(preddata),
-                         as.integer(PSAMPLE),
-                         as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
-                         as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
-                         as.integer(numsplines), 
-                         PACKAGE = "gdm"
-                       )
-		                        
-		v <- max(z$pdata)
-                if (v > predmax ) predmax <- v
-            }
-            splineindex <- splineindex + numsplines
-	}
-
-	
-        ##
-        ## plot the predictors with non-zero sum of coefficients
-        ##      
-        splineindex <- 1
-	for ( i in 1:preds ) 
-        {  
-            ## only if the sum of the coefficients associated with this predictor is > 0.....
-            numsplines <- x$splines[i]
-            if ( sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0 ) 
-            {
-		if (one_page_per_plot)
-                {
-      		    dev.new()
-		    dev.next()
-		}
-		
-   	        else 
-                {
-                    thisplot <- thisplot + 1
-		    if (thisplot > (plot.layout[1] * plot.layout[2])) 
-                    {	
-			dev.new()                              				
-                        dev.next()					
-			thisplot <- 1
-                        par(mfrow=plot.layout)	
-		    }
-		}
-                  
-		## get predictor plot Y-data    
-                 z <- .C( "GetPredictorPlotData", 
-                           pdata = as.double(preddata),
-                           as.integer(PSAMPLE),
-                           as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
-                           as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
-                           as.integer(numsplines),
-                           PACKAGE = "gdm"
-                        )
-
-                        
-                  plot( seq(from=x$knots[[(i*3)-2]],to=x$knots[[(i*3)]], length=PSAMPLE),
-                  	z$pdata, 
-                        xlab=x$predictors[i], 
-                        ylab=paste("f(", x$predictors[i], ")", sep="" ), 
-            	  	ylim=c(0,predmax), type="l" )
-      	    }
-	      	splineindex <- splineindex + numsplines
-      	}       
-}
-
-
-predict.gdm <- 
-function (object, data, ...) 
-{
-    options(warn.FPU = FALSE)
-
-#
-#  Call the dll function
-#
-    predicted <- rep(0,times=nrow(data))
-    z <- .C( "GDM_PredictFromTable",
-             as.matrix(data),
-             as.integer(object$geo),
-             as.integer(length(object$predictors)), 
-             as.integer(nrow(data)), 
-             as.double(object$knots),
-             as.integer(object$splines),
-             as.double(c(object$intercept,object$coefficients)),
-             preddata = as.double(predicted),
-             PACKAGE = "gdm"
-           )
-    return(z$preddata)
-}
-
-
-gdm.transform <- 
-function (model, data) 
-{
+##########################################################################
+gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
+  #################
+  #data<-gdmTab
+  #geo<-TRUE
+  #splines<-NULL
+  #knots<-NULL
+  #################
   options(warn.FPU = FALSE)
-  transformed <- matrix(0, nrow(data), ncol(data))
-  colnames(transformed) <- names(data)
-  z <- .C("GDM_TransformFromTable", as.integer(nrow(data)), 
-          as.integer(ncol(data)), as.integer(model$geo), as.integer(length(model$predictors)), 
-          as.integer(model$splines), as.double(model$knots), as.double(model$coefficients), 
-          as.matrix(data), trandata = as.double(transformed), 
-          PACKAGE = "gdm")
-  nRows <- nrow(data)
-  nCols <- ncol(data)
-  myVec <- z$trandata
-  pos <- 1
-  for (i in seq(from = 1, to = nCols, by = 1)) {
-    tmp <- myVec[seq(from = pos, to = pos + nRows - 1)]
-    transformed[, i] <- tmp
-    pos <- pos + nRows
+    
+  ##adds error checking to gdm function
+  ##checks to see if in site-pair format from formatsitepair function
+  if(class(data)[1] != "gdmData"){
+    warning("data class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model will not fit.")
   }
-  return(transformed)
+  ##checks to makes sure data is at least a matrix or data frame
+  if(!(class(data)[1]=="gdmData" | class(data)[1]=="matrix" | class(data)[1]=="data.frame")){
+    stop("data argument nees to be a matrix or a data frame")
+  }
+    
+  ##sanity check on the data table
+  if(ncol(data) < 6){
+    stop("Not enough columns in data. (At minimum need: Observed, weights, X0, Y0, X1, Y1) ")
+  }  
+  if(nrow(data) < 1){
+    stop("Not enough rows in data")
+  }
+    
+  ##checks that geo has either TRUE or FALSE
+  if(!(geo==TRUE | geo==FALSE)){
+    stop("geo argument must be either TRUE or FALSE")
+  }
+  ##makes sure splines is a numeric vector
+  if(is.null(splines)==FALSE & class(splines)!="numeric"){
+    stop("argument splines needs to be a numeric data type")
+  }
+  ##checks knots inputs
+  if(is.null(knots)==FALSE & class(knots)!="numeric"){
+    stop("argument knots needs to be a numeric data type")
+  }
+    
+  ##check that the response data is [0..1]
+  rtmp <- data[,1]
+  if(length(rtmp[rtmp<0]) > 0){
+    stop("Response data has negative values. Must be between 0 - 1.")
+  }
+  if (length(rtmp[rtmp>1]) > 0){
+    stop("Response data has values greater than 1. Must be between 0 - 1.")
+  }
+
+  ##current data format is response,weights,X0,Y0,X1,Y1 before any predictor data (thus 6 leading columns)
+  LEADING_COLUMNS <- 6
+  if(geo){
+    nPreds <- ( ncol(data) - LEADING_COLUMNS ) / 2 + 1		
+  }else{
+    nPreds <- ( ncol(data) - LEADING_COLUMNS ) / 2
+  }
+    
+  if(nPreds < 1){
+    stop("Data has NO predictors")
+  }
+
+  ##setup the predictor name list
+  if(geo){
+    if(nPreds > 1){
+      predlist <- c("Geographic", sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds-1)], "s1."), "[[", 2))
+    }else{
+      predlist <- c("Geographic")
+    }
+  }else{
+    predlist <- sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds-1)], "s1."), "[[", 2)
+  }
+
+  ##deal with the splines and knots
+  if(is.null(knots)){
+    ##generate knots internally from the data
+    if(is.null(splines)){
+      nSplines <- 3
+      quantvec <- rep(0, nPreds * nSplines)
+      splinvec <- rep(nSplines, nPreds)
+        
+      if(geo){
+        ##get knots for the geographic distance
+        v <- sqrt((data[,3]-data[,5])^2 + (data[,4]-data[,6])^2)
+        quantvec[1] <- min(v)
+        quantvec[2] <- median(v)
+        quantvec[3] <- max(v)
+          
+        if(nPreds > 1){
+          ##get knots for the environmental predictors
+          for(i in seq(from = 1, to = nPreds-1, by = 1)){
+            v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds-1])                 
+            index = i * nSplines
+            quantvec[index+1] <- min(v)
+            quantvec[index+2] <- median(v)
+            quantvec[index+3] <- max(v)
+          }
+        }
+      }else{
+        ## get knots for the environmental predictors after skipping geographic preds
+        for(i in seq(from = 1, to = nPreds, by = 1)){
+          v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds])                   
+          index = (i-1) * nSplines
+          quantvec[index+1] <- min(v)
+          quantvec[index+2] <- median(v)
+          quantvec[index+3] <- max(v)
+        }
+      }
+    }else{
+      ##otherwise check that the supplied splines vector has enough data and minumum spline values of 3
+      if(length(splines) != nPreds){
+        stop(paste("Number of splines does not equal the number of predictors. 
+              Splines argument has", length(splines), "items but needs", nPreds, "items."))
+      }
+        
+      ##count the total number of user defined splines to dimension the knots vector
+      quantvec <- rep(0, sum(splines))
+      splinvec <- splines
+        
+      if(geo){
+        if(splines[1] < 3){
+          stop("Must have at least 3 splines per predictor")
+        }
+          
+        ## get knots for the geographic distance
+        v <- sqrt((data[,3]-data[,5])^2 + (data[,4]-data[,6])^2)
+        quantvec[1] <- min(v)		## 0% knot
+        quantvec[splines[1]] <- max(v)	## 100% knot
+          
+        quant_increment <- 1.0 / (splines[1]-1)
+        this_increment <- 1
+        for (i in seq(from = 2, to = (splines[1]-1), by = 1)){  
+          ## mid % knots
+          quantvec[i] <- quantile(v,quant_increment*this_increment)
+          this_increment <- this_increment + 1
+        }
+          
+        if(nPreds > 1){
+          ##get knots for the environmental predictors
+          current_quant_index <- splines[1]
+          for(i in seq(from = 1, to = nPreds-1, by = 1)){
+            num_splines <- splines[i+1]
+            if(num_splines < 3){
+              stop("Must have at least 3 splines per predictor")
+            }
+                
+            v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds-1])                 
+            quantvec[current_quant_index+1] <- min(v)	            ## 0% knot
+            quantvec[current_quant_index+num_splines] <- max(v)	    ## 100% knot
+              
+            quant_increment <- 1.0 / (num_splines-1)
+            this_increment <- 1
+            for(i in seq(from = 2, to = (num_splines-1), by = 1)){  
+              ##mid % knots
+              quantvec[current_quant_index+i] <- quantile(v,quant_increment*this_increment)
+              this_increment <- this_increment + 1
+            }
+              
+            current_quant_index <- current_quant_index + num_splines
+          }
+        }
+      }else{
+        ##get knots for the environmental predictors
+        current_quant_index <- 0
+        for(i in seq(from = 1, to = nPreds, by = 1)){
+          num_splines <- splines[i]
+          if(num_splines < 3){
+            stop("Must have at least 3 splines per predictor")
+          }
+              
+          v <- c(data[,i+LEADING_COLUMNS], data[,i+LEADING_COLUMNS+nPreds])          
+          quantvec[current_quant_index+1] <- min(v)	        ## 0% knot
+          quantvec[current_quant_index+num_splines] <- max(v)	## 100% knot
+            
+          quant_increment <- 1.0 / (num_splines-1)
+          this_increment <- 1
+          for(i in seq(from = 2, to = (num_splines-1), by = 1)){  
+            ##mid % knots
+            quantvec[current_quant_index+i] <- quantile(v,quant_increment*this_increment)
+            this_increment <- this_increment + 1
+          }
+          current_quant_index <- current_quant_index + num_splines
+        }
+      }
+    }
+  }else{
+    ##user defined knots supplied as an argument
+    if(is.null(splines)){
+      ##check that there are nPreds * 3 knots in the user defined vector
+      if(length(knots) != (nPreds * 3)){
+        stop(paste("When knots are supplied by the user, there should be", (nPreds * 3), "items in the knots argument, not", length(knots), "items."))
+      }
+        
+      ## now check that each of the three knots for each predictor are in ascending order
+      for(i in seq(from = 1, to = nPreds, by = 1)){
+        index = i * 3
+        if((knots[index-1] < knots[index-2]) || 
+            (knots[index] < knots[index-2]) || 
+            (knots[index] < knots[index-1])){
+          stop(paste("Knots for ", predlist[i], "are not in ascending order."))
+        }
+      }
+        
+      nSplines <- 3
+      quantvec <- knots
+      splinvec <- rep(nSplines, nPreds)
+    }else{
+      ##check that there are sum(splines) knots in the user defined vector
+      if(length(knots) != sum(splines)){
+        stop(paste("When knots are supplied by the user, there should be", sum(splines), "items in the knots argument, not", length(knots), "items."))
+      }
+        
+      ##now check that each of the knots for each predictor are in ascending order
+      index = 0
+      for(i in seq(from = 1, to = nPreds, by = 1)){
+        for(j in seq(from = 2, to = splines[i], by = 1)){
+          if(knots[index+j] < knots[index+j-1]){
+            stop(paste("Knots for ", predlist[i], "are not in ascending order."))
+          }
+        }
+        index <- index + splines[i]
+      }
+        
+      quantvec <- knots
+      splinvec <- splines
+    }
+  }
+    
+  p1 <- 0
+  p2 <- 0
+  p3 <- 0
+  p4 <- 0
+  p5 <- rep(0,times=length(quantvec))
+  p6 <- rep(0,times=nrow(data))
+  p7 <- rep(0,times=nrow(data))
+  p8 <- rep(0,times=nrow(data))
+
+  ##Call the dll function
+  z <- .C( "GDM_FitFromTable",
+            paste(getwd()),
+            as.matrix(data),
+            as.integer(geo),
+            as.integer(nPreds), 
+            as.integer(nrow(data)), 
+            as.integer(ncol(data)),
+            as.integer(splinvec),
+            as.double(quantvec),                 
+            gdmdev = as.double(p1),
+            nulldev = as.double(p2),
+            expdev = as.double(p3),
+            intercept = as.double(p4),         
+            coeffs = as.double(p5),
+            response = as.double(p6),
+            preddata = as.double(p7),
+            ecodist = as.double(p8), 
+            PACKAGE = "gdm")
+    
+  ##call <- match.call()
+  m <- match.call(expand.dots = F)
+    
+  gdmModOb <- structure(list(dataname = m[[2]],
+                              geo = geo,
+                              sample = nrow(data),
+                              gdmdeviance = z$gdmdev,
+                              nulldeviance = z$nulldev,
+                              explained = z$expdev,
+                              intercept = z$intercept,
+                              predictors = predlist,
+                              coefficients = z$coeffs,
+                              knots = quantvec,
+                              splines = splinvec,
+                              creationdate = date(),
+                              observed = z$response,
+                              predicted = z$preddata,
+                              ecological = z$ecodist))
+    
+  class(gdmModOb) <- c("gdm", "list")
+    
+  if(sum(gdmModOb$coefficients)==0){
+    warning("Problem with model fitting, no solution obtained. Sum of spline coefficients = 0. Deviance explained = 0.")
+    gdmModOb$explained <- 0
+  }
+  return(gdmModOb)
 }
 
+##########################################################################
 
 
+##########################################################################
+plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue", 
+                      plot.linewidth=2.0, ...){
+  #################
+  #x <- gdmTabMod
+  #plot.layout <- c(2,2)
+  #plot.color <- "blue"
+  #plot.linewidth <- 2.0
+  #################
+  options(warn.FPU = FALSE)
+  PSAMPLE <- 200
+  preddata <- rep(0,times=PSAMPLE)
+  
+  ##establish what plot layout to use
+  thisplot <- 0
+  one_page_per_plot <- FALSE
+  if ((plot.layout[1]==1) && (plot.layout[2]==1)){
+    one_page_per_plot <- TRUE
+  }else{
+    par(mfrow=plot.layout)
+  }
+  
+  ##apply the link function and plot.....
+  plot(x$ecological, x$observed, xlab="Predicted Ecological Distance", ylab="Observed Compositional Dissimilarity", type="n")
+  points(x$ecological, x$observed, pch=20, cex=0.25, col=plot.color)
+  overlayX <- seq( from=min(x$ecological), to=max(x$ecological), length=PSAMPLE )
+  overlayY <- 1 - exp( - overlayX )
+  lines( overlayX, overlayY, lwd=plot.linewidth ) 
+  thisplot <- thisplot + 1
+  
+  ##use the raw data and plot.....
+  if(one_page_per_plot){
+    dev.new()
+    dev.next()
+  }
+  plot(x$predicted, x$observed, xlab="Predicted Compositional Dissimilarity", ylab="Observed Compositional Dissimilarity", type="n")
+  points( x$predicted, x$observed, pch=20, cex=0.25, col=plot.color )
+  overlayX <- overlayY <- seq( from=min(x$predicted), to=max(x$predicted), length=PSAMPLE )
+  lines( overlayX, overlayY, lwd=plot.linewidth ) 
+  thisplot <- thisplot + 1
+  
+  ##determine the max of all the predictor data
+  preds <- length(x$predictors)
+  predmax <- 0
+  splineindex <- 1
+  for(i in 1:preds){  
+    ##only if the sum of the coefficients associated with this predictor is > 0.....
+    numsplines <- x$splines[i]
+    if(sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0){
+      ## get predictor plot Y-data                            
+      z <- .C( "GetPredictorPlotData", 
+               pdata = as.double(preddata),
+               as.integer(PSAMPLE),
+               as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
+               as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
+               as.integer(numsplines), 
+               PACKAGE = "gdm" )
+      
+      v <- max(z$pdata)
+      if(v > predmax){
+        predmax <- v
+      } 
+    }
+    splineindex <- splineindex + numsplines
+  }
+  
+  ##plot the predictors with non-zero sum of coefficients      
+  splineindex <- 1
+  for(i in 1:preds){  
+    #i <- 1
+    ##only if the sum of the coefficients associated with this predictor is > 0.....
+    numsplines <- x$splines[i]
+    if(sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0){
+      if (one_page_per_plot){
+        dev.new()
+        dev.next()
+      }else{
+        thisplot <- thisplot + 1
+        if(thisplot > (plot.layout[1] * plot.layout[2])){	
+          #dev.new()                              				
+          #x11()
+          #dev.next()					
+          thisplot <- 1
+          par(mfrow=plot.layout)	
+        }
+      }
+      
+      ##get predictor plot Y-data    
+      z <- .C( "GetPredictorPlotData", 
+               pdata = as.double(preddata),
+               as.integer(PSAMPLE),
+               as.double(x$coefficients[splineindex:(splineindex+numsplines-1)]),
+               as.double(x$knots[splineindex:(splineindex+numsplines-1)]),
+               as.integer(numsplines),
+               PACKAGE = "gdm")
+      
+      if(x$geo & i==1){
+        varNam <- "Geographic Distance"
+      } else{
+        varNam <- x$predictors[i]
+      }
+      
+      plot(seq(from=x$knots[[(i*3)-2]],to=x$knots[[(i*3)]], length=PSAMPLE), z$pdata, 
+           xlab=varNam, ylab=paste("f(", varNam, ")", sep="" ), ylim=c(0,predmax), type="l")
+    }
+    splineindex <- splineindex + numsplines
+  }       
+}
+##########################################################################
+
+
+##########################################################################
+predict.gdm <- function (object, data, time=F, predRasts=NULL, ...){
+  #################
+  ##object = gdm model
+  ##data = a sitepair table
+  #object <- gdm.1
+  #data <- envRast
+  #time <- T
+  #predRasts <- stack(envRast[[1]]*0.85, envRast[[2]], envRast[[3]]*0.85, envRast[[4]]+2, envRast[[5]]+2)
+  #predRasts <- stack(envRast[[1]], envRast[[3]], envRast[[5]], envRast[[2]])
+  #################
+  options(warn.FPU = FALSE)
+  
+  if(time==TRUE){
+    if(is.null(predRasts)==TRUE){
+      stop("Prediction rasters needed when time is TRUE")
+    }
+    if(class(data)!="RasterStack" & class(data)!="RasterLayer" & class(data)!="RasterBrick"){
+      stop("Prediction data need to be a raster object when time is TRUE")
+    }
+    if(class(predRasts)!="RasterStack" & class(predRasts)!="RasterLayer" & class(predRasts)!="RasterBrick"){
+      stop("predRasts need to be a raster object when time is TRUE")
+    }
+    if(nlayers(data)!=nlayers(predRasts)){
+      stop("Current and future raster objects must have the same number of layers")
+    }
+    if(nlayers(data)!=length(object$predictors)-1 | nlayers(predRasts)!=length(object$predictors)-1){
+      stop("Number of predictor variables does not equal the number used to fit the model")
+    }
+    for(i in 1:nlayers(data)){
+      if(names(data)[i]!=names(predRasts)[i]){
+        stop("Layer names do not match the variables used to fit the model")
+      }
+    }
+    
+    ##sets up sitepair table with current and future data
+    predLayer <- data[[1]]
+    currXY <- as.data.frame(na.omit(rasterToPoints(data, progress='text')))
+    predXY <- as.data.frame(na.omit(rasterToPoints(predRasts, progress='text')))
+    cells <- cellFromXY(predLayer, cbind(currXY$x, currXY$y))
+    dummData <- rep.int(0, nrow(currXY))
+    
+    data <- cbind(dummData, dummData, currXY[,1:2], currXY, predXY[,-c(1,2)])
+    
+#     for(n in 3:ncol(currXY)){
+#       varNam <- colnames(currXY)[n]
+#       s1var <- paste("s1.", varNam, sep="")
+#       s2var <- paste("s2.", varNam, sep="")
+#       data <- cbind(data, currXY[,n], futXY[,n])
+#       colnames(data)[ncol(data)] <- s2var
+#       colnames(data)[ncol(data)-1] <- s1var
+#     }
+
+    t1var <- paste("t1.", colnames(currXY)[-c(1,2)], sep="")
+    t2var <- paste("t2.", colnames(predXY)[-c(1,2)], sep="")
+    
+    colnames(data) <- c("distance", "weights", "s1.xCoord", "s1.yCoord", 
+                        "s2.xCoord", "s2.yCoord", t1var, t2var)
+  }
+  
+  
+  ##Call the dll function
+  predicted <- rep(0,times=nrow(data))
+  z <- .C( "GDM_PredictFromTable",
+           as.matrix(data),
+           as.integer(object$geo),
+           as.integer(length(object$predictors)), 
+           as.integer(nrow(data)), 
+           as.double(object$knots),
+           as.integer(object$splines),
+           as.double(c(object$intercept,object$coefficients)),
+           preddata = as.double(predicted),
+           PACKAGE = "gdm")
+  
+  if(time==FALSE){
+    return(z$preddata)
+  }else{
+    predLayer[cells] <- z$preddata
+    return(predLayer)
+  }
+}
+##########################################################################
+
+
+##########################################################################
+gdm.transform <- function (model, data){
+  ##model = a GDM model
+  ##data = Either a raster object of prediction variables, needs to have the same 
+  ##          variable as those used to fit the model, or a data frame
+  #################
+  #model <- gdm.rast
+  #data <- envRast
+  #################
+  options(warn.FPU = FALSE)
+  rastDat <- NULL
+  dataCheck <- data
+  
+  ##error checking of inputs
+  ##checks to make sure a gdm model is given
+  if(class(model)[1]!="gdm"){
+    stop("model argument must be a gdm model object")
+  }
+  ##checks to make sure data is a correct format
+  if(!(class(data)=="RasterStack" | class(data)=="RasterLayer" | class(data)=="RasterBrick" | class(data)=="data.frame")){
+    stop("Data to be transformed must be either a raster object or data frame")
+  }
+  
+  geo <- model$geo
+  
+  ##turns raster data into dataframe
+  if(class(data)=="RasterStack" | class(data)=="RasterLayer" | class(data)=="RasterBrick"){
+    ##converts the raster object into a dataframe, for the gdm transformation
+    rastDat <- data
+    data <- rasterToPoints(rastDat)
+    ##determines the cell number of the xy coordinates
+    rastCells <- cellFromXY(rastDat, xy=data[,1:2]) 
+    
+    ##transforms raster data
+    if(geo==FALSE){
+      data <- data[,3:ncol(data)]
+    }
+  }
+  
+  holdData <- data
+  fullTrans <- matrix(0,nrow(holdData),ncol(holdData))
+  rows <- nrow(holdData)
+  istart <- 1
+  iend <- min(100000,rows)
+  
+  while(istart < rows){
+    ##Call the dll function
+    data <- holdData[istart:iend,]
+    transformed <- matrix(0,nrow(data),ncol(data))
+    #cat(istart, " ", iend, "\n")
+    z <- .C( "GDM_TransformFromTable",
+             as.integer(nrow(data)), 
+             as.integer(ncol(data)),
+             as.integer(model$geo),
+             as.integer(length(model$predictors)), 
+             as.integer(model$splines),             
+             as.double(model$knots),             
+             as.double(model$coefficients),
+             as.matrix(data),
+             trandata = as.double(transformed),
+             PACKAGE = "gdm")
+    
+    ## Convert transformed from a vector into a dataframe before returning...
+    nRows <- nrow(data)
+    nCols <- ncol(data)
+    
+    ## z$trandata is the transformed data vector created in GDM_TransformFromTable
+    myVec <- z$trandata
+    pos <- 1
+    for (i in seq(from = 1, to = nCols, by = 1)) {
+      tmp <- myVec[seq(from=pos, to=pos+nRows-1)]
+      transformed[,i] <- tmp
+      pos <- pos + nRows
+    }
+    fullTrans[istart:iend,] <- transformed
+    istart <- iend + 1
+    iend <- min(istart + 99999, rows)
+  }
+  
+  ##if wanted output data as raster, provides maps raster, or output table
+  if(class(dataCheck)=="RasterStack" | class(dataCheck)=="RasterLayer" | class(dataCheck)=="RasterBrick"){
+    ##maps the transformed data back to the input rasters
+    rastLay = rastDat[[1]]
+    outputRasts = stack()
+    for(nn in 1:ncol(fullTrans)){
+      #print(nn)
+      #nn=3
+      rastLay[rastCells] = fullTrans[,nn]
+      outputRasts = stack(outputRasts, rastLay)
+    }
+    ##renames raster layers to be the same as the input
+    if(geo){
+      names(outputRasts) = c("x", "y", names(rastDat))
+    } else {
+      names(outputRasts) = names(rastDat)
+    }
+    
+    ##get the predictors with non-zero sum of coefficients      
+    splineindex <- 1
+    predInd <- NULL
+    for(i in 1:length(model$predictors)){  
+      #i <- 1
+      ##only if the sum of the coefficients associated with this predictor is > 0.....
+      numsplines <- model$splines[i]
+      if(sum(model$coefficients[splineindex:(splineindex+numsplines-1)])>0){
+        predInd <- c(predInd, i)
+      }
+      splineindex <- splineindex + numsplines
+    }
+    if(geo){
+      predInd <- c(1,2,predInd[-1]+1)
+    }
+    
+    outputRasts <- outputRasts[[predInd]]
+    
+    ##returns rasters
+    return(outputRasts)
+  }else{
+    if(is.null(rastDat)){
+      ##if not raster data, sends back the transformed data
+      colnames(fullTrans) <- colnames(data)
+      return(fullTrans)
+    }else{
+      ##returns only the transformed variable data as a table, and the cells with which to map to
+      colnames(fullTrans) <- colnames(data)
+      return(list(fullTrans, rastCells))
+    }
+  }
+}
+##########################################################################
+
+
+##########################################################################
 summary.gdm <- 
-function (object, ...) 
-{
-        print( "", quote=F )    
-        print( "", quote=F )    
-        print( "GDM Modelling Summary", quote=F );
-        print( paste( "Creation Date: ", object$creationdate ), quote=F );
-        print( "", quote=F )    
-##        call <- match.call()
-        m <- match.call(expand.dots = F)
-        print( paste( "Name: ", m[[2]] ), quote=F )
-        print( "", quote=F )    
-        print( paste( "Data: ", object$dataname ), quote=F )
-        print( "", quote=F )    
-        print( paste( "Samples: ", object$sample ), quote=F )
-        print( "", quote=F )    
-        print( paste( "Geographical distance used in model fitting? ", object$geo ), quote=F )
-        print( "", quote=F )    
-        print( paste( "NULL Deviance: ", object$nulldeviance ), quote=F )
-        print( paste( "GDM Deviance: ", object$gdmdeviance ), quote=F )  
-        print( paste( "Deviance Explained: ", object$explained ), quote=F )
-        print( "", quote=F )    
-        print( paste( "Intercept: ", object$intercept ), quote=F )
-        print( "", quote=F )    
-        thiscoeff <- 1
-        thisquant <- 1
-        for ( i in 1:length(object$predictors) ) {
-        print( paste( "Predictor ",i,": ",object$predictors[[i]], sep="" ), quote=F )            
-        print( paste( "Splines: ",object$splines[[i]], sep="" ), quote=F )
-        numsplines <- object$splines[[i]]
-        for ( j in 1:numsplines ) {
-                if ( j == 1 ) print( paste( "Min Knot: ",object$knots[[thisquant]], sep="" ), quote=F )          
-                else if ( j == numsplines ) print( paste( "Max Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
-                else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
-                thisquant <- thisquant + 1
-        }
-        for ( j in 1:numsplines ) {
-            print( paste( "Coefficient[",j,"]: ",object$coefficients[[thiscoeff]], sep="" ), quote=F )
-            thiscoeff <- thiscoeff + 1
-        }
-        print( "", quote=F )                
+  function (object, ...) 
+  {
+    print( "", quote=F )    
+    print( "", quote=F )    
+    print( "GDM Modelling Summary", quote=F );
+    print( paste( "Creation Date: ", object$creationdate ), quote=F );
+    print( "", quote=F )    
+    ##        call <- match.call()
+    m <- match.call(expand.dots = F)
+    print( paste( "Name: ", m[[2]] ), quote=F )
+    print( "", quote=F )    
+    print( paste( "Data: ", object$dataname ), quote=F )
+    print( "", quote=F )    
+    print( paste( "Samples: ", object$sample ), quote=F )
+    print( "", quote=F )    
+    print( paste( "Geographical distance used in model fitting? ", object$geo ), quote=F )
+    print( "", quote=F )    
+    print( paste( "NULL Deviance: ", object$nulldeviance ), quote=F )
+    print( paste( "GDM Deviance: ", object$gdmdeviance ), quote=F )  
+    print( paste( "Deviance Explained: ", object$explained ), quote=F )
+    print( "", quote=F )    
+    print( paste( "Intercept: ", object$intercept ), quote=F )
+    print( "", quote=F )    
+    thiscoeff <- 1
+    thisquant <- 1
+    for ( i in 1:length(object$predictors) ) {
+      print( paste( "Predictor ",i,": ",object$predictors[[i]], sep="" ), quote=F )            
+      print( paste( "Splines: ",object$splines[[i]], sep="" ), quote=F )
+      numsplines <- object$splines[[i]]
+      for ( j in 1:numsplines ) {
+        if ( j == 1 ) print( paste( "Min Knot: ",object$knots[[thisquant]], sep="" ), quote=F )          
+        else if ( j == numsplines ) print( paste( "Max Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
+        else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
+        thisquant <- thisquant + 1
+      }
+      for ( j in 1:numsplines ) {
+        print( paste( "Coefficient[",j,"]: ",object$coefficients[[thiscoeff]], sep="" ), quote=F )
+        thiscoeff <- thiscoeff + 1
+      }
+      print( "", quote=F )                
     }   
-}
+  }
+##########################################################################
 
 
-
+##########################################################################
 formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F, 
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL, 
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL, 
@@ -563,17 +687,17 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   ##Output Variables:
   ##outTable = the fully calculated site-pair table for GDM
   ###########################
-  #bioData <- testData1b2
+  #bioData <- siteSpp
   #bioFormat <- 1
   #dist <- "bray"
-  #abundance <- F
-  #siteColumn <- "site"
-  #XColumn <- "Long"
-  #YColumn <- "Lat"
+  #abundance <- T
+  #siteColumn <- "SITEYR"
+  #XColumn <- "utm18E"
+  #YColumn <- "utm18N"
   #sppColumn <- NULL
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- envRast
+  #predData <- rastStack
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeightVect <- NULL
@@ -589,56 +713,83 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   #sppColumn <- "species"
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- envRast
+  #predData <- envTab
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeightVect <- NULL
   #samples <- NULL
   ###########################
-  ##required libraries
-  #require(raster)
-  #require(reshape2)
-  #require(vegan)
-  #print(class(predData))
-  ##if rows of bioData and predData do not match, exit function
-  ##if bioFormat is not a number, exit function
+  ##input error checking
+  ##makes sure bioData is in an acceptable format
+  if(!(class(bioData)=="data.frame" | class(bioData)=="matrix" | class(bioData)=="gdmData")){
+    "bioData should be a data frame or matrix in one of the acceptable formats"
+  }
+  ##makes sure predData is in an acceptable format
+  if(!(class(predData)=="data.frame" | class(predData)=="matrix" | class(predData)=="RasterStack" | class(predData)=="RasterLayer" | class(predData)=="RasterBrick")){
+    "predData should be a data frame or matrix in one of the acceptable formats"
+  }
+  ##if bioFormat is not an acceptable number, exit function
   if(bioFormat %in% c(1:4)){} else{
     stop("Acceptable values for the bioFormat argument are: 1, 2, 3, or 4")
   }
-  ##if samples is not a number, then exit function
-  if(is.numeric(samples)==FALSE & is.null(samples)==FALSE){
-    stop("samples argument must be a number")
+  ##checks that geo has either TRUE or FALSE
+  if(!(abundance==TRUE | abundance==FALSE)){
+    stop("abundance argument must be either TRUE or FALSE")
   }
-  ##makes sure that sppFilter is a number, if not exit function
-  if(is.numeric(sppFilter)==FALSE){
-    stop("sppFilter argument must be a number")
+  ##if samples is not a number, then exit function
+  if(is.null(samples)==FALSE){
+    if(is.numeric(samples)==FALSE | samples<0){
+      stop("samples argument must be a positive integer number")
+    }
   }
   
+  ##makes sure that sppFilter is a number, if not exit function
+  if((is.numeric(sppFilter)==FALSE & is.null(sppFilter)==FALSE) | sppFilter<0){
+    stop("sppFilter argument must be a positive integer number")
+  }
+  ##makes sure a proper weightType is used
   if(weightType %in% c("equal", "richness", "custom")){} else{
     stop("Acceptable values for the weightType argument are: equal, richness, or custom")
   }
-  
+  ##makes sure that a site column is provided when using table type 2 and raster environmental data
   if(bioFormat==2 & is.null(siteColumn)==T){
     if(!(class(predData)=="RasterStack" | class(predData)=="RasterLayer" | class(predData)=="RasterBrick")){
       stop("A siteColumn needs to be provided in either the bioData or predData inputs")
     }
   }
-  
+  ##when a site column is provided
   if(is.null(siteColumn)==F){
-    if(!(siteColumn %in% colnames(bioData)) & (bioFormat==1 | bioFormat==2)){
+    ##makes sure the site column name is of type character
+    if(class(siteColumn)!="character"){
+      stop("siteColumn argument needs to be as type character")
+      ##checks to see if siteColumn exists in the bioData for bioFormats 1 and 2    
+    }else if(!(siteColumn %in% colnames(bioData)) & (bioFormat==1 | bioFormat==2)){
       stop("Cannot find a match for siteColumn in the columns of bioData.")
     }
+    ##if the siteColumn is provided with input type 3, remove it
     if(bioFormat==3 & siteColumn %in% colnames(bioData)){
       wSite <- which(colnames(bioData)==siteColumn)
       bioData <- bioData[-wSite]
     }
   }
-  
+  ##checks to make sure that the coordinate columns are characters and can be found in either the biological or 
+  ##environmental data
+  if(bioFormat!=4){
+    if(class(XColumn)!="character"){
+      stop("XColumn argument needs to be as type character")
+    }else if(class(YColumn)!="character"){
+      stop("YColumn argument needs to be as type character")
+    }else if(!(XColumn %in% colnames(bioData) | XColumn %in% colnames(predData))){
+      stop("XColumn not found in either the bioData or predData arguments")
+    }else if(!(YColumn %in% colnames(bioData) | YColumn %in% colnames(predData))){
+      stop("YColumn not found in either the bioData or predData arguments")
+    }
+  }
+  ##checks table type 3 specific requirements
   if(bioFormat==3){
     if(weightType=="richness"){
       stop("Cannot weight by site richness when supplying the biological data as a distance matrix.")
-    }
-    if(nrow(bioData)!=ncol(bioData)){
+    }else if(nrow(bioData)!=ncol(bioData)){
       stop("Biological dissimularity has differing number of rows to number of columns, and therefore is not a true dissimularity matrix")
     }
   }
@@ -649,9 +800,14 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       warning("One or more of the provided distance predictor matrices are not of class 'matrix'.")
     }
   }
+  ##if a custom weight vector is provided, makes sure it is a vector
+  if(is.null(custWeightVect)==FALSE & class(custWeightVect)!="numeric"){
+    stop("argument custWeightVect needs to be a numeric data type")
+  }
   
   toRemove <- NULL
   removeRand <- NULL
+  distData <- NULL
   ##checks input data format
   ##species data as site-species matrix
   if(bioFormat==1){
@@ -685,7 +841,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       colnames(cellID)[colnames(cellID)=="cellFromXY(siteRaster, locs)"] <- "cellName"
       
       if(nrow(cellID)==sum(is.na(cellID$cellName))){
-        stop("None of the given points intersect with the given raster data. Double check that you geography is correct and that the given XColumn and YColumn values are correct.")
+        stop("None of the given points intersect with the given raster data. Double check that your geography is correct and that the given XColumn and YColumn values are correct.")
       }
       names(spSiteCol)[names(spSiteCol)==siteColumn] <- "siteIDn"
       
@@ -702,11 +858,26 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       rastEXDat <- as.data.frame(extract(predData, cellID$cellName))
       predData <- cbind(cellID, locs, rastEXDat)
       predData <- predData[order(predData$cellName),]
+      cellNameCol <- which(names(predData)=="cellName")
+      predData <- aggregate(predData[,-siteNum], predData[cellNameCol], FUN=mean)
       
       ##aggregates bioData data into classes by raster cells
       bioData <- cbind(cellID, bioData[-c(siteNum)])
       bioData <- bioData[order(bioData$cellName),]
       siteNum <- which(colnames(bioData)=="cellName")
+      if(abundance==T){
+        bioData <- aggregate(bioData, bioData[cellNameCol], FUN=mean)
+        sppDat <- bioData[,-c(siteNum, x, y)]
+      }else{
+        noLocs <- bioData[-c(x,y)]
+        agLocs <- aggregate(noLocs, noLocs[cellNameCol], FUN=sum)
+        agLocs <- agLocs[,-siteNum]
+        getRastCoords <- as.data.frame(xyFromCell(siteRaster, agLocs$cellName))
+        bioData <- cbind(agLocs[siteNum], getRastCoords, agLocs[,-siteNum])
+        XColumn <- "x"
+        YColumn <- "y"
+        sppDat <- bioData[,-c(siteNum, x, y)]
+      }
       
       ##filters out sites with low species count
       ##prep for filtering
@@ -719,7 +890,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       spSiteCol <- filterBioDat["headDat"]
       colnames(spSiteCol) <- "cellName"
       ##reassembles data after filtering
-      bioData <- merge(spSiteCol, bioData, by="cellName")
+      bioData <- unique(merge(spSiteCol, bioData, by="cellName"))
       ##identifies what to remove from distpred matrix data based on spp filter
       filterOut <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] < sppFilter)
       toRemove <- which(headDat %in% filterOut$headDat)
@@ -764,7 +935,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       spSiteCol <- filterBioDat["headDat"]
       colnames(spSiteCol) <- siteColumn
       ##reassembles data after filtering
-      bioData <- merge(spSiteCol, bioData, by=siteColumn)
+      bioData <- unique(merge(spSiteCol, bioData, by=siteColumn))
       ##identifies what to remove from distpred matrix data based on spp filter
       filterOut <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] < sppFilter)
       toRemove <- which(headDat %in% filterOut$headDat)
@@ -807,8 +978,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     }else{
       distData <- vegdist(inDataTable, dist, binary=F)
     }
-  ########################################################################
-  ##species data as x,y,species list
+    ########################################################################
+    ##species data as x,y,species list
   }else if(bioFormat==2){
     ##insert data if not available
     if(is.null(abundColumn)){
@@ -836,7 +1007,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       cellID <- as.data.frame(cellFromXY(siteRaster, locs))
       colnames(cellID)[colnames(cellID)=="cellFromXY(siteRaster, locs)"] <- "cellName"
       if(nrow(cellID)==sum(is.na(cellID$cellName))){
-        stop("None of the given points intersect with the given raster data. Double just that you geography is correct and that the given XColumn and YColumn values are correct.")
+        stop("None of the given points intersect with the given raster data. Double check that you geography is correct and that the given XColumn and YColumn values are correct.")
       }
       
       ##if siteColumn has been provided....... now should always be true
@@ -933,7 +1104,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         ##reassembles data after filtering
         cellXY <- xyFromCell(siteRaster, spSiteCol$cellName)
         spSiteCol <- cbind(spSiteCol, cellXY)
-        bioData <- merge(spSiteCol, byCell, by=cellName)
+        bioData <- unique(merge(spSiteCol, byCell, by=cellName))
         ##identifies what to remove from distpred matrix data based on spp filter
         filterOut <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] < sppFilter)
         toRemove <- which(headDat$cellName %in% filterOut$cellName)
@@ -978,7 +1149,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       castData <- dcast(newDataTable, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
       
       ##filters species data
-      siteName <- which(names(castData)=="siteUltimateCoolness")
+      siteName <- which(colnames(castData)=="siteUltimateCoolness")
       sppDat <- castData[-c(siteName)]
       headDat <- castData[c(siteName)]
       sppDat[sppDat>=1] <- 1
@@ -993,7 +1164,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       holdData <- aggregate(holdData, holdData[1], FUN=mean)
       holdData <- holdData[-1]
       siteXY <- merge(spSiteCol, holdData, by.x="siteUltimateCoolness", by.y=siteColumn, all=F)
-      bioData <- merge(siteXY, castData, by="siteUltimateCoolness")
+      bioData <- unique(merge(siteXY, castData, by="siteUltimateCoolness"))
       ##identifies what to remove from distpred matrix data based on spp filter
       filterOut <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] < sppFilter)
       toRemove <- which(headDat$siteUltimateCoolness %in% filterOut$siteUltimateCoolness)
@@ -1054,8 +1225,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     }else{
       distData <- vegdist(inDataTable, dist, binary=F)
     }
-  ########################################################################
-  ##species data as site-site distance matrix
+    ########################################################################
+    ##species data as site-site distance matrix
   }else if(bioFormat==3){
     ##site-site distance already calculated
     #castData = bioData
@@ -1063,12 +1234,12 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     distData <- as.vector(bioData[distData])
     predData <- unique(predData)
     predData <- predData[order(predData[siteColumn]),]
-  ########################################################################
-  ##site pair table, already preped 
+    ########################################################################
+    ##site pair table, already preped 
   }else if(bioFormat==4){
     ##site-pair distance value
     outTable <- bioData
-  ########################################################################
+    ########################################################################
     
   }else{
     ##return error, bioFormat argument out of bounds
@@ -1195,7 +1366,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   }
   
   ##Builds index needed for output gdm table format
-  xCoord.S1 <- yCoord.S1 <- xCoord.S2 <- yCoord.S2 <- NULL
+  s1.xCoord <- s1.yCoord <- s2.xCoord <- s2.yCoord <- NULL
   s1 <- s2 <- NULL
   
   if((siteCol %in% colnames(envInfo))==T){
@@ -1230,21 +1401,21 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
     if(sum(checkTab>1)>0){
       stop("A site has two or more unique entries of data associated with it. Double check you data for incosistancies.")
     }
-    xCoord.S1 <- envInfo[s1, dXCol]
-    xCoord.S2 <- envInfo[s2, dXCol]
-    yCoord.S1 <- envInfo[s1, dYCol]
-    yCoord.S2 <- envInfo[s2, dYCol]  
+    s1.xCoord <- envInfo[s1, dXCol]
+    s2.xCoord <- envInfo[s2, dXCol]
+    s1.yCoord <- envInfo[s1, dYCol]
+    s2.yCoord <- envInfo[s2, dYCol]  
   }else if((dXCol %in% colnames(spdata))==T){
-    xCoord.S1 <- spdata[s1, dXCol]
-    xCoord.S2 <- spdata[s2, dXCol]
-    yCoord.S1 <- spdata[s1, dYCol]
-    yCoord.S2 <- spdata[s2, dYCol]
+    s1.xCoord <- spdata[s1, dXCol]
+    s2.xCoord <- spdata[s2, dXCol]
+    s1.yCoord <- spdata[s1, dYCol]
+    s2.yCoord <- spdata[s2, dYCol]
   }else{
     stop("X,Y Coordinates not found with unique sites, unable to complete site-pair table")
   }
   
   ##sets up output table
-  gdmForm <- cbind(gdmTable, xCoord.S1, yCoord.S1, xCoord.S2, yCoord.S2)
+  gdmForm <- cbind(gdmTable, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord)
   xhold <- which(names(envInfo)==dXCol)
   yhold <- which(names(envInfo)==dYCol)
   sitehold <- which(names(envInfo)==siteCol)
@@ -1268,20 +1439,26 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
 
 
 ##########################################################################
-isplineExtract <- function (gdmModel){
+isplineExtract <- function (model){
   ##Extracts Ispline data from a gdm model
   ##Input Variable:
-  ##gdmModel = a gdm model object
+  ##model = a gdm model object
   ##Output Variable:
   ##outData = a list of two matrices, one for x and y spline coordinates (graph space)
   ###########################
-  #gdmModel = gdmOb
+  #model = gdmOb
   ###########################
+  ##error checking
+  ##checks to make sure a gdm model is given
+  if(class(model)[1]!="gdm"){
+    stop("model argument must be a gdm model object")
+  }
+  
   ##Collects or sets simple data
   options(warn.FPU = FALSE)
   PSAMPLE <- 200
   preddata <- rep(0, times = PSAMPLE)
-  pn <- gdmModel$predictors
+  pn <- model$predictors
   nPreds <- length(pn)
   yDat <- xDat <- matrix(0,PSAMPLE,nPreds)
   colnames(yDat) <- colnames(xDat) <- pn
@@ -1294,23 +1471,24 @@ isplineExtract <- function (gdmModel){
     ######
     #i<-1
     ######
-    numsplines <- gdmModel$splines[i]
+    numsplines <- model$splines[i]
     z <- .C("GetPredictorPlotData", 
             pdata = as.double(preddata), 
             as.integer(PSAMPLE), 
-            as.double(gdmModel$coefficients[splineindex:(splineindex + numsplines - 1)]), 
-            as.double(gdmModel$knots[splineindex:(splineindex + numsplines - 1)]), 
+            as.double(model$coefficients[splineindex:(splineindex + numsplines - 1)]), 
+            as.double(model$knots[splineindex:(splineindex + numsplines - 1)]), 
             as.integer(numsplines),
             PACKAGE = "gdm")
     yDat[,i] <- z$pdata
     pmin <- pmin + PSAMPLE
     pmax <- pmax + PSAMPLE
-    xDat[,i] <-  seq(from=gdmModel$knots[[(i*3)-2]],to=gdmModel$knots[[(i*3)]], length=PSAMPLE)
+    xDat[,i] <-  seq(from=model$knots[[(i*3)-2]],to=model$knots[[(i*3)]], length=PSAMPLE)
     splineindex <- splineindex + numsplines
   }
   
   ##lists and returns matrices
-  outData <- list(xDat,yDat)
+  outData <- list(x=xDat,y=yDat)
   return(outData)
 }
 ##########################################################################
+

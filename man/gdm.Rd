@@ -60,7 +60,7 @@ Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilari
 \link[gdm]{plot.gdm}, \link[gdm]{predict.gdm}, \link[gdm]{gdm.transform}} }
 
 \examples{
-##Fit table environmental data
+##fit table environmental data
 ##sets up site-pair table, environmental tabular data
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
@@ -72,7 +72,7 @@ sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColu
 gdmTabMod <- gdm(sitePairTab, geo=TRUE)
 summary(gdmTabMod)
 
-##Fit raster environmental data
+##fit raster environmental data
 ##sets up site-pair table
 rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
 envRast <- stack(rastFile)

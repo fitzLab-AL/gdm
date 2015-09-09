@@ -72,7 +72,7 @@ A list of distance matrices to be used as predictors, either in combination with
 Default = "equal". Defines the weighting for sites. Can be either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each site weighted according to number of species recorded), or (3) "custom" (user defined). If weightType="custom", the user must provide a vector of site weights equal to the number of rows in the full site-pair table (i.e., before species filtering or sub-sampling is taken into account).
 }
   \item{custWeightVect}{
-A vector of user-defined site weights. Required when weightType = "custom". Ignored otherwise. 
+A numeric object of user-defined site weights. Required when weightType = "custom". Ignored otherwise. 
 }
   \item{samples}{
 Default = NULL. The maximum number of site-pairs to be included in the output site-pair table. The function first constructs the full site-pair table. Then, if the value of the samples parameter is a less than or equal to the number of rows available in the site-pair table, a new table is created with randomly selected rows from the original table.

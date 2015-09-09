@@ -11,7 +11,7 @@ A raster stack of five Worldclim gridded climate variables used as environmental
 A raster stack of five layers.
 }
 \details{
-The specific variables included in this data are: bio5, bio6, bio15, bio18, and bio19. The clipped area is Southwestern Australia.
+The specific variables included in this data are: bio5, bio6, bio15, bio18, and bio19. The clipped area is southwestern Australia.
 }
 \source{
 http://www.worldclim.org/

@@ -2,10 +2,10 @@
 \alias{gdm.transform}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Transform Predictor Data Using A Generalized Dissimilarity Model
+Transform Environmental Data Using a Generalized Dissimilarity Model
 }
 \description{
-This function transforms a table of geographic and environmental predictors using (1) the fitted functions from a model object returned from \code{\link{gdm}} and (2) a data frame containing predictor data for a set of sites. Future versions will incoporate direct transformation of rasters stacks for mapping biological variation.
+This function transforms geographic and environmental predictors using (1) the fitted functions from a model object returned from \code{\link{gdm}} and (2) a data frame or raster stack containing predictor data for a set of sites.
 }
 \usage{
 gdm.transform(model, data)
@@ -16,11 +16,14 @@ gdm.transform(model, data)
 A gdm model object resulting from a call to \code{\link{gdm}}.
 }
   \item{data}{
-A data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN. If geographic distance was not used as a predictor in model fitting, the first two columns (X, Y) need to be removed. Note that the order of the predictor columns MUST be the same as the order of the predictors in the site-pair table used in model fitting. There is currently no checking to ensure that the order of the variables to be transformed are the same as those in the site-pair table used in model fitting.
+Either (i) a data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN or (ii) a raster stack with one layer per predictor variable used in the model, excluding X and Y (rasters for x- and y-coordinates are built automatically from the input rasters if the model was fit with geo=T). The order of the columns (data frame) or raster layers (raster stack) MUST be the same as the order of the predictors in the site-pair table used in model fitting. There is currently no checking to ensure that the order of the variables to be transformed are the same as those in the site-pair table used in model fitting. If geographic distance was not used as a predictor in model fitting, the x- and y-columns need to be removed from the data to be transformed. Output is provided in the same format as the input data. 
 }
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-gdm.transform returns a matrix with the same number of rows as the input data frame. If the model uses geographic distance as a predictor the output table will have the first and second columns set to the transformed X and Y values for each site in the input table. The transformed predictor data will be in the remaining columns. Values of the predictors can be taken from a set of rasters, that once transformed, can be mapped to reveal spatial biological variation. 
+gdm.transform returns either a data frame with the same number of rows as the input data frame or a raster stack, depending on the format of the input data. If the model uses geographic distance as a predictor the output object will contain columns or layers for the transformed X and Y values for each site. The transformed environmental data will be in the remaining columns or layers. 
 }
 \references{
 Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
@@ -30,24 +33,46 @@ Fitzpatrick MC, Keller SR (2015) Ecological genomics meets community-level model
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{\code{\link[gdm]{predict.gdm}}}
-
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
 \examples{
-##sets up site-pair table
 load(system.file("./data/gdm.RData", package="gdm"))
-sppData <- gdmExpData[, c(1,2,13,14)]
-envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
-	siteColumn="site", predData=envTab)
 
-##create GDM
-gdmMod <- gdm(sitePairTab, geo=TRUE)
+# grab the columns with xy, site ID, and species data 
+sppTab <- gdmExpData[, c("species", "site", "Lat", "Long")]
 
-##reordering environmental data to create table for transform function
-envTrans <- envTab[, c(13,12,2:11)] # same order as sitePairTab
+##fit gdm using rasters
+rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+envRast <- stack(rastFile)
+sitePairRast <- formatsitepair(sppTab, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
+	siteColumn="site", predData=envRast)
+##remove NA values
+sitePairRast <- na.omit(sitePairRast)
 
-##tranform geo & env to biological importance
-bioImp <- gdm.transform(gdmMod, envTrans)
+##fit raster GDM
+gdmRastMod <- gdm(sitePairRast, geo=TRUE)
+
+##raster input, raster output
+transRasts <- gdm.transform(gdmRastMod, envRast)
+
+# map biological patterns
+rastDat <- sampleRandom(transRasts, 10000)
+pcaSamp <- prcomp(rastDat)
+ 
+# note the use of the 'index' argument
+pcaRast <- predict(transRasts, pcaSamp, index=1:3)
+
+# scale rasters
+pcaRast[[1]] <- (pcaRast[[1]]-pcaRast[[1]]@data@min) /
+  (pcaRast[[1]]@data@max-pcaRast[[1]]@data@min)*255
+pcaRast[[2]] <- (pcaRast[[2]]-pcaRast[[2]]@data@min) /
+  (pcaRast[[2]]@data@max-pcaRast[[2]]@data@min)*255
+pcaRast[[3]] <- (pcaRast[[3]]-pcaRast[[3]]@data@min) /
+  (pcaRast[[3]]@data@max-pcaRast[[3]]@data@min)*255
+
+plotRGB(pcaRast, r=1, g=2, b=3)
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

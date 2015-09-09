@@ -2,17 +2,17 @@
 \alias{isplineExtract}
 
 \title{
-Extract I-spline values from a gdm object.}
+Extract I-spline Values From a gdm Object.}
 
 \description{
 Extracts the I-spline values from a gdm object. There is one I-spline for each predictor that has at least one non-zero coefficient in the fitted model.
 }
 \usage{
-isplineExtract(gdmModel)
+isplineExtract(model)
 }
 
 \arguments{
-  \item{gdmModel}{
+  \item{model}{
 A gdm object from \code{\link{gdm}}.
 }
 }
@@ -41,7 +41,7 @@ exSplines <- isplineExtract(gdmMod)
 
 ##plot spline(s)
 #spline for winter precip (bio19)
-plot(exSplines[[1]][,"s1.bio19"], exSplines[[2]][,"s1.bio19"], type="l", 
+plot(exSplines[[1]][,"bio19"], exSplines[[2]][,"bio19"], type="l", 
 lwd=3, xlab="Winter precipitation (mm)", ylab="Partial Ecological Distance")
 }
 

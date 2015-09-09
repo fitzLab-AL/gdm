@@ -11,6 +11,6 @@ A full dissimilarity matrix.
 A data frame with 180 rows and 180 columns.
 }
 \source{
-Created using the example species data.
+Created using the example species data from southwest Australia.
 }
 \keyword{datasets}

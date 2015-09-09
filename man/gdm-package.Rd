@@ -9,7 +9,7 @@ Overview of the functions in the gdm package
 }
 
 \description{
-Generalized Dissimilarity Modeling is a statistical technique for modelling biotic compositional dissimilarity between pairs of geographical locations. The \pkg{gdm} package currently provides basic functions to fit, plot, predict and summarize Generalized Dissimilarity Models. Future updates will incorporate mapping and support for genomic data. 
+Generalized Dissimilarity Modeling is a statistical technique for modelling spatial variation in biodiversity between pairs of geographical locations. The \pkg{gdm} package currently provides basic functions to fit, summarize, and plot Generalized Dissimilarity Models and to make predictions (in both space and time) and map biological patterns by transforming environmental predictor variables. Future updates will incorporate support for genomic data. 
 }
 \details{
 The functions in the \pkg{gdm} package provide the tools necessary for fitting GDMs, including functions to prepare biodiversity and environmental data. Major functionality includes:
@@ -17,7 +17,7 @@ The functions in the \pkg{gdm} package provide the tools necessary for fitting G
     \item Formatting various types of biodiversity and environmental data to \pkg{gdm}'s site-pair format used in model fitting  
     \item Fitting GDMs using geographic and environmental distances between sites
     \item Plotting fitted functions & extracting I-spline values
-    \item Predicting pairwise dissimiliarites between sites and transforming envirnmental predictors to biological importance.
+    \item Predicting pairwise dissimiliarites between sites or times and transforming envirnmental predictors to biological importance and mapping these patterns.
   }
 
 To see the preferable citation of the package, type \code{citation("gdm")}.  
@@ -45,7 +45,7 @@ GDM fits biological distances to pairwise site geographical and environmental di
 
 \section{III. Model prediction and transformation of environmental data}{
   \tabular{ll}{
-    \code{\link{predict}}\tab To predict pairwise biological dissimilarities in space or time\cr
+    \code{\link{predict}}\tab To predict biological dissimilarities between sites in space or between time periods\cr
     \code{\link{gdm.transform}}\tab To transform each environmental predictor to biological importance\cr
   --------------------------- \tab --------------------------------------------------------------------------------------------------- \cr  
 }
@@ -60,7 +60,7 @@ GDM fits biological distances to pairwise site geographical and environmental di
 }
 }
 
-\author{The \pkg{gdm} development team is Glenn Manion, Matt Lisk, Simon Ferrier, Diego Neito-Lugilde, and Matt Fitzpatrick. Where others have contributed to
+\author{The \pkg{gdm} development team is Glenn Manion, Matt Lisk, Simon Ferrier, Diego Nieto-Lugilde, and Matt Fitzpatrick. Where others have contributed to
 individual functions, credits are provided in function help pages.
 
 The maintainers of the R version of \pkg{gdm} are Matt Fitzpatrick <mfitzpatrick@al.umces.edu> and Matt Lisk <mlisk@al.umces.edu>.

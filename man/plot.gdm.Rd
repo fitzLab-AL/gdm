@@ -2,7 +2,7 @@
 \alias{plot}
 \alias{plot.gdm}
 \title{
-Plot model fit and I-splines from a Generalized Dissimilarity Model
+Plot model fit and I-splines from a generalized dissimilarity model
 }
 \description{
 plot is used to plot the I-splines and fit of a generalized dissimilarity model created using the \code{\link{gdm}} function.

@@ -4,14 +4,14 @@
 Creates Site-Pair Table
 }
 \description{
-Takes the lower half of a site-site distance (dissimilarity) matrix and creates the site-pair table. This function is called from the \code{\link{formatsitepair}} function and should not need to be called directly by the user.
+Takes the lower half of a site-by-site distance (dissimilarity) matrix and creates the site-pair table. This function is called from the \code{\link{formatsitepair}} function and should not need to be called directly by the user.
 }
 \usage{
 createsitepair(dist, spdata, envInfo, dXCol, dYCol, siteCol, weightsType, custWeights)
 }
 \arguments{
   \item{dist}{
-The lower half of a site-site distance (dissimilarity) matrix, provided by the \code{\link{formatsitepair}} function.
+The lower half of a site-by-site distance (dissimilarity) matrix, provided by the \code{\link{formatsitepair}} function.
 }
   \item{spdata}{
 Input species data, the same as the bioData input to the \code{\link{formatsitepair}} function.
