@@ -1,8 +1,8 @@
 Package: gdm
 Type: Package
 Title: Functions for Generalized Dissimilarity Modeling
-Version: 1.1.1
-Date: 2015-03-27
+Version: 1.1.2
+Date: 2015-09-11
 Author: Glenn Manion, Matthew Lisk, Simon Ferrier, Diego Nieto-Lugilde, Matthew C. Fitzpatrick 
 Maintainer: Matthew C. Fitzpatrick <mfitzpatrick@al.umces.edu>
 Description: A toolkit with functions to fit, plot, and summarize Generalized Dissimilarity Models.
@@ -10,3 +10,5 @@ License: GPL-2
 Depends: R (>= 2.15.2), Rcpp (>= 0.10.4), raster, reshape2, vegan
 LinkingTo: Rcpp
 Imports: plyr
+Suggests: R.rsp
+VignetteBuilder: R.rsp
