@@ -1,18 +1,18 @@
 //
 // GdmTabLib
 //
+#include <string>
 #include "stdafx.h"
-#include "Gdm4Rlib.h"
+#include "Gdmlib.h"
 #include "NNLS_Double.h"
 //#include "Message.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+//#include <Rcpp.h>
 #include <math.h>
-//added
-#include <iostream>
-#include <cstdio>
-#include <string>
+//#include <iostream>
+//#include <unistd.h>
 
 //#ifdef _WIN32
 //	#include <io.h>
@@ -107,8 +107,25 @@ void GDM_FitFromTable(char **wspath,
 	//
 	// Write a binary file image of the predictor matrix
 	//
-	char lpTmpFile[256];		
-	sprintf(lpTmpFile, "%s/%s", *wspath, "gdmtmp.bin" );
+	char lpTmpFile[256];	
+	char *s;
+	s = tmpnam(NULL);
+	
+	//file extension
+	std::string bin = ".bin";
+	char *cbin = new char[bin.length() + 1];
+	strcpy(cbin, bin.c_str());
+	
+	//creates full file name
+	char fullFile[256];
+	strncpy(fullFile, s, sizeof(fullFile));
+	strncat(fullFile, cbin, sizeof(fullFile));
+	
+	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
+	
+	//Rprintf("Created Temporary File");
+	//Rcpp::print("Created Temporary File");
+	
 	int h = _open( lpTmpFile, _O_BINARY | _O_CREAT | _O_TRUNC | _O_RDWR, S_IREAD | S_IWRITE );
 	if ( h < 0 )
 	{

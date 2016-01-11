@@ -103,12 +103,13 @@ sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
 
 ##environmental raster data
-rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-envRast <- stack(rastFile)
+##commented out to reduce example run time
+#rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#envRast <- stack(rastFile)
 
 #########table type 1
 ##site-species table without coordinates
-testData1a <- dcast(sppData, site~species)
+testData1a <- reshape2::dcast(sppData, site~species)
 ##site-species table with coordinates
 coords <- unique(sppData[2:ncol(sppData)])
 testData1b <- merge(testData1a, coords, by="site")
@@ -116,16 +117,18 @@ testData1b <- merge(testData1a, coords, by="site")
 exFormat1a <- formatsitepair(testData1a, 1, siteColumn="site", XColumn="Long", YColumn="Lat",
 	predData=envTab)
 ##site-species, table-raster
-exFormat1b <- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long", YColumn="Lat",
-	predData=envRast)
+##commented out to reduce example run time
+#exFormat1b <- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long", YColumn="Lat",
+#	predData=envRast)
 
 #########table type 2
 ##site xy spp list, table-table
 exFormat2a <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 	siteColumn="site", predData=envTab)
 ##site xy spp list, table-raster
-exFormat2b <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
-	siteColumn="site", predData=envRast)
+##commented out to reduce example run time
+#exFormat2b <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
+#	siteColumn="site", predData=envRast)
 
 #########table type 3
 ##dissim matrix model

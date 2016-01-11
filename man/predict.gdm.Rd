@@ -10,7 +10,7 @@ This function predicts biological distances between sites or times using a model
 }
 \usage{
 ## S3 method for class 'gbm'
-\method{predict}{gdm}(object, data, time=F, predRasts=NULL, ...)
+\method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
