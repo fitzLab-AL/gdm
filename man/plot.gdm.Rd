@@ -27,10 +27,10 @@ Color of the data points that are plotted for the overall plots.
 The line width for the regression line over-plotted in the two overall plots to optimize the display of the line over the data points.
 }
   \item{include.rug}{
-Whether or not to include a rug plot of the actual site-pair values used to fit the gdm in the plots of the variable splines. When set to TRUE, a site-pair table must be supplied for the rug.sitepair argument. Default is FALSE.
+Whether or not to include a rug plot of the predictor values used to fit the gdm in the I-spline plots. When set to TRUE, a site-pair table must be supplied for the rug.sitepair argument. Default is FALSE.
 }
   \item{rug.sitepair}{
-A site-pair table used to add a rug plot of the tables values to the variable spline plots. This should be the same site-pair table used to fit the given gdm object, and there is no internal code to check that this is the case.
+A site-pair table used to add a rug plot of the predictor values used to fit the gdm in the I-spline plots. This should be the same site-pair table used to fit the gdm model being plotted. The function does not check whether the supplied site-pair table matches that used in model fitting.
 }
   \item{...}{
 Ignored.

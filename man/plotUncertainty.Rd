@@ -5,7 +5,7 @@
 Plot variance of I-splines using bootstrapping.
 }
 \description{
-This function estimates uncertainty in the I-splines using bootstrapping. The function can run in parallel on multicore machines to reduce computation time (recommended for large number of iterations). I-spline plots with error bands (+/- one standard deviation) are produced showing (1) the variance of Ispline coefficients and (2) a rug plot indicating how sites are distributed along each gradient.
+This function estimates uncertainty in the I-splines using bootstrapping. The function can run in parallel on multicore machines to reduce computation time (recommended for large number of iterations). I-spline plots with error bands (+/- one standard deviation) are produced showing (1) the variance of Ispline coefficients and (2) a rug plot indicating how sites used in model fitting are distributed along each gradient.
 }
 \usage{
 plotUncertainty(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL, knots=NULL, 
@@ -23,7 +23,7 @@ The fraction (0-1) of sites to remove from the full site-pair table when subsamp
   \item{bsIters}{
 The number of bootstrap iterations to perform.
 }
-  \item{gdm}{
+  \item{geo}{
 Same as the \code{\link{gdm}} geo argument.
 }
   \item{splines}{
@@ -56,7 +56,7 @@ When the parallel argument is set to TRUE, the number of cores to be registered 
 plotUncertainty returns NULL.
 }
 \references{
-Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque, N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua} in the Mojave Desert: a multivariate, spatially-explicit approach to guide ecological restoration. \emph{Conservation Genetics} 16:1303–1317.
+Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque, N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua} in the Mojave Desert: a multivariate, spatially-explicit approach to guide ecological restoration. \emph{Conservation Genetics} 16:1303-1317.
 }
 
 \seealso{\code{\link[gdm]{plot.gdm}, \link[gdm]{formatsitepair}}}
@@ -66,15 +66,17 @@ Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque, N. A. Custer, and T.
 load(system.file("./data/gdm.RData", package="gdm"))
 sppData <- gdmExpData[c(1,2,13,14)]
 envTab <- gdmExpData[c(2:ncol(gdmExpData))]
-sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
-	siteColumn="site", predData=envTab)
+sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", 
+                              sppColumn="species", siteColumn="site", predData=envTab)
 
 ##plot GDM uncertainty using one core
-plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=5, geo=TRUE, plot.layout=c(3,3))
+#not run
+#plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=5, geo=TRUE, plot.layout=c(3,3))
 
 ##plot GDM uncertainty in parallel
-plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=50, geo=TRUE, plot.layout=c(3,3),
-parallel=T, cores=10)
+#not run
+#plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=50, geo=TRUE, plot.layout=c(3,3),
+#parallel=T, cores=10)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

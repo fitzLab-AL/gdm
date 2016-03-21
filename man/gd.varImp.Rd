@@ -5,7 +5,7 @@
 Estimate variable importance/significance in gdm using matrix permutation.
 }
 \description{
-This function uses matrix permutation to perform variable significance testing in a generalized dissimilarity model. The function can run in parallel on multicore machines to reduce computation time (recommended). 
+This function uses matrix permutation to perform variable significance testing and to estimate variable importance in a generalized dissimilarity model. The function can run in parallel on multicore machines to reduce computation time (recommended). 
 }
 \usage{
 gdm.varImp(spTable, geo, splines = NULL, knots = NULL, 
@@ -26,31 +26,31 @@ Same as the \code{\link{gdm}} splines argument.
 Same as the \code{\link{gdm}} knots argument.
 }
   \item{fullModelOnly}{
-Set to TRUE to test only the full variable set. Set to false to estiatme variable importance and significance using matrix permutation and backward elimination. Default is FALSE.
+Set to TRUE to test only the full variable set. Set to false to estimate variable importance and significance using matrix permutation and backward elimination. Default is FALSE.
 }
   \item{nPerm}{
 Number of permutations to use to estimate p-values. Default is 100.
 }
   \item{parallel}{
-Whether or not to run the matrix permutations and model fitting in parallel. The parallel processing is done using a foreach loop and it is highly recommended when the nPerms argument is hundreds or more. When is argument is set to FALSE, the processes are completed using lapply. The default is FALSE. 
+Whether or not to run the matrix permutations and model fitting in parallel. Parallel processing is accomplished using a foreach loop and it is highly recommended when the nPerms argument is hundreds or more. When is argument is set to FALSE, the processes are completed using lapply. The default is FALSE. 
 }
   \item{cores}{
 When the parallel argument is set to TRUE, the number of cores to be registered for the foreach loop. Must be <= the number of cores in the machine running the function.
 }
 }
 \details{
-This function implements matrix permutation to test variable significance in gdm as described in Ferrier et al. (2007) and Fitzpatrick et al. (2011). The function first fits a "full model" using all predictors in the site-pair table. Next, it permutates the site-pair table nPerm times by randomizing the order of the rows. A new set of gdm's are fit to these permutated site-pair tables to estimate an overall p-value for model significance. If fullModelOnly=F, the function then permutates the site-pair table nPerm times by randomizing the order of the rows, but one variable at a time. At each step, the least important variable is dropped (backward elimination) and the process continues until all variables have been tested.    
+This function implements matrix permutation to test variable significance in gdm as described in Ferrier et al. (2007) and Fitzpatrick et al. (2011). The function first fits a "full model" using all predictors in the site-pair table. Next, it permutates the site-pair table nPerm times by randomizing the order of the rows. A new set of gdm's are fit to these permutated site-pair tables to estimate an overall p-value for model significance. If fullModelOnly=F, this process continues by then permutating the site-pair table nPerm times, but removing one variable at a time and reassessing variable importance and significance. At each step, the least important variable is dropped (backward elimination) and the process continues until all variables have been tested.    
 }
 \value{
-A list of three matrices. The first summarizes model deviance, percent deviance explained, and p-value for each fitted model (i.e., the full model and each model with variables removed in succession). If fullModelOnly=T, this table will have values only in the first column. The remaining two tables summarize variable importance and significance respectively. Variable importnace is measured as the amount full model deviacne is reduced when that variable is removed.   
+A list of three matrices. The first summarizes model deviance, percent deviance explained, and p-value for each fitted model (i.e., the full model and each model with variables removed in succession during the backward elimination procedure). If fullModelOnly=T, this table will have values only in the first column. The remaining two tables summarize variable importance and significance respectively. Variable importance is measured as the amount full model deviance is reduced when that variable is removed. Significance is estimated using the bootstrapped p-value.   
 }
-\Author(s){
+\author{
 Karel Mokany, Matthew Lisk, and Matt Fitzpatrick
 }
 \references{
 Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 
-Fitzpatrick, MC, Sanders NJ, Ferrier S, Longino JT, Weiser MD, and RR Dunn. 2011. Forecasting the Future of Biodiversity: a Test of Single- and Multi-Species Models for Ants in North America. \emph{Ecography} 34: 836–47.
+Fitzpatrick, MC, Sanders NJ, Ferrier S, Longino JT, Weiser MD, and RR Dunn. 2011. Forecasting the Future of Biodiversity: a Test of Single- and Multi-Species Models for Ants in North America. \emph{Ecography} 34: 836-47.
 }
 
 

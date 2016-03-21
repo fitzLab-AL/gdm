@@ -732,7 +732,7 @@ summary.gdm <- function (object, ...){
 ##########################################################################
 ##Takes species data from a variety of commonly used formats and transforms it into a
 ##site-pair table for GDM
-formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F, 
+formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE, 
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL, 
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL, 
                            weightType="equal", custWeights=NULL, samples=NULL){
@@ -754,25 +754,25 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   #custWeights <- NULL
   #samples <- 80
   #################
-  #bioData <- occurData
-  #bioFormat <- 1
+  #bioData <- exFormat2a
+  #bioFormat <- 4
   #dist <- "bray"
   #abundance <- F
-  #siteColumn <- "cell"
-  #XColumn <- "long"
-  #YColumn <- "lat"
+  #siteColumn <- "site"
+  #XColumn <- NULL
+  #YColumn <- NULL
   #sppColumn <- NULL
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- rastFiles
-  #distPreds <- NULL
-  #weightType <- "custom"
-  #custWeights <- weightData
+  #predData <- envTab
+  #distPreds <- list(as.matrix(gdmDissim))
+  #weightType <- "equal"
+  #custWeights <- NULL
   #samples <- NULL
   ###########################
   ##input error checking
   ##makes sure bioData is in an acceptable format
-  if(!(class(bioData)=="data.frame" | class(bioData)=="matrix" | class(bioData)=="gdmData")){
+  if(!(class(bioData)[1]=="data.frame" | class(bioData)[1]=="matrix" | class(bioData)[1]=="gdmData")){
     "bioData should be a data frame or matrix in one of the acceptable formats"
   }
   ##makes sure predData is in an acceptable format
@@ -830,10 +830,10 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
       stop("Cannot find a match for siteColumn in the columns of bioData.")
     }
     ##if the siteColumn is provided with input type 3, remove it
-    if(bioFormat==3 & siteColumn %in% colnames(bioData)){
-      wSite <- which(colnames(bioData)==siteColumn)
-      bioData <- bioData[-wSite]
-    }
+    #if(bioFormat==3 & siteColumn %in% colnames(bioData)){
+    #  wSite <- which(colnames(bioData)==siteColumn)
+    #  bioData <- bioData[-wSite]
+    #}
   }
   ##checks to make sure that the coordinate columns are characters and can be found in either the biological or 
   ##environmental data
@@ -852,7 +852,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
   if(bioFormat==3){
     if(weightType=="richness"){
       stop("Cannot weight by site richness when supplying the biological data as a distance matrix.")
-    }else if(nrow(bioData)!=ncol(bioData)){
+    }else if(nrow(bioData)!=(ncol(bioData)-1)){
       stop("Biological dissimularity has differing number of rows to number of columns, and therefore is not a true dissimularity matrix")
     }
   }
@@ -1046,11 +1046,16 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     ########################################################################
     ##species data as site-site distance matrix
   }else if(bioFormat==3){
+    ##orders bioData to match ordering of predData below
+    holdSite <- bioData[,which(siteColumn %in% colnames(bioData))]
+    bioData <- bioData[,-which(siteColumn %in% colnames(bioData))]
+    orderedData <- as.matrix(as.dist(bioData[order(holdSite),order(holdSite)]))
+    
     ##site-site distance already calculated
-    distData <- lower.tri(as.matrix(bioData), diag=FALSE)
-    distData <- as.vector(bioData[distData])
+    distData <- lower.tri(as.matrix(orderedData), diag=FALSE)
+    distData <- as.vector(orderedData[distData])
     predData <- unique(predData)
-    ##orders the prediction data by site..... why again?
+    ##orders the prediction data by site
     predData <- predData[order(predData[siteColumn]),]
     ########################################################################
     ##site pair table, already preped 
@@ -1084,14 +1089,16 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
         stop("The dimensions of your predictions matrices are not the same size.")
       }
     }, mat1=baseMat)
-    
+    print(dim(baseMat))
     
     ##hold site columns
     holdSiteCols <- lapply(distPreds, function(dP){dP[,which(siteColumn %in% colnames(dP))]})
     #remove site column from matrices
     distPreds <- lapply(distPreds, function(dP){dP[,-which(siteColumn %in% colnames(dP))]})
+    print(dim(distPreds[[1]]))
     ##orders the distance matices of distPreds
     distPreds <- mapply(function(dP, hSC){as.matrix(as.dist(dP[order(hSC),order(hSC)]))}, dP=distPreds, hSC=holdSiteCols, SIMPLIFY=FALSE)
+    print(dim(distPreds[[1]]))
     ##orders the site columns to match the distance matrices
     orderSiteCols <- lapply(holdSiteCols, function(hSC){hSC[order(hSC)]})
 
@@ -1104,10 +1111,13 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=F,
     }
     ##set new baseMat
     baseMat <- distPreds[[1]]
+    print(dim(baseMat))
     
     ##checks the size of the dissimilarity matrices against the size of distData
     baseMatDat <- lower.tri(as.matrix(baseMat),diag=FALSE)
     baseMatDat <- as.vector(baseMat[baseMatDat])  
+    print(nrow(outTable))
+    print(length(baseMatDat))
     if(nrow(outTable)!=length(baseMatDat)){
       stop("The dimensions of the distance predictor matrices do not match the biological data")
     }
@@ -1603,6 +1613,7 @@ removeSitesFromSitePair <- function(n, tab, rmFrac){
 }
 ##########################################################################
 
+
 ##########################################################################
 singleSppSitePair <- function(bioData, bioFormat, siteColumn=NULL, XColumn, 
                               YColumn, sppColumn=NULL, sppID, 
@@ -1667,7 +1678,7 @@ singleSppSitePair <- function(bioData, bioFormat, siteColumn=NULL, XColumn,
   
   ##makes sure that sppID is a number, if not exit function
   #if((is.character(sppID)==FALSE & is.null(sppID)==FALSE) | sppID<0){
-    #stop("sppID argument must be a character")
+  #stop("sppID argument must be a character")
   #}
   ##makes sure a proper weightType is used
   if(weightType %in% c("equal", "custom")){} else{

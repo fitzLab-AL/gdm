@@ -5,7 +5,7 @@
 Permutate Site-Pair Table Rows
 }
 \description{
-A function which randomizes the rows of a given site-pair table. This function is called from the \code{\link{variableSignificaneTesting}} function and should not need to be called directly by the user.
+A function which randomizes the rows of a given site-pair table. This function is called from the \code{\link{gdm.varImp}} function and should not need to be called directly by the user.
 }
 \usage{
 permutateSitePair(spTab, siteVarTab, indexTab, vNames)
@@ -29,12 +29,12 @@ Vector of variable names in both the site-pair and site x variable tables.
 A site-pair table, with rows randomized from the original site-pair table.
 }
 \note{
-This function is called from the \code{\link{variableSignificaneTesting}} function and the user should not need to access directly.
+This function is called from the \code{\link{gdm.varImp}} function and the user should not need to access directly.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{\code{\link[gdm]{variableSignificaneTesting}}}
+\seealso{\code{\link[gdm]{gdm.varImp}}}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ gdm }

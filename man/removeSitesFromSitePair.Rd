@@ -7,7 +7,7 @@ Remove Sites from Site-Pair Table
 Randomly selects a number of sites from a given site-pair table and removes them from the site-pair table. This function is called from the \code{\link{plotUncertainty}} function and should not need to be called directly by the user.
 }
 \usage{
-removeSitesFromSitePair(n, tab, rmPer)
+removeSitesFromSitePair(n, tab, rmFrac)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,7 +17,7 @@ An integer, not actually used, but needed to preform lapply
   \item{tab}{
 A site-pair table, same as used to fit a \code{\link{gdm}}.
 }
-  \item{rmPer}{
+  \item{rmFrac}{
 The percent of sites to remove from the full site-pair table.
 }
 }

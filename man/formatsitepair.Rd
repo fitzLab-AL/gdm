@@ -5,11 +5,11 @@
 Converts Common Biological (Response) and Environmental (Predictor) Data Formats to a GDM Site-Pair Table
 }
 \description{
-This function takes input biological and environmental data in various formats and builds a site-pair formatted table required for fitting a Generalized Dissimilarity Model using the \code{\link{gdm}} function. NOTE: Sample site x-y coordinates MUST be present in either the biological or the environmental data.
+This function takes input biological (response) and environmental, geographic, and other predictor variables and builds a site-pair table required for fitting a Generalized Dissimilarity Model using the \code{\link{gdm}} function. NOTE: x-y coordinates of sites MUST be present in either the biological or the environmental data.
 
-The input biological data can be in one of the following four formats (note that "species" can optionally be replaced by any other classification of biological entities - e.g. "functional types", "haplotypes"):
+The input biological data can be in one of the following four formats. Note that the general term "species" is used, but any classification of biological entities (e.g. functional types, haplotypes, etc) can be used as long as an appropriate distance metric is also supplied (see "dist" argument). - :
 
-  1. site-species matrix
+  1. site-by-species matrix
 
   2. x, y, species list
 
@@ -17,16 +17,16 @@ The input biological data can be in one of the following four formats (note that
 
   4. an existing site-pair table (see Details)
 
-Environmental (predictor) data can be provided in three formats:
+Predictor data can be provided in three formats:
 
-  - a site-predictor matrix with a column for each predictor variable and a row for each site
+  - a site-by-predictor matrix with a column for each predictor variable and a row for each site
 
   - a raster stack, with one raster for each predictor variable
 
-  - one or more site-site distance predictor matrices using the "distPreds" argument (see below).
+  - one or more site-site distance matrices using the "distPreds" argument (see below).
 }
 \usage{
-formatsitepair(bioData, bioFormat, dist="bray", abundance=F, siteColumn=NULL, XColumn,
+formatsitepair(bioData, bioFormat, dist="bray", abundance=FALSE, siteColumn=NULL, XColumn,
 	YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData, distPreds=NULL,
 	weightType="equal", custWeights=NULL, samples=NULL)
 }
@@ -60,22 +60,22 @@ Only used if bioFormat = 2 (x, y, species list). The name of the column containi
 If abundance = TRUE, this parameter identifies the column containing the measure of abundance at each site. Only used if bioFormat = 2 (i.e., x, y, species list), though in the case of abundance data, the format would be: x, y, species, abundance.
 }
   \item{sppFilter}{
-Default = 0. To account for limited sampling effort at some sites, sppFilter removes all sites at which the number of recorded species (i.e., species richness) is less than the specified value. For example, if sppFilter = 5, all sites with fewer than 5 recorded species will be removed.
+Default = 0. To account for limited sampling effort at some sites, sppFilter removes all sites at which the number of recorded species (i.e., observed species richness) is less than the specified value. For example, if sppFilter = 5, all sites with fewer than 5 recorded species will be removed.
 }
   \item{predData}{
 The environmental predictor data. Accepts either a site-predictor matrix or a raster stack.
 }
   \item{distPreds}{
-A list of distance matrices to be used as predictors, either in combination with, or as a substitute for, predData. For example, pairwise dissimilarity for one biological group (e.g., trees) can be used as a predictor for another group (e.g., ferns). Each matrix should be an x by x distance table, with the addition of one column with the names of the sites and the final dimentions being x rows and x+1 columns. The column of site names should have the same name as the siteColumn argument.
+A list of distance matrices to be used as predictors, either in combination with, or as a substitute for, predData. For example, pairwise dissimilarity for one biological group (e.g., trees) can be used as a predictor for another group (e.g., ferns). Each distance matrix must have as the first column the names of the sites (therefore the matrix will not be square). The column of site names should have the same name as the siteColumn argument. Site IDs are required here to ensure correct ordering of sites in the construction of the site-pair table.  
 }
   \item{weightType}{
-Default = "equal". Defines the weighting for sites. Can be either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each site weighted according to number of species recorded), or (3) "custom" (user defined). If weightType="custom", the user must provide a vector of site weights equal to the number of rows in the full site-pair table (i.e., before species filtering or sub-sampling is taken into account).
+Default = "equal". Defines the weighting for sites. Can be either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each site weighted according to number of species recorded), or (3) "custom" (user defined). If weightType="custom", the user must provide a vector of site weights equal to the number of rows in the full site-pair table (i.e., before species filtering (sppFilter argument) or sub-sampling is taken into account (samples argument)).
 }
   \item{custWeights}{
-A two column matrix or data frame object of user-defined site weights. The first column should be the site id of the biological data and should be named the same character string as in siteColumn. The second column should be numeric weight values and should be named "weights". The weight values represend the importance of each site, and the values in the output site-pair table is an average of the two sites. Required when weightType = "custom". Ignored otherwise. 
+A two column matrix or data frame of user-defined site weights. The first column should be the site ID and should be named the same character string as in siteColumn. The second column should be numeric weight values and should be named "weights". The weight values represent the importance of each site in model fitting, and the values in the output site-pair table is an average of the two sites. Required when weightType = "custom". Ignored otherwise. 
 }
   \item{samples}{
-Default = NULL. A positive intiger of the number of random sites used to construct the site-pair table. Used to reduce the number of sites to overcome possible memory limitations. 
+Default = NULL. A positive integer of the number of random sites to be used to construct the site-pair table. This argument can be used to reduce the number of sites to overcome possible memory limitations when fitting models with very large numbers of sites. 
 }
 }
 \details{
@@ -85,9 +85,9 @@ bioData = site-species matrix; bioFormat = 1: assumes that the response data are
 
 bioData = x, y, species list (optionally a fourth column with abundance can be provided); bioFormat = 2: assumes a table of 3 or 4 columns, the first two being the x & y coordinates of species records, the third (sppCol) being the name of the species observed at that location, and optionally a fourth column indicating a measure of abundance.  If an abundance column is not provided, presence-only data are assumed. In the case that a raster stack is provided for the environmental data (predData), the x-y coordinates will be intersected with the raster stack and, if the number of unique cells intersected by the points is less than the number of unique site IDs (i.e. multiple sites fall within a single cell), the function will use the raster cell as the site ID and aggregate sites accordingly. Therefore, model fitting will be sensitive to raster cell size.
 
-bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used when a site-site distance (dissimilarity) matrix has already been created for the biological response (e.g., Fst for genetic data). Only the lower half (triangle) of the matrix is needed to create the site-pair output table, but this function automatically removes the upper half if present. This is the only case in which the environmental data CANNOT be provided as a raster object.
+bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used when a site-site distance (dissimilarity) matrix has already been created for the biological response (e.g., Fst for genetic data). The distance matrix must have as the first column the names of the sites (therefore the matrix will not be square). The column of site names should have the same name as the siteColumn argument. Only the lower half (triangle) of the matrix is needed to create the site-pair output table, but this function automatically removes the upper half if present. This is the only bioFormat in which the environmental data CANNOT be provided as a raster object.
 
-bioData = site-pair able; bioFormat = 4: with an already created site-pair table, this option allows for one to add one or more distance matrices (see distPreds above) to the table and/or sub-sample the table (see sample above).
+bioData = site-pair able; bioFormat = 4: with an already created site-pair table, this option allows for one to add one or more distance matrices (see distPreds above) to the table and/or sub-sample the table (see sample above). If the site-pair table was not created using the formatsitepair function, the user will need to ensure the order of the sites matches that in other tables being provided to the function.
 
 NOTE: The function assumes that the x-y coordinates and the raster stack (if used) are in the same coordinate system. No checking is performed to confirm this is the case.
 }
@@ -132,13 +132,16 @@ exFormat2a <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColum
 
 #########table type 3
 ##dissim matrix model
+site <- unique(sppData$site)
+gdmDissim <- cbind(site, gdmDissim)
 exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat", predData=envTab,
 	siteColumn="site")
 
 #########table type 4
 ##adds a predictor matrix to an existing site-pair table, in this case, predData needs to be
 ##filled, but is not actually used
-exFormat4 <- formatsitepair(exFormat2a, 4, predData=envTab, distPreds=list(as.matrix(gdmDissim)))
+exFormat4 <- formatsitepair(exFormat2a, 4, predData=envTab, siteColumn="site",
+	distPreds=list(as.matrix(gdmDissim)))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
