@@ -523,8 +523,8 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
 gdm.transform <- function (model, data){
   #################
   ##lines used to quickly test function
-  #model <- spGDM 
-  #data <- cropRasts
+  #model <- gdm.1 
+  #data <- envTrans
   #data <- cropRasts[[3:nlayers(cropRasts)]]
   #################
   options(warn.FPU = FALSE)
@@ -545,7 +545,7 @@ gdm.transform <- function (model, data){
   geo <- model$geo
 
   ##turns raster data into dataframe
-  if(class(data)=="RasterStack" | class(data)=="RasterLayer" | class(data)=="RasterBrick"){
+  if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
     ##converts the raster object into a dataframe, for the gdm transformation
     rastDat <- data
     data <- rasterToPoints(rastDat)
@@ -576,12 +576,14 @@ gdm.transform <- function (model, data){
   ##to prevent errors in the transformation of the x and y values when geo is a predictor,
   ##extracts the rows with the minimum and maximum x and y values, these rows will be added
   ##onto the "chuck" given to transform, and then immediately removed after the transformation,
-  ##this makes sure that the c++ code will always have access to the minimum and maximum x and y
-  ##values
-  xMaxRow <- holdData[which.max(holdData[,"x"]),]
-  xMinRow <- holdData[which.min(holdData[,"x"]),]
-  yMaxRow <- holdData[which.max(holdData[,"y"]),]
-  yMinRow <- holdData[which.min(holdData[,"y"]),]
+  ##this makes sure that the c++ code will always have access to the minimum and maximum 
+  ##x and y values
+  if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+    xMaxRow <- holdData[which.max(holdData[,"x"]),]
+    xMinRow <- holdData[which.min(holdData[,"x"]),]
+    yMaxRow <- holdData[which.max(holdData[,"y"]),]
+    yMinRow <- holdData[which.min(holdData[,"y"]),]
+  }
   
   ##transform the data based on the gdm
   ##part of a loop to prevent memory errors 
@@ -589,7 +591,9 @@ gdm.transform <- function (model, data){
     ##Call the dll function
     data <- holdData[istart:iend,]
     ##adds coordinate rows to data to be transformed
-    data <- rbind(xMaxRow, xMinRow, yMaxRow, yMinRow, data)
+    if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+      data <- rbind(xMaxRow, xMinRow, yMaxRow, yMinRow, data)
+    }
     transformed <- matrix(0,nrow(data),ncol(data))
     z <- .C( "GDM_TransformFromTable",
              as.integer(nrow(data)), 
@@ -618,7 +622,9 @@ gdm.transform <- function (model, data){
     }
     
     ##remove the coordinate rows before doing anything else
-    transformed <- transformed[-c(1:4),]
+    if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+      transformed <- transformed[-c(1:4),]
+    }
     
     ##places the transformed values into the readied data frame 
     fullTrans[istart:iend,] <- transformed

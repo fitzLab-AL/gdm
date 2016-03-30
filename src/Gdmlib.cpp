@@ -1649,7 +1649,7 @@ void GDM_FitFromTable(char **wspath,
 	char lpTmpFile[256];
 	char *s;
 	char *dir = *wspath;
-	char *headFile = "gdmTemp";
+	char const *headFile = "gdmTemp";
 	s = tempnam(dir, headFile);
 	
 	//file extension
