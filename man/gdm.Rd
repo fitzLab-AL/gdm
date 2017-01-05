@@ -8,11 +8,11 @@ Fit a Generalized Dissimilarity Model to Tabular Site-Pair Data
 
 For an overview of the functions in the gdm package have a look here: \code{\link{gdm-package}}.
 
-gdm is used to fit a generalized dissimilarity model to tabular site-pair data formatted as follows using the \code{\link{formatsitepair}} function: Response, Weights, X0, Y0, X1, Y1, Pred1SiteA, Pred2SiteA, ..., PredNSiteA, Pred1SiteB, Pred2SiteB, ..., PredNSiteB. The first column (Response) must be any ratio based dissimilarity (distance) measure between Site A and Site B. The second column defines any weighting to be applied during fitting of the model. If equal weighting is required, then all entries in this column should be set to 1.0 (default). The third and fourth columns, X0 and Y0, represent the spatial coordinates of the first site in the site pair (Site A). The fifth and sixth columns, X1 and Y1, represent the coordinates of the second site (Site B). Note that the first six columns are REQUIRED, even if you do not intend to use geographic distance as a predictor (in which case these columns can be loaded with dummy data if the actual coordinates are unknown). The next N*2 columns contain values for N predictors for Site A, followed by values for the same N predictors for Site B. 
+The gdm function is used to fit a generalized dissimilarity model to tabular site-pair data formatted as follows using the \code{\link{formatsitepair}} function: distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord, s1.Pred1, s1.Pred2, ..., s1.PredN, s2.Pred1, s2.Pred2, ..., s2.PredN. The first column (Response) must be any ratio based dissimilarity (distance) measure between Site 1 and Site 2. The second column defines any weighting to be applied during fitting of the model. If equal weighting is required, then all entries in this column should be set to 1.0 (default). The third and fourth columns, s1.X and s1.Y, represent the spatial coordinates of the first site in the site pair (s1). The fifth and sixth columns, s2.X and s2.Y, represent the coordinates of the second site (s2). Note that the first six columns are REQUIRED, even if you do not intend to use geographic distance as a predictor (in which case these columns can be loaded with dummy data if the actual coordinates are unknown - though that would be weird, no?). The next N*2 columns contain values for N predictors for Site 1, followed by values for the same N predictors for Site 2. 
 
-The following is an example of a GDM input table header: 
+The following is an example of a GDM input table header with three environmental predictors (Temp, Rain, Bedrock): 
 
-Response, Weights, X0, Y0, X1, Y1, S1_Temp, S1_Rain, S1_Bedrock, S2_Temp, S2_Rain, S2_Bedrock
+distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord, s1.Temp, s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock
 }
 \usage{
 gdm(data, geo=FALSE, splines=NULL, knots=NULL)
@@ -20,7 +20,7 @@ gdm(data, geo=FALSE, splines=NULL, knots=NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-A data frame containing the site pairs to be used to fit the GDM (typically obtained using the \code{\link{formatsitepair}} function). The observed response data must be located in the first column. The weights to be applied to each site pair must be located in the second column. If geo is TRUE, then the X0, Y0 and Y0, Y1 columns will be used to calculate the geographic distance between site pairs for inclusion as the geographic predictor term in the model. If geo is FALSE (default), then the X0, Y0, X1 and Y1 data columns must still be included, but are ignored in fitting the model. Columns containing the predictor data for Site A, and the predictor data for Site B, follow.
+A data frame containing the site pairs to be used to fit the GDM (typically obtained using the \code{\link{formatsitepair}} function). The observed response data must be located in the first column. The weights to be applied to each site pair must be located in the second column. If geo is TRUE, then the s1.xCoord, s1.yCoord and s2.xCoord, s2.yCoord columns will be used to calculate the geographic distance between site pairs for inclusion as the geographic predictor term in the model. If geo is FALSE (default), then the s1.xCoord, s1.yCoord, s2.xCoord and s2.yCoord data columns must still be included, but are ignored in fitting the model. Columns containing the predictor data for Site 1, and the predictor data for Site 2, follow.
 }
   \item{geo}{
 Set to TRUE if geographic distance between sites is to be included as a model term. Set to FALSE if geographic distance is to be omitted from the model. Default is FALSE.

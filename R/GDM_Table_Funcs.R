@@ -1,13 +1,12 @@
-
 ##########################################################################
 ##function to fit a gdm object from a sitepair table
 gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   #################
   ##lines used to quickly test function
-  #data<-table
-  #geo<-F
-  #splines<-splines
-  #knots<-knots
+  #data <- sitepairs
+  #geo <- F
+  #splines <- NULL
+  # knots <- NULL
   #################
   options(warn.FPU = FALSE)
     
@@ -18,12 +17,12 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   }
   ##checks to makes sure data is a matrix or data frame
   if(!(class(data)[1]=="gdmData" | class(data)[1]=="matrix" | class(data)[1]=="data.frame")){
-    stop("data argument needs to be a matrix or a data frame")
+    stop("data argument needs to be gdmData, a matrix, or a data frame")
   }
     
   ##sanity check on the data table
   if(ncol(data) < 6){
-    stop("Not enough columns in data. (Minimum need: Observed, weights, X0, Y0, X1, Y1)")
+    stop("Not enough columns in data. (Minimum need: Observed, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord)")
   }  
   if(nrow(data) < 1){
     stop("Not enough rows in data")
@@ -51,9 +50,6 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
     stop("Response data has values greater than 1. Must be between 0 - 1.")
   }
 
-# gdm ---------------------------------------------------------------------
-
-
   ##current data format is response,weights,X0,Y0,X1,Y1 before any predictor data (thus 6 leading columns)
   LEADING_COLUMNS <- 6
   if(geo){
@@ -70,12 +66,12 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   ##setup the predictor name list, and removes the "s1." and "s2." to make resulting names more intuitive
   if(geo==TRUE){
     if(nPreds > 1){
-      predlist <- c("Geographic", sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds-1)], "s1."), "[[", 2))
+      predlist <- c("Geographic", sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds-1)], "s1.", fixed=T), "[[", 2))
     }else{
       predlist <- c("Geographic")
     }
   }else{
-    predlist <- sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds)], "s1."), "[[", 2)
+    predlist <- sapply(strsplit(names(data)[(LEADING_COLUMNS+1):(LEADING_COLUMNS+nPreds)], "s1.", fixed=T), "[[", 2)
   }
 
   ##deal with the splines and knots
@@ -285,17 +281,15 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   
   ##reports a warning should the model "fit", yet the sum of coefficients = 0
   if(sum(gdmModOb$coefficients)==0){
-    warning("Problem with model fitting, no solution obtained. Sum of spline coefficients = 0. Deviance explained = 0.")
-    ##sets the deviance explained to 0, to reflect that the model didn't fit correctly
-    gdmModOb$explained <- 0
+    warning("Problem with model fitting, no solution obtained. Sum of spline coefficients = 0. Deviance explained = NULL.")
+    ##sets the deviance explained to NULL, to reflect that the model didn't fit correctly
+    gdmModOb <- NULL
   }
   
   ##returns gdm object
   return(gdmModOb)
 }
-
 ##########################################################################
-
 
 ##########################################################################
 ##function to plot the splines of a gdm object
@@ -303,15 +297,14 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
                       plot.linewidth=2.0, include.rug=FALSE, rug.sitepair=NULL, ...){
   #################
   ##lines used to quickly test function
-  #x <- gdm.1
+  #x <- model.2
   #plot.layout <- c(2,2)
   #plot.color <- "green"
   #plot.linewidth <- 2.0
   #include.rug <- T
-  #rug.sitepair <- gdmTab
+  #rug.sitepair <- GDM_input_table
   #################
   ##checks to make sure that a site-pair table has been included
-  
   
   options(warn.FPU = FALSE)
   PSAMPLE <- 200
@@ -327,7 +320,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
   }
   
   ##plots the compositional dissimilarity spline plot
-  plot(x$ecological, x$observed, xlab="Predicted Ecological Distance", ylab="Observed Compositional Dissimilarity", type="n")
+  plot(x$ecological, x$observed, xlab="Predicted Ecological Distance", ylab="Observed Compositional Dissimilarity", type="n", ylim=c(0,1))
   points(x$ecological, x$observed, pch=20, cex=0.25, col=plot.color)
   overlayX <- seq( from=min(x$ecological), to=max(x$ecological), length=PSAMPLE )
   overlayY <- 1 - exp( - overlayX )
@@ -340,7 +333,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
     dev.next()
   }
   ##plots the second compositional dissimilarity spline plot
-  plot(x$predicted, x$observed, xlab="Predicted Compositional Dissimilarity", ylab="Observed Compositional Dissimilarity", type="n")
+  plot(x$predicted, x$observed, xlab="Predicted Compositional Dissimilarity", ylab="Observed Compositional Dissimilarity", type="n", ylim=c(0,1))
   points( x$predicted, x$observed, pch=20, cex=0.25, col=plot.color )
   overlayX <- overlayY <- seq( from=min(x$predicted), to=max(x$predicted), length=PSAMPLE )
   lines( overlayX, overlayY, lwd=plot.linewidth ) 
@@ -375,7 +368,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
   ##plot the predictors with non-zero sum of coefficients      
   splineindex <- 1
   for(i in 1:preds){  
-    #i <- 2
+    #i <- 3
     ##only if the sum of the coefficients associated with this predictor is > 0.....
     numsplines <- x$splines[i]
     if(sum(x$coefficients[splineindex:(splineindex+numsplines-1)]) > 0){
@@ -409,7 +402,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
         if(include.rug==TRUE){
           rugData <- unique(sqrt(((rug.sitepair$s1.xCoord-rug.sitepair$s2.xCoord)^2)+((rug.sitepair$s1.yCoord-rug.sitepair$s2.yCoord)^2)))
         }
-      } else{
+      }else{
         varNam <- x$predictors[i]
         ##gets rug plot data
         if(include.rug==TRUE){
@@ -418,8 +411,10 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
         }
       }
       
-      plot(seq(from=x$knots[[(i*3)-2]],to=x$knots[[(i*3)]], length=PSAMPLE), z$pdata, 
+      plot(seq(from=x$knots[[(i*numsplines)-(numsplines-1)]], to=x$knots[[(i*numsplines)]], length=PSAMPLE), z$pdata, 
            xlab=varNam, ylab=paste("f(", varNam, ")", sep="" ), ylim=c(0,predmax), type="l")
+      #plot(seq(from=x$knots[[(i*3)-2]], to=x$knots[[(i*3)]], length=PSAMPLE), z$pdata, 
+      #     xlab=varNam, ylab=paste("f(", varNam, ")", sep="" ), ylim=c(0,predmax), type="l")
       if(include.rug==TRUE){
         rug(rugData)
       }
@@ -430,7 +425,6 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
 }
 ##########################################################################
 
-
 ##########################################################################
 ##function to either predict the biological dissimilarities between sites, 
 ##or to predict the dissimilarity of the same sites between two time periods,
@@ -440,10 +434,10 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
   ##lines used to quickly test function
   ##object = gdm model
   ##data = a sitepair table
-  #object <- gdm1
-  #data <- climExtCurr
+  #object <- gdm.rastF
+  #data <- envRast
   #time <- T
-  #predRasts <- climExtFuture
+  #predRasts <- futRasts
   #################
   options(warn.FPU = FALSE)
   
@@ -464,9 +458,16 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
     if(nlayers(data)!=nlayers(predRasts)){
       stop("Current and future raster objects must have the same number of layers")
     }
-    if(nlayers(data)!=length(object$predictors)-1 | nlayers(predRasts)!=length(object$predictors)-1){
-      stop("Number of predictor variables does not equal the number used to fit the model")
+    if(object$geo==TRUE){
+      if(nlayers(data)!=length(object$predictors)-1 | nlayers(predRasts)!=length(object$predictors)-1){
+        stop("Number of predictor variables does not equal the number used to fit the model")
+      }
+    }else{
+      if(nlayers(data)!=length(object$predictors) | nlayers(predRasts)!=length(object$predictors)){
+        stop("Number of predictor variables does not equal the number used to fit the model")
+      }
     }
+    
     for(i in 1:nlayers(data)){
       if(names(data)[i]!=names(predRasts)[i]){
         stop("Layer names do not match the variables used to fit the model")
@@ -517,14 +518,13 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
 }
 ##########################################################################
 
-
 ##########################################################################
 ##function to transform input data into biological space based on a given gdm
-gdm.transform <- function (model, data){
+gdm.transform <- function(model, data){
   #################
   ##lines used to quickly test function
-  #model <- gdm.1 
-  #data <- envTrans
+  #model <- gdmModel 
+  #data <- climCurrExt
   #data <- cropRasts[[3:nlayers(cropRasts)]]
   #################
   options(warn.FPU = FALSE)
@@ -578,11 +578,13 @@ gdm.transform <- function (model, data){
   ##onto the "chuck" given to transform, and then immediately removed after the transformation,
   ##this makes sure that the c++ code will always have access to the minimum and maximum 
   ##x and y values
-  if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
-    xMaxRow <- holdData[which.max(holdData[,"x"]),]
-    xMinRow <- holdData[which.min(holdData[,"x"]),]
-    yMaxRow <- holdData[which.max(holdData[,"y"]),]
-    yMinRow <- holdData[which.min(holdData[,"y"]),]
+  if(geo==TRUE){
+    if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+      xMaxRow <- holdData[which.max(holdData[,"x"]),]
+      xMinRow <- holdData[which.min(holdData[,"x"]),]
+      yMaxRow <- holdData[which.max(holdData[,"y"]),]
+      yMinRow <- holdData[which.min(holdData[,"y"]),]
+    }
   }
   
   ##transform the data based on the gdm
@@ -591,7 +593,7 @@ gdm.transform <- function (model, data){
     ##Call the dll function
     data <- holdData[istart:iend,]
     ##adds coordinate rows to data to be transformed
-    if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+    if((dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick") & geo==TRUE){
       data <- rbind(xMaxRow, xMinRow, yMaxRow, yMinRow, data)
     }
     transformed <- matrix(0,nrow(data),ncol(data))
@@ -622,7 +624,7 @@ gdm.transform <- function (model, data){
     }
     
     ##remove the coordinate rows before doing anything else
-    if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
+    if((dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick") & geo==TRUE){
       transformed <- transformed[-c(1:4),]
     }
     
@@ -688,7 +690,6 @@ gdm.transform <- function (model, data){
 }
 ##########################################################################
 
-
 ##########################################################################
 ##function to print a summary of a gdm object
 summary.gdm <- function (object, ...){
@@ -709,7 +710,7 @@ summary.gdm <- function (object, ...){
   print( "", quote=F )    
   print( paste( "NULL Deviance: ", object$nulldeviance ), quote=F )
   print( paste( "GDM Deviance: ", object$gdmdeviance ), quote=F )  
-  print( paste( "Deviance Explained: ", object$explained ), quote=F )
+  print( paste( "Percent Deviance Explained: ", object$explained ), quote=F )
   print( "", quote=F )    
   print( paste( "Intercept: ", object$intercept ), quote=F )
   print( "", quote=F )    
@@ -734,17 +735,16 @@ summary.gdm <- function (object, ...){
 }
 ##########################################################################
 
-
 ##########################################################################
 ##Takes species data from a variety of commonly used formats and transforms it into a
 ##site-pair table for GDM
 formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE, 
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL, 
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL, 
-                           weightType="equal", custWeights=NULL, samples=NULL){
+                           weightType="equal", custWeights=NULL, sampleSites=1){
   ###########################
   ##lines used to quickly test function
-  #bioData <- sppTab
+  #bioData <- sppData
   #bioFormat <- 2
   #dist <- "bray"
   #abundance <- F
@@ -752,13 +752,13 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   #XColumn <- "Long"
   #YColumn <- "Lat"
   #sppColumn <- "species"
-  #sppFilter <- 10
+  #sppFilter <- 0
   #abundColumn <- NULL
   #predData <- envTab
-  #distPreds <- list(newGDMdissim)
+  #distPreds <- NULL
   #weightType <- "equal"
   #custWeights <- NULL
-  #samples <- 80
+  #sampleSites <- 1
   #################
   #bioData <- exFormat2a
   #bioFormat <- 4
@@ -774,17 +774,27 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   #distPreds <- list(as.matrix(gdmDissim))
   #weightType <- "equal"
   #custWeights <- NULL
-  #samples <- NULL
+  #sampleSites <- NULL
   ###########################
   ##input error checking
   ##makes sure bioData is in an acceptable format
   if(!(class(bioData)[1]=="data.frame" | class(bioData)[1]=="matrix" | class(bioData)[1]=="gdmData")){
     "bioData should be a data frame or matrix in one of the acceptable formats"
   }
+  ##transforms bioData into a data frame in order to proceed without error, just to make sure,
+  ##basically remove the affects of factors
+  if(class(bioData)[1]=="data.frame" | class(bioData)[1]=="matrix"){
+    bioData <- as.data.frame(bioData, stringsAsFactors=F)
+  }
+  
   ##makes sure predData is in an acceptable format
   if(!(class(predData)=="data.frame" | class(predData)=="matrix" | class(predData)=="RasterStack" | class(predData)=="RasterLayer" | class(predData)=="RasterBrick")){
     "predData should be a data frame or matrix in one of the acceptable formats"
   }
+  if(class(predData)[1]=="data.frame" | class(predData)[1]=="matrix"){
+    predData <- as.data.frame(predData, stringsAsFactors=F)
+  }
+  
   ##if bioFormat is not an acceptable number, exit function
   if(bioFormat %in% c(1:4)){} else{
     stop("Acceptable values for the bioFormat argument are: 1, 2, 3, or 4")
@@ -793,16 +803,16 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   if(!(abundance==TRUE | abundance==FALSE)){
     stop("abundance argument must be either TRUE or FALSE")
   }
-  ##if samples is not a number, then exit function
-  if(is.null(samples)==FALSE){
-    if(is.numeric(samples)==FALSE | samples<0){
-      stop("samples argument must be a positive integer number")
+  ##if sampleSites is not a number, then exit function
+  if(is.null(sampleSites)==FALSE){
+    if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
+      stop("sampleSites argument must be a number between 0-1")
     }
   }
   
   ##makes sure that sppFilter is a number, if not exit function
   if((is.numeric(sppFilter)==FALSE & is.null(sppFilter)==FALSE) | sppFilter<0){
-    stop("sppFilter argument must be a positive integer number")
+    stop("sppFilter argument must be a positive integer")
   }
   ##makes sure a proper weightType is used
   if(weightType %in% c("equal", "richness", "custom")){} else{
@@ -859,7 +869,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     if(weightType=="richness"){
       stop("Cannot weight by site richness when supplying the biological data as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
-      stop("Biological dissimularity has differing number of rows to number of columns, and therefore is not a true dissimularity matrix")
+      stop("Biological dissimilarity has differing number of rows to number of columns. Did you forget to add a column for site ID's?")
     }
   }
   
@@ -884,7 +894,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ##first, if bioFormat=2, then transforms it into a site-spp matrix (bioFormat 1)
     if(bioFormat==2){
       ##makes sure that the sppColumn name can be found in the bioData with bioFormat 2
-      if((sppColumn %in% names(bioData))){} else{
+      if((sppColumn %in% colnames(bioData))){} else{
         stop("Cannot find sppColumn in bioData - check name?")
       }
       
@@ -937,7 +947,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       colnames(cellID)[which(colnames(cellID)=="cellFromXY(predData, locs)")] <- "cellName"
       ##if none of the points intersected with the prediction raster
       if(nrow(cellID)==sum(is.na(cellID$cellName))){
-        stop("None of the given points intersect with the given raster data. Double check that you geography is correct and that the given XColumn and YColumn values are correct.")
+        stop("None of the given points intersect with the given raster data. Double check that your geography is correct and that the given XColumn and YColumn values are correct.")
       }
       cellLocs <- as.data.frame(xyFromCell(predData, cellID$cellName))
       ##temporarily keeps old site in to identify what to remove from other objects
@@ -987,7 +997,9 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ##totals the number of species per site
     sppDat[sppDat>=1] <- 1
     sppDat[sppDat==0] <- 0
-    sppTotals <- cbind(as.data.frame(bioData[siteCol]), apply(sppDat, 1, function(m){sum(as.numeric(m))}))
+    sppDat[is.na(sppDat)] <- 0
+    sppTotals <- cbind.data.frame(bioData[,siteCol], apply(sppDat, 1, function(m){sum(as.numeric(m))}))
+    colnames(sppTotals) <- c(siteColumn, "totals")
     ##filters out sites with less species than filter
     filterBioDat <- subset(sppTotals, sppTotals[colnames(sppTotals)[2]] >= sppFilter)
     toRemove <- bioData[,siteCol][which(!(bioData[,siteCol] %in% filterBioDat[,siteColumn]))]
@@ -996,18 +1008,18 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     bioData <- unique(merge(spSiteCol, bioData, by=siteColumn))
     
     ##removes random sampling of sites
-    if(is.null(samples)==FALSE){
-      if(nrow(bioData)<samples){
-        warning("After species filter, fewer remaining records remaining than specified in samples, continuing without farther removals")
+    if(is.null(sampleSites)==FALSE){
+      #if(nrow(bioData)<sampleSites){
+        #warning("After species filter, fewer records remaining than specified in sampleSites, continuing without subsampling")
       }else{
         fullSites <- bioData[,siteCol]
-        randRows <- sample(1:nrow(bioData), samples)
+        randRows <- sample(1:nrow(bioData), round(nrow(bioData)*sampleSites,0))
         ##actual selection of the random rows to keep
         bioData <- bioData[c(randRows),]
         #removeRand <- fullLength[-(randRows)]
         ##records the sites that have been removed, for distPreds later in function
         removeRand <- fullSites[which(! (fullSites %in% bioData[,siteCol]))]
-      } 
+      #} 
     }
     
     ##identifies and removes filtered out sites and sampled sites from predData
@@ -1015,7 +1027,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     colnames(bioData)[colnames(bioData)==siteColumn] <- "gettingCoolSiteColumn"
     colnames(predData)[colnames(predData)==siteColumn] <- "gettingCoolSiteColumn"
     predData <- unique(predData)
-    predData <- predData[which(predData$gettingCoolSiteColumn %in% bioData$gettingCoolSiteColumn),]
+    predData <- predData[which(predData$gettingCoolSiteColumn %in% 
+                                 as.character(as.numeric(bioData$gettingCoolSiteColumn))),]
     
     ##remove custom weights from any sites removed by species filtering and sampling
     if(weightType=="custom" & !is.null(custWeights)){
@@ -1035,17 +1048,19 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     predData <- predData[order(predData[,predSite]),]
     bioData <- bioData[order(bioData[,bioSite]),]
     
-    ##sets up species data for calculating dissimularity
+    ##sets up species data for calculating dissimilarity
     bx <- which(names(bioData)==XColumn)
     by <- which(names(bioData)==YColumn)
     sppData <- bioData[-c(bioSite, bx, by)]
     
     ##creates distance matrix
     if(abundance==F){
-      sppDat[sppDat>=1] <- 1
-      sppDat[sppDat==0] <- 0
+      sppData[sppData>=1] <- 1
+      sppData[sppData==0] <- 0
+      sppData[is.na(sppData)] <- 0
       distData <- vegan::vegdist(sppData, dist, binary=T)
     }else{
+      sppData[is.na(sppData)] <- 0
       distData <- vegan::vegdist(sppData, dist, binary=F)
     }
     
@@ -1092,19 +1107,19 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ##checks to size of each dissimilarity matrix, to make sure they are all the same
     lapply(distPreds, function(mat, mat1){
       if((dim(mat1)[1]!=dim(mat)[1]) & (dim(mat1)[2]!=dim(mat)[2])){
-        stop("The dimensions of your predictions matrices are not the same size.")
+        stop("The dimensions of your predictor matrices are not the same.")
       }
     }, mat1=baseMat)
-    print(dim(baseMat))
+    #print(dim(baseMat))
     
     ##hold site columns
     holdSiteCols <- lapply(distPreds, function(dP){dP[,which(siteColumn %in% colnames(dP))]})
     #remove site column from matrices
     distPreds <- lapply(distPreds, function(dP){dP[,-which(siteColumn %in% colnames(dP))]})
-    print(dim(distPreds[[1]]))
+    #print(dim(distPreds[[1]]))
     ##orders the distance matices of distPreds
     distPreds <- mapply(function(dP, hSC){as.matrix(as.dist(dP[order(hSC),order(hSC)]))}, dP=distPreds, hSC=holdSiteCols, SIMPLIFY=FALSE)
-    print(dim(distPreds[[1]]))
+    #print(dim(distPreds[[1]]))
     ##orders the site columns to match the distance matrices
     orderSiteCols <- lapply(holdSiteCols, function(hSC){hSC[order(hSC)]})
 
@@ -1117,15 +1132,15 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     }
     ##set new baseMat
     baseMat <- distPreds[[1]]
-    print(dim(baseMat))
+    #print(dim(baseMat))
     
     ##checks the size of the dissimilarity matrices against the size of distData
     baseMatDat <- lower.tri(as.matrix(baseMat),diag=FALSE)
     baseMatDat <- as.vector(baseMat[baseMatDat])  
-    print(nrow(outTable))
-    print(length(baseMatDat))
+    #print(nrow(outTable))
+    #print(length(baseMatDat))
     if(nrow(outTable)!=length(baseMatDat)){
-      stop("The dimensions of the distance predictor matrices do not match the biological data")
+      stop("The dimensions of the distance predictor matrices do not match the biological data.")
     }
     
     ##addes any associated distance predictors to the sitepair table
@@ -1168,7 +1183,6 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   return(outTable)
 }
 ##########################################################################
-
 
 ##########################################################################
 ##Used in formatGDMData to transform data from a site-site distance matrix into
@@ -1235,7 +1249,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
     }
     
     if(sum(checkTab>1)>0){
-      stop("A site has two or more unique entries of data associated with it. Double check data for incosistancies.")
+      stop("A site has two or more unique entries of data associated with it. Check data for issues.")
     }
     s1.xCoord <- envInfo[s1, dXCol]
     s2.xCoord <- envInfo[s2, dXCol]
@@ -1247,7 +1261,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
     s1.yCoord <- spdata[s1, dYCol]
     s2.yCoord <- spdata[s2, dYCol]
   }else{
-    stop("X,Y Coordinates not found with unique sites, unable to complete site-pair table")
+    stop("X,Y Coordinates not found with unique sites, unable to build site-pair table")
   }
   
   ##sets up output table
@@ -1272,7 +1286,6 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   return(gdmTableFill)
 }
 ##########################################################################
-
 
 ##########################################################################
 ##Extracts Ispline data from a gdm model
@@ -1323,15 +1336,15 @@ isplineExtract <- function (model){
 ##########################################################################
 
 ##########################################################################
-plotUncertainty = function(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL, 
+plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL, 
                            knots=NULL, splineCol="blue", errCol="grey80", 
                            plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE,
                            cores=2){
   ##A function to plot the uncertantiy of each variable from a GDM model
   #################
   #spTable <- sitePairTab          ##the input site-pair table to subsample from
-  #leaveOut <- 0.1     ##percent of sites that should be randomly removed from site pair table 
-  #bsIters <- 50       ##the number of time the site-pair table should be sampled
+  #sampleSites <- 0.9     ##fraction of sites that should be retained from site pair table 
+  #bsIters <- 50       ##the number of times the site-pair table should be sampled
   #geo <- F              ##rather or not the gdm model takes geography into account, see gdm
   #splines <- NULL       ##splines gdm setting, see gdm
   #knots <- NULL         ##knots gdm setting, see gdm
@@ -1390,20 +1403,29 @@ plotUncertainty = function(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL,
   if((is.null(bsIters)==FALSE & is.numeric(bsIters)==FALSE) | bsIters<1){
     stop("argument bsIters needs to be a positive integer")
   }
-  ##makes sure leaveOut is a number
-  if(is.numeric(leaveOut)==FALSE){
-    stop("leaveOut must be a number between 0 and 1")
+  ##makes sure sampleSites is a number
+  if(is.numeric(sampleSites)==FALSE){
+    stop("sampleSites must be a number between 0 and 1")
   }
-  ##makes sure that leaveOut is between 0 and 1
-  if(leaveOut < 0){
-    stop("leaveOut must be a number between 0 and 1")
+  ##makes sure that sampleSites is between 0 and 1
+  if(sampleSites < 0){
+    stop("sampleSites must be a number between 0 and 1")
   }
-  if(leaveOut > 1){
-    stop("leaveOut must be a number between 0 and 1")
+  if(sampleSites > 1){
+    stop("sampleSites must be a number between 0 and 1")
   }
+  if(sampleSites==0){
+    stop("a sampleSites value of 0 will remove all sites from the analysis")
+  }
+  ##double makes sure these values are integers, seems to truncate if not
+  cores <- as.integer(cores)
+  bsIters <- as.integer(bsIters)
   
   ##assign k to prevent issues to cran checking
   k <- NULL
+  
+  ##makes copies of the site-pair table in order to randomly subsample each one differently
+  lstSP <- lapply(1:bsIters, function(i){spTable})
   
   ##runs parallel if desired by the users
   if(parallel==TRUE){
@@ -1418,8 +1440,8 @@ plotUncertainty = function(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL,
     cl <- makeCluster(cores, outfile="")
     registerDoParallel(cl)
     ##first removes a number of sites according to input
-    subSamps <- foreach(k=1:bsIters, .verbose=F, .packages=c("gdm")) %dopar%
-      removeSitesFromSitePair(k, tab=spTable, rmFrac=leaveOut)
+    subSamps <- foreach(k=1:length(lstSP), .verbose=F, .packages=c("gdm")) %dopar%
+                      removeSitesFromSitePair(spTable[[k]], sampleSites=sampleSites)
     ##models the subsamples
     gdmMods <- foreach(k=1:length(subSamps), .verbose=F, .packages=c("gdm")) %dopar%
                      #gdmMods <- try(foreach(k=1, .verbose=F, .packages=c("gdm")) %dopar%
@@ -1427,7 +1449,7 @@ plotUncertainty = function(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL,
     stopCluster(cl)
   }else{
     ##first removes a number of sites according to input
-    subSamps <- lapply(1:bsIters, removeSitesFromSitePair, tab=spTable, rmFrac=leaveOut)
+    subSamps <- lapply(lstSP, removeSitesFromSitePair, sampleSites=sampleSites)
     ##models the subsamples
     gdmMods <- lapply(subSamps, gdm, geo=geo, splines=splines, knots=knots)
   }
@@ -1555,100 +1577,226 @@ plotUncertainty = function(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL,
 ##########################################################################
 
 ########################################################################## 
-removeSitesFromSitePair <- function(n, tab, rmFrac){
+removeSitesFromSitePair <- function(spTable, sampleSites){
   ##a function to remove a random number of sites from a sitepair table
   ##involves assigning an index to each site, picking the indicies to be 
   ##removed, then identifying which site pairs those indices are a part of
   ##and remove those site pairs from the table
   #################
-  #n <- 1                    ##a number, not actually used, but needed to preform lapply
-  #tab <- gdmTab             ##sitepair table
-  #rmFrac <- leaveOut    ##fraction of sites to remove from sitepair table
+  #spTable <- gdmTab             ##sitepair table
+  #sampleSites <- 0.8         ##fraction of sites to keep in sitepair table
   #################
-  ##First create an index of each site in the JTable
-  sortMat<-matrix(NA,(nrow(tab)*2),5)
-  ##Fill the sorting table
-  i_site<-1
-  for(i_row in 1:nrow(tab)){
-    sortMat[i_site,1] <- tab[i_row,3] 
-    sortMat[i_site,2] <- tab[i_row,4]
-    sortMat[i_site,3] <- 1
-    sortMat[i_site,4] <- i_row
-    i_site <- i_site+1
-    sortMat[i_site,1] <- tab[i_row,5] 
-    sortMat[i_site,2] <- tab[i_row,6]
-    sortMat[i_site,3] <- 2
-    sortMat[i_site,4] <- i_row
-    i_site <- i_site+1  
+  
+  ##adds error checking to gdm function
+  ##checks to see if in site-pair format from formatsitepair function
+  if(class(spTable)[1] != "gdmData"){
+    warning("spTable class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model will not fit.")
+  }
+  ##checks to makes sure data is a matrix or data frame
+  if(!(class(spTable)[1]=="gdmData" | class(spTable)[1]=="matrix" | class(spTable)[1]=="data.frame")){
+    stop("spTable argument needs to be gdmData, a matrix, or a data frame")
+  }
+  ##makes sure that sampleSites is a number between 0 and 1,
+  ##and that it is not equal to 0
+  if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
+    stop("argument sampleSites needs to be a positive number between 0 and 1")
+  }
+  if(sampleSites==0){
+    stop("sampleSites = 0 will remove all sites from the analysis!")
   }
   
-  ##Now sort the sorting table by Long then Lat
-  sortMat <- sortMat[order(sortMat[,1], sortMat[,2]),]
-  ##loop through and give each site an index based on whether it matches the 
-  ##Lat & Long of the site above it
-  sortMat[1,5]<-1
-  for(i_row in 2:nrow(sortMat)){
-    if(sortMat[i_row,1] == sortMat[(i_row-1),1]){
-      if(sortMat[i_row,2] == sortMat[(i_row-1),2]){
-        sortMat[i_row,5] <- sortMat[(i_row-1),5]
-      }else{
-        sortMat[i_row,5] <- sortMat[(i_row-1),5] + 1
-      } ## end else
-    }else{
-      sortMat[i_row,5] <- sortMat[(i_row-1),5] + 1
+  if(sampleSites>0){
+    sortMatX <- sapply(1:nrow(spTable), function(i, spTab){c(spTab[i,3], spTab[i,5])}, spTab=spTable)
+    sortMatY <- sapply(1:nrow(spTable), function(i, spTab){c(spTab[i,4], spTab[i,6])}, spTab=spTable)
+    sortMatNum <- sapply(1:nrow(spTable), function(i){c(1,2)})
+    sortMatRow <- sapply(1:nrow(spTable), function(i){c(i,i)})
+    ##adds a column of NA for index to be added to
+    fullSortMat <- cbind(as.vector(sortMatX), as.vector(sortMatY), as.vector(sortMatNum), as.vector(sortMatRow), rep(NA, length(sortMatX)))
+    ##assigns sites by unique coordinates
+    siteByCoords <- as.data.frame(unique(fullSortMat[,1:2]))
+    ##number of sites to expect by coordinates
+    numSites <- nrow(siteByCoords)
+    ##assigns site index based on coordinates
+    for(i in 1:numSites){
+      fullSortMat[which(fullSortMat[,1]==siteByCoords[i,1] & fullSortMat[,2]==siteByCoords[i,2]),5] <- i
     }
-  }
-  ##And finally create the indexTab, table to indexes of sites
-  indexTab <- matrix(NA,nrow(tab),2)
-  for(i_row in 1:nrow(sortMat)){
-    indexTab[sortMat[i_row,4],sortMat[i_row,3]] <- sortMat[i_row,5]
-  }
   
-  ##determines the number of sites to remove
-  numToRemove <- round(max(indexTab)*rmFrac)
-  ##randomly determines the index of sites to remove
-  rmSites <- sample(1:max(indexTab), numToRemove)
-  rmIndexCol1 <- which(indexTab[,1] %in% rmSites)
-  rmIndexCol2 <- which(indexTab[,2] %in% rmSites)
-  ##creates sampled table
-  sampTable <- tab[-c(unique(c(rmIndexCol1, rmIndexCol2))),]
+    ##create index table to know where each site is in input site-pair table
+    indexTab <- matrix(NA,nrow(spTable),2)
+    for(iRow in 1:nrow(fullSortMat)){
+      indexTab[fullSortMat[iRow,4],fullSortMat[iRow,3]] <- fullSortMat[iRow,5]
+    }
+
+    ##determines the number of sites to remove
+    numToRemove <- round(max(indexTab)*(1-sampleSites))
+    ##randomly determines the index of sites to remove
+    if(numToRemove > 0){
+      rmSites <- sample(1:max(indexTab), numToRemove)
+      rmIndexCol1 <- which(indexTab[,1] %in% rmSites)
+      rmIndexCol2 <- which(indexTab[,2] %in% rmSites)
+      ##creates sampled table
+      sampTable <- spTable[-c(unique(c(rmIndexCol1, rmIndexCol2))),]
+    }else{
+      warning("Percentage of sites to be retained is high enough such that no sites were removed.")
+      sampTable <- spTable
+    }
+  }else{
+    sampTable <- spTable
+  }
   
   ##returns the sampled table
   return(sampTable)
 }
 ##########################################################################
 
-
 ##########################################################################
-##for single species site pair, when ready
+##space for single species site pair, when ready
 ##########################################################################
 
-
+#samp <- sample(1:nrow(gdmTab), 2500)
 ##########################################################################
 gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FALSE, 
-                                       nPerm=100, parallel=FALSE, cores=2){
+                                       nPerm=100, parallel=FALSE, cores=2, sampleSites=1, 
+                                        sampleSitePairs=1, outFile=NULL){
   ##function to test the signifiance of the various variables of a gdm site-pair table
   #################
-  #spTable <- sitePairTab          ##the input site-pair table to subsample from
+  #spTable <- testVTab         ##the input site-pair table to subsample from
+  #load("M:/UAE/kavyaWorking/Code/GDM/GDMSitepairTable.RData")
+  #spTable <- gdmTab
+  #spTable <- gdmTab[-c(samp),]
   #geo <- T              ##rather or not the gdm model takes geography into account, see gdm
   #splines <- NULL       ##splines gdm setting, see gdm
   #knots <- NULL         ##knots gdm setting, see gdm
-  #fullModelOnly <- F         ##not sure about this argument, acceptable values are TRUE and FALSE
-  #nPerm <- 50
-  #parallel <- F
-  #cores <- 2
+  #fullModelOnly <- F     ##rather to run the full calculations, or just once on the full model, acceptable values are TRUE and FALSE
+  #nPerm <- 5             ##number of permutations
+  #parallel <- T          ##rather or not to run in parallel
+  #cores <- 5             ##if in parallel, the number of cores to run on
+  #sampleSites <- 1   ##the percent of sites to be retained before calculating
+  #sampleSitePairs <- 1  ##the percent of site-pairs (rows) to be retained before calculating
+  #outFile <- "D:/junk/testWrite.RData"
+  #outFile <- "testWrite3.RData"
   #################
-  ##things to be examined later
-  ##spline and knot inputs while variable testing
-  ##change values of wieghts when changing site-pair table site pairs
-  #################
-  ##assign k to prevent issues to cran checking
+  ##assign k to prevent issues with cran checking
   k <- NULL
+  
+  ##error checking for input objects
+  ##checks to see if in site-pair format from formatsitepair function
+  if(class(spTable)[1] != "gdmData"){
+    warning("spTable class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model will not fit.")
+  }
+  ##checks to makes sure data is a matrix or data frame
+  if(!(class(spTable)[1]=="gdmData" | class(spTable)[1]=="matrix" | class(spTable)[1]=="data.frame")){
+    stop("spTable argument needs to be gdmData, a matrix, or a data frame")
+  }
+  
+  ##sanity check on the data table
+  if(ncol(spTable) < 6){
+    stop("Not enough columns in data. (Minimum need: Observed, weights, X0, Y0, X1, Y1)")
+  }  
+  if(nrow(spTable) < 1){
+    stop("Not enough rows in data")
+  }
+  
+  ##checks that geo has either TRUE or FALSE
+  if(!(geo==TRUE | geo==FALSE)){
+    stop("geo argument must be either TRUE or FALSE")
+  }
+  ##makes sure splines is a numeric vector
+  if(is.null(splines)==FALSE & class(splines)!="numeric"){
+    stop("argument splines needs to be a numeric data type")
+  }
+  ##checks knots inputs
+  if(is.null(knots)==FALSE & class(knots)!="numeric"){
+    stop("argument knots needs to be a numeric data type")
+  }
+  ##checks that fullModelOnly has either TRUE or FALSE
+  if(!(fullModelOnly==TRUE | fullModelOnly==FALSE)){
+    stop("fullModelOnly argument must be either TRUE or FALSE")
+  }
+  ##makes sure that nPerm is a positive integer 
+  if((is.null(nPerm)==FALSE & is.numeric(nPerm)==FALSE) | nPerm<1){
+    stop("argument nPerm needs to be a positive integer")
+  }
+  ##checks that parallel has either TRUE or FALSE
+  if(!(parallel==TRUE | parallel==FALSE)){
+    stop("parallel argument must be either TRUE or FALSE")
+  }
+  ##makes sure that cores has a value when parallel is true
+  if(parallel==TRUE & is.null(cores)==TRUE){
+    stop("If parallel==TRUE, the number of cores must be specified")
+  }
+  ##makes sure that cores is a positive integer 
+  if((is.null(cores)==FALSE & is.numeric(cores)==FALSE) | cores<1){
+    stop("argument cores needs to be a positive integer")
+  }
+  ##makes sure that both sampleSites and sampleSitePairs are a number between 0 and 1,
+  ##and that neither is equal to 0
+  if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
+    stop("argument sampleSites needs to be a positive number between 0 and 1")
+  }
+  if(is.numeric(sampleSitePairs)==FALSE | sampleSitePairs<0 | sampleSitePairs>1){
+    stop("argument sampleSitePairs needs to be a positive number between 0 and 1")
+  }
+  if(sampleSites==0){
+    stop("a sampleSites value of 0 will remove all sites from the analysis")
+  }
+  if(sampleSitePairs==0){
+    stop("a sampleSitePairs value of 0 will remove all sites from the analysis")
+  }
+  ##checks to see if the user has requested for an output file to be written, and if so
+  ##makes sure that it is formatted correctly
+  if(is.null(outFile)==FALSE){
+    ##first makes sure outFile is a string
+    if(is.character(outFile)==FALSE){
+      stop("argument outFile needs to be a character string of the directory and file name you wish the tables to be written to")
+    }
+    ##makes sure that text has ".RData" in it, if not, adds it
+    outFileChar <- nchar(outFile)
+    if(substr(outFile, outFileChar-5, outFileChar)!=".RData"){
+      outFile <- paste(outFile, ".RData", sep="")
+    }
+    ##checks to see if there is a path as well as a file name
+    if(length(strsplit(outFile,"/")[[1]])>1){
+      splitOutFile <- strsplit(outFile,"/")[[1]][-length(strsplit(outFile,"/")[[1]])]
+      dir.create(paste(splitOutFile, collapse="/"))
+    }else{
+      outFile <- paste("./", outFile, sep="")
+    }
+  }
+
+  ##double makes sure these values are integers, seems to truncate if not
+  nPerm <- as.integer(nPerm)
+  cores <- as.integer(cores)
+  
+  ##removes a user specified number of sites from the site-pair table
+  if(sampleSites<1){
+    spTable <- removeSitesFromSitePair(spTable, sampleSites=sampleSites)
+    ##throws warning if sampleSitePairs<1 as well
+    if(sampleSitePairs<1){
+      warning("You have selected to randomly remove sites and/or site-pairs.")
+    }
+  }
+  ##removes a user specified number of site-paires from the site-pair table
+  if(sampleSitePairs<1){
+    ##determine which rows to remove
+    numRm <- sample(1:nrow(spTable), round(nrow(spTable)*(1-sampleSitePairs)))
+    spTable <- spTable[-c(numRm),]
+  }
+
+  ##check that the response data is [0..1]
+  rtmp <- spTable[,1]
+  if(length(rtmp[rtmp<0]) > 0){
+    stop("Response spTable has negative values. Must be between 0 - 1.")
+  }
+  if (length(rtmp[rtmp>1]) > 0){
+    stop("Response spTable has values greater than 1. Must be between 0 - 1.")
+  }
   
   ##number of variables in the site-pair table, adds 1 if geo is to be TRUE
   nVars <- (ncol(spTable)-6)/2
   ##collects variable names
-  varNames <- colnames(spTable[,c(7:(6+nVars))])
+  varNames <- colnames(spTable[c(7:(6+nVars))])
+  
   varNames <- sapply(strsplit(varNames, "s1."), "[[", 2)
   if(geo==TRUE){
     nVars <- nVars + 1
@@ -1663,7 +1811,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   ##adds a column of NA for index to be added to
   fullSortMat <- cbind(as.vector(sortMatX), as.vector(sortMatY), as.vector(sortMatNum), as.vector(sortMatRow), rep(NA, length(sortMatX)))
   ##assigns sites by unique coordinates
-  siteByCoords <- unique(fullSortMat[,1:2])
+  siteByCoords <- as.data.frame(unique(fullSortMat[,1:2]))
   ##number of sites to expect by coordinates
   numSites <- nrow(siteByCoords)
   ##assigns site index based on coordinates
@@ -1676,6 +1824,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   for(iRow in 1:nrow(fullSortMat)){
     indexTab[fullSortMat[iRow,4],fullSortMat[iRow,3]] <- fullSortMat[iRow,5]
   }
+  
   ## And remove the sorting table and supporting objects to free up memory
   rm(fullSortMat)
   rm(sortMatX)
@@ -1685,44 +1834,52 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   rm(siteByCoords)
   
   ##create siteXvar table, to be able to rebuild site-pair table later in function
-  exBySite <- lapply(1:numSites, function(i, index, tab){rowSites <- which(index[,1] %in% i)
-  if(length(rowSites)<1){
-    rowSites <- which(index[,2] %in% i)
-  }
-  exSiteData <- tab[rowSites[1],]
-  return(exSiteData)
+  exBySite <- lapply(1:numSites, function(i, index, tab){
+    rowSites <- which(index[,1] %in% i)
+    if(length(rowSites)<1){
+      rowSites <- which(index[,2] %in% i)
+    }
+    exSiteData <- tab[rowSites[1],]
+    return(exSiteData)
   }, index=indexTab, tab=spTable)
-  ##extracts the data from the site-pair table by site
-  siteData <- lapply(exBySite, function(row){row[grep("s1.", colnames(row))]})
   ##identifies the one site not in the first column of the index table                                                 
   outSite <- which(!(1:numSites %in% indexTab[,1]))
-  ##removes the site that did not appear in the first column
-  siteData[[outSite]] <- NULL
-  ##transforms data from list to table
-  siteData <- do.call("rbind", siteData)
-  ##removes 's1.' from column names
-  colnames(siteData) <- sapply(strsplit(colnames(siteData), "s1."), "[[", 2)
+  #print(outSite)
+  ##sets up siteXvar table, uses for loop to make sure have steps correct
+  for(i in 1:length(exBySite)){
+    #i <- 42
+    ##grabs row and identify if should take s1 or s2 by rather or not number appears in outsite
+    siteRow <- exBySite[[i]]
+    if(i %in% outSite){
+      ##extracts the data from the site-pair table by site
+      siteRow <- siteRow[grep("s2.", colnames(siteRow))]
+      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s2."), "[[", 2)
+    }else{
+      ##extracts the data from the site-pair table by site
+      siteRow <- siteRow[grep("s1.", colnames(siteRow))]
+      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s1."), "[[", 2)
+    }
+    exBySite[[i]] <- siteRow
+  }
   
-  ##adding the site removed above, with correct values
-  outSiteData <- exBySite[[outSite]][grep("s2.", colnames(exBySite[[outSite]]))]
-  colnames(outSiteData) <- sapply(strsplit(colnames(outSiteData), "s2."), "[[", 2)
-  siteData <- rbind(siteData, outSiteData)
+  ##transforms data from list to table
+  siteData <- do.call("rbind", exBySite)
   
   ##sets up objects to be returned by the function
-  modelTestValues <- matrix(NA,3,nVars,dimnames = list(c("Model deviance", "Percent deviance explained", "Model p-value"),c("fullModel", paste("fullModel-", seq(1,nVars-1), sep=""))))
+  modelTestValues <- matrix(NA,4,nVars,dimnames = list(c("Model deviance", "Percent deviance explained", "Model p-value", "Fitted permutations"),c("fullModel", paste("fullModel-", seq(1,nVars-1), sep=""))))
   ##deviance reduction variable table, not yet sure why imporant
   devReductVars <- matrix(NA, nVars, nVars-1)
   rownames(devReductVars) <- varNames
   colnames(devReductVars) <- c("fullModel", paste("fullModel-", seq(1,nVars-2), sep=""))
   ##p value variable table, not yet sure why imporant
-  pValues <- devReductVars
+  pValues <- numPermsFit <- devReductVars
   
   ##assigns given site-pair table to new variable, to prevent changing the original input
   currSitePair <- spTable
   
   for(v in 1:nVars){
-    #v <- 11
-    print(varNames[v])
+    #v <- 2
+    #print(varNames[v])
 
     ##runs gdm, first time on full site-pair table
     ##however as variables are removed the "full" site-pair table will have less varialbes in it
@@ -1740,7 +1897,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       permSitePairs <- foreach(k=1:nPerm, .verbose=F, .packages=c("gdm"), .export=c("permutateSitePair")) %dopar%
         permutateSitePair(currSitePair, siteData, indexTab, varNames)
       
-      permGDM <- try(foreach(k=1:length(permSitePairs), .verbose=T, .packages=c("gdm")) %dopar%
+      permGDM <- try(foreach(k=1:length(permSitePairs), .verbose=F, .packages=c("gdm")) %dopar%
                        gdm(permSitePairs[[k]], geo=geo, splines=NULL, knots=NULL))
       ##closes cores
       stopCluster(cl)
@@ -1753,22 +1910,29 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     
     ##runs gdm on the permuted tables
     permModelDev <- sapply(permGDM, function(mod){mod$gdmdeviance})
+    ##if needed, removes nulls from output permModelDev
+    modPerms <- length(which(sapply(permModelDev,is.null)==TRUE))
+    if(modPerms>0){
+      permModelDev <- unlist(permModelDev[-(which(sapply(permModelDev,is.null)==T))])
+    }
     
     ##begins to fill in the output table with data from fully fitted model
     modelTestValues[1,v] <- fullGDM$gdmdeviance
     modelTestValues[2,v] <- fullGDM$explained
     #p-value
-    modelTestValues[3,v] <- sum(permModelDev<=fullGDM$gdmdeviance)/nPerm
-    
+    modelTestValues[3,v] <- sum(permModelDev<=fullGDM$gdmdeviance)/(nPerm-modPerms)
+    ##fitted permutations
+    modelTestValues[4,v] <- nPerm-modPerms
+     
     ##ends the loop if only 1 variable was used in the model
     if(length(varNames)<2){
-      #if(length(varNames)<1){
       break
     }
     
     ##begins running tests on variations
     ##runs model without geo if geo was part of the model
     if(geo==TRUE){
+      #print("doing Geo")
       noGeoGDM <- gdm(currSitePair, geo=FALSE, splines=NULL, knots=NULL)
       
       ##create a series of permutated site-pair tables, randomized site comparisons
@@ -1779,29 +1943,42 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
         
         permSitePairs <- foreach(k=1:nPerm, .verbose=F, .packages=c("gdm"), .export=c("permutateSitePair")) %dopar%
           permutateSitePair(currSitePair, siteData, indexTab, varNames)
+        
+        permGDM <- try(foreach(k=1:length(permSitePairs), .verbose=F, .packages=c("gdm")) %dopar%
+                         gdm(permSitePairs[[k]], geo=geo, splines=NULL, knots=NULL))
         ##closes cores
         stopCluster(cl)
       }else{
         ##non-parallel version
         permSitePairs <- lapply(1:nPerm, function(i, csp, sd, it, vn){permutateSitePair(csp,sd,it,vn)}, 
                                 csp=currSitePair, sd=siteData, it=indexTab, vn=varNames)
+        ##runs gdm on the permuted tables
+        permGDM <- lapply(permSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
       }
       
       ##runs gdm on the permuted tables
-      permGDM <- lapply(permSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
-      ##permutations for geographic, and adds them to output objects
-      permDevReduct <- sapply(permGDM, function(mod, ngeo){ngeo$gdmdeviance - mod$gdmdeviance}, ngeo=noGeoGDM)
+      permModelDev <- sapply(permGDM, function(mod){mod$gdmdeviance})
+      ##if needed, removes nulls from output permModelDev
+      modPerms <- length(which(sapply(permModelDev,is.null)==TRUE))
+      if(modPerms>0){
+        permModelDev <- unlist(permModelDev[-(which(sapply(permModelDev,is.null)==T))])
+      }
+      
+      ##calculates table values for geographic, and adds them to output objects
+      permDevReduct <- noGeoGDM$gdmdeviance - permModelDev
       devReductVars[1,v] <- noGeoGDM$gdmdeviance - fullGDM$gdmdeviance
-      pValues[1,v] <- sum(permDevReduct>=devReductVars[1,v])/nPerm
+      pValues[1,v] <- sum(permDevReduct>=devReductVars[1,v])/(nPerm-modPerms)
+      numPermsFit[1,v] <- nPerm-modPerms
     }
     
     ##now tests all other variables 
     for(varChar in varNames){
-      #varChar <- varNames[1]
+      #varChar <- varNames[2]
       if(varChar!="Geographic"){
         ##select variable columns to be removed from original site-pair table
-        testVarCol <- grep(varChar, colnames(currSitePair))
-        testSitePair <- currSitePair[,-c(testVarCol)]
+        testVarCols1 <- grep(paste("^s1.", varChar, "$", sep=""), colnames(currSitePair))
+        testVarCols2 <- grep(paste("^s2.", varChar, "$", sep=""), colnames(currSitePair))
+        testSitePair <- currSitePair[,-c(testVarCols1, testVarCols2)]
         ##run gdm for the missing variable
         noVarGDM <- gdm(testSitePair, geo=geo, splines=NULL, knots=NULL)
         
@@ -1813,21 +1990,32 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
           
           noVarSitePairs <- foreach(k=1:nPerm, .verbose=F, .packages=c("gdm"), .export=c("permutateVarSitePair")) %dopar%
             permutateVarSitePair(currSitePair, siteData, indexTab, varChar)
+          ##runs gdm on the permuted tables
+          permGDM <- try(foreach(k=1:length(noVarSitePairs), .verbose=F, .packages=c("gdm")) %dopar%
+                           gdm(noVarSitePairs[[k]], geo=geo, splines=NULL, knots=NULL))
           ##closes cores
           stopCluster(cl)
         }else{
           ##non-parallel version
           noVarSitePairs <- lapply(1:nPerm, function(i, csp, sd, it, vn){permutateVarSitePair(csp,sd,it,vn)}, 
                                    csp=currSitePair, sd=siteData, it=indexTab, vn=varChar)
+          ##runs gdm on the permuted tables
+          permGDM <- lapply(noVarSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
         }
         
         ##runs gdm on the permuted tables
-        permGDM <- lapply(noVarSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
-        ##permutations for geographic, and adds them to output objects
-        permDevReduct <- sapply(permGDM, function(mod, nvar){nvar$gdmdeviance - mod$gdmdeviance}, nvar=noVarGDM)
+        permModelDev <- sapply(permGDM, function(mod){mod$gdmdeviance})
+        ##if needed, removes nulls from output permModelDev
+        modPerms <- length(which(sapply(permModelDev,is.null)==TRUE))
+        if(modPerms>0){
+          permModelDev <- unlist(permModelDev[-(which(sapply(permModelDev,is.null)==T))])
+        }
+        
+        ##calculates table values for geographic, and adds them to output objects
+        permDevReduct <- noVarGDM$gdmdeviance - permModelDev
         devReductVars[which(rownames(devReductVars) %in% varChar),v] <- noVarGDM$gdmdeviance - fullGDM$gdmdeviance
-        #print(varChar)
-        pValues[which(rownames(pValues) %in% varChar),v] <- sum(permDevReduct>=devReductVars[which(rownames(devReductVars) %in% varChar),v])/nPerm
+        pValues[which(rownames(pValues) %in% varChar),v] <- sum(permDevReduct>=devReductVars[which(rownames(devReductVars) %in% varChar),v])/(nPerm-modPerms)
+        numPermsFit[which(rownames(numPermsFit) %in% varChar),v] <- nPerm-modPerms
       }
     }
     
@@ -1862,15 +2050,22 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     }else{
       ##removes any non-geo variable
       nameToRemove <- varNames[varToOmit]
+      #nameToRemove <- "bio1"
       ##remove from variables
       varNames <- varNames[-varToOmit]
-      removeFromSiteP <- grep(nameToRemove, colnames(currSitePair))
+      removeFromSitePs1 <- grep(paste("^s1.", nameToRemove, "$", sep=""), colnames(currSitePair))
+      removeFromSitePs2 <- grep(paste("^s2.", nameToRemove, "$", sep=""), colnames(currSitePair))
       ##removes variable from important objects
-      currSitePair <- currSitePair[,-c(removeFromSiteP)]
+      currSitePair <- currSitePair[,-c(removeFromSitePs1,removeFromSitePs2)]
     }
   }
   ##lists tables into one object
-  outObject <- list(modelTestValues, devReductVars, pValues)
+  outObject <- list(modelTestValues, devReductVars, pValues, numPermsFit)
+  ##if given, writes out files to space on disk
+  if(is.null(outFile)==FALSE){
+    save(outObject, file=outFile)
+  }
+  
   return(outObject)
 }
 ##########################################################################
@@ -1897,8 +2092,15 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
   #print(vNames)
   ##extracts values of other variables 
   varLists <- lapply(vNames, function(vn, rvTab, spt, inT){if(vn!="Geographic"){
+    ###################
+    #vn <- vNames[[2]]
+    #rvTab=randVarTab
+    #spt=spTab
+    #inT=indexTab
+    ###################
     ##identifies variable columns in randVarTab
-    randCols <- grep(vn, colnames(rvTab))
+    randCols <- grep(paste("^", vn, "$", sep=""), colnames(rvTab))
+    #print(randCols)
     ##identifies variable columns in site-pair table
     spCols <- grep(vn, colnames(spt))
     
@@ -1925,6 +2127,8 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
   return(newSP)
 }
 ##########################################################################
+
+##########################################################################
 permutateVarSitePair <- function(spTab, siteVarTab, indexTab, vName){
   ##only randomizes the values for a particular variable 
   #################
@@ -1937,17 +2141,20 @@ permutateVarSitePair <- function(spTab, siteVarTab, indexTab, vName){
   randVarTab <- siteVarTab[sample(nrow(siteVarTab), nrow(siteVarTab)), ]
   
   ##identifies variable columns in randVarTab
-  randCols <- grep(vName, colnames(randVarTab))
+  randCols <- grep(paste("^", vName, "$", sep=""), colnames(randVarTab))
   ##identifies variable columns in site-pair table
-  spCols <- grep(vName, colnames(spTab))
+  spCols1 <- grep(paste("^s1.", vName, "$", sep=""), colnames(spTab))
+  spCols2 <- grep(paste("^s2.", vName, "$", sep=""), colnames(spTab))
   
   ##extracts values based on new index position
   s1var <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,1],randCols]})
   s2var <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,2],randCols]})
   ##places values back into site-pair table
-  spTab[,spCols[1]] <- s1var
-  spTab[,spCols[2]] <- s2var
+  spTab[,spCols1] <- s1var
+  spTab[,spCols2] <- s2var
   
   return(spTab)
 }
 ##########################################################################
+
+

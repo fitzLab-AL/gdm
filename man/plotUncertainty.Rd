@@ -2,13 +2,13 @@
 \alias{plotUncertainty}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Plot variance of I-splines using bootstrapping.
+Plot I-splines with error bands using bootstrapping.
 }
 \description{
-This function estimates uncertainty in the I-splines using bootstrapping. The function can run in parallel on multicore machines to reduce computation time (recommended for large number of iterations). I-spline plots with error bands (+/- one standard deviation) are produced showing (1) the variance of Ispline coefficients and (2) a rug plot indicating how sites used in model fitting are distributed along each gradient.
+This function estimates uncertainty in the fitted I-splines using bootstrapping. The function can run in parallel on multicore machines to reduce computation time (recommended for large number of iterations). I-spline plots with error bands (+/- one standard deviation) are produced showing (1) the variance of I-spline coefficients and (2) a rug plot indicating how sites used in model fitting are distributed along each gradient.
 }
 \usage{
-plotUncertainty(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL, knots=NULL, 
+plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL, knots=NULL, 
                 splineCol="blue", errCol="grey80", plot.linewidth=2.0, plot.layout=c(2,2),
                 parallel=FALSE, cores=2)
 }
@@ -17,8 +17,8 @@ plotUncertainty(spTable, leaveOut, bsIters, geo=FALSE, splines=NULL, knots=NULL,
   \item{spTable}{
 A site-pair table, same as used to fit a \code{\link{gdm}}.
 }
-  \item{leaveOut}{
-The fraction (0-1) of sites to remove from the full site-pair table when subsampling.
+  \item{sampleSites}{
+The fraction (0-1) of sites to retain from the full site-pair table when subsampling.
 }
   \item{bsIters}{
 The number of bootstrap iterations to perform.
@@ -45,7 +45,7 @@ The line width of the plotted mean spline line. The default is 2.
 Same as the \code{\link{plot.gdm}} plot.layout argument.
 }
   \item{parallel}{
-Whether or not to run the uncertainty estimation in parallel. The parallel processing is done using a foreach loop and it is highly recommended when the bsIters argument is hundreds or more. When is argument is set to FALSE, the processes are completed using lapply. The default is FALSE. 
+Whether or not to run the uncertainty estimation in parallel. The parallel processing is highly recommended when the bsIters argument is hundreds or more. The default is FALSE (no parallel processing). 
 }
   \item{cores}{
 When the parallel argument is set to TRUE, the number of cores to be registered for the foreach loop. Must be <= the number of cores in the machine running the function.
@@ -59,7 +59,7 @@ plotUncertainty returns NULL.
 Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque, N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua} in the Mojave Desert: a multivariate, spatially-explicit approach to guide ecological restoration. \emph{Conservation Genetics} 16:1303-1317.
 }
 
-\seealso{\code{\link[gdm]{plot.gdm}, \link[gdm]{formatsitepair}}}
+\seealso{\code{\link[gdm]{plot.gdm}, \link[gdm]{formatsitepair}, \link[gdm]{removeSitesFromSitePair}}}
 
 \examples{
 ##sets up site-pair table
@@ -71,11 +71,11 @@ sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 
 ##plot GDM uncertainty using one core
 #not run
-#plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=5, geo=TRUE, plot.layout=c(3,3))
+#plotUncertainty(sitePairTab, sampleSites=0.70, bsIters=5, geo=TRUE, plot.layout=c(3,3))
 
 ##plot GDM uncertainty in parallel
 #not run
-#plotUncertainty(sitePairTab, leaveOut=0.30, bsIters=50, geo=TRUE, plot.layout=c(3,3),
+#plotUncertainty(sitePairTab, sampleSites=0.70, bsIters=50, geo=TRUE, plot.layout=c(3,3),
 #parallel=T, cores=10)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
