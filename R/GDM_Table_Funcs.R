@@ -1656,11 +1656,11 @@ removeSitesFromSitePair <- function(spTable, sampleSites){
 #samp <- sample(1:nrow(gdmTab), 2500)
 ##########################################################################
 gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FALSE, 
-                                       nPerm=100, parallel=FALSE, cores=2, sampleSites=1, 
+                                       nPerm=50, parallel=FALSE, cores=2, sampleSites=1, 
                                         sampleSitePairs=1, outFile=NULL){
   ##function to test the signifiance of the various variables of a gdm site-pair table
   #################
-  #spTable <- testVTab         ##the input site-pair table to subsample from
+  #spTable <- sitePairTab         ##the input site-pair table to subsample from
   #load("M:/UAE/kavyaWorking/Code/GDM/GDMSitepairTable.RData")
   #spTable <- gdmTab
   #spTable <- gdmTab[-c(samp),]
@@ -1673,6 +1673,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   #cores <- 5             ##if in parallel, the number of cores to run on
   #sampleSites <- 1   ##the percent of sites to be retained before calculating
   #sampleSitePairs <- 1  ##the percent of site-pairs (rows) to be retained before calculating
+  #outFile <- NULL
   #outFile <- "D:/junk/testWrite.RData"
   #outFile <- "testWrite3.RData"
   #################
@@ -1878,7 +1879,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   currSitePair <- spTable
   
   for(v in 1:nVars){
-    #v <- 2
+    #v <- 1
     #print(varNames[v])
 
     ##runs gdm, first time on full site-pair table
@@ -1965,9 +1966,17 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       }
       
       ##calculates table values for geographic, and adds them to output objects
-      permDevReduct <- noGeoGDM$gdmdeviance - permModelDev
-      devReductVars[1,v] <- noGeoGDM$gdmdeviance - fullGDM$gdmdeviance
-      pValues[1,v] <- sum(permDevReduct>=devReductVars[1,v])/(nPerm-modPerms)
+      if(is.null(noGeoGDM$gdmdeviance)==TRUE){
+        permDevReduct <- -9999
+        devReductVars[1,v] <- -9999
+        pValues[1,v] <- -9999
+      }else{
+        permDevReduct <- noGeoGDM$gdmdeviance - permModelDev
+        ##change in devience with variable removed
+        #devReductVars[1,v] <- noGeoGDM$gdmdeviance - fullGDM$gdmdeviance  ##original - difference in devience
+        devReductVars[1,v] <- 100 * abs((noGeoGDM$explained - fullGDM$explained)/fullGDM$explained)  ##new - percent change in devience
+        pValues[1,v] <- sum(permDevReduct>=(noGeoGDM$gdmdeviance - fullGDM$gdmdeviance))/(nPerm-modPerms)
+      }
       numPermsFit[1,v] <- nPerm-modPerms
     }
     
@@ -2012,9 +2021,16 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
         }
         
         ##calculates table values for geographic, and adds them to output objects
-        permDevReduct <- noVarGDM$gdmdeviance - permModelDev
-        devReductVars[which(rownames(devReductVars) %in% varChar),v] <- noVarGDM$gdmdeviance - fullGDM$gdmdeviance
-        pValues[which(rownames(pValues) %in% varChar),v] <- sum(permDevReduct>=devReductVars[which(rownames(devReductVars) %in% varChar),v])/(nPerm-modPerms)
+        if(is.null(noVarGDM$gdmdeviance)==TRUE){
+          permDevReduct <- -9999
+          ggg <- which(rownames(devReductVars) %in% varChar)
+          devReductVars[ggg,v] <- rep(-9999, times=length(ggg))
+          pValues[ggg,v] <- rep(-9999, times=length(ggg))
+        }else{
+          permDevReduct <- noVarGDM$gdmdeviance - permModelDev
+          devReductVars[which(rownames(devReductVars) %in% varChar),v] <- 100 * abs((noVarGDM$explained - fullGDM$explained)/fullGDM$explained)
+          pValues[which(rownames(pValues) %in% varChar),v] <- sum(permDevReduct>=(noVarGDM$gdmdeviance - fullGDM$gdmdeviance))/(nPerm-modPerms)
+        }
         numPermsFit[which(rownames(numPermsFit) %in% varChar),v] <- nPerm-modPerms
       }
     }

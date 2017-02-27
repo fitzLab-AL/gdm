@@ -5,11 +5,11 @@
 Quantify model significance and variable importance/significance in gdm using matrix permutation.
 }
 \description{
-This function uses matrix permutation to perform model and variable significance testing and to estimate variable importance in a generalized dissimilarity model. The function can run in parallel on multicore machines to reduce computation time (recommended). 
+This function uses matrix permutation to perform model and variable significance testing and to estimate variable importance in a generalized dissimilarity model. The function can be run in parallel on multicore machines to reduce computation time (recommended until we learn to program in C++). 
 }
 \usage{
 gdm.varImp(spTable, geo, splines = NULL, knots = NULL, fullModelOnly = FALSE, 
-nPerm = 100, parallel = FALSE, cores = 2, sampleSites = 1, sampleSitePairs = 1,
+nPerm = 50, parallel = FALSE, cores = 2, sampleSites = 1, sampleSitePairs = 1,
 outFile = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,13 +27,13 @@ Same as the \code{\link{gdm}} splines argument.
 Same as the \code{\link{gdm}} knots argument.
 }
   \item{fullModelOnly}{
-Set to TRUE to test only the full variable set. Set to false to estimate model significance and variable importance and significance using matrix permutation and backward elimination. Default is FALSE.
+Set to TRUE to test only the full variable set. Set to FALSE to estimate model significance and variable importance and significance using matrix permutation and backward elimination. Default is FALSE.
 }
   \item{nPerm}{
-Number of permutations to use to estimate p-values. Default is 100.
+Number of permutations to use to estimate p-values. Default is 50.
 }
   \item{parallel}{
-Whether or not to run the matrix permutations and model fitting in parallel. Parallel processing is highly recommended when either (i) the nPerms argument is large (>100) or (ii) a large number of site-pairs are being used in model fitting (note computation demand can be reduced using subsampling - see next arguments). The default is FALSE. 
+Whether or not to run the matrix permutations and model fitting in parallel. Parallel processing is highly recommended when either (i) the nPerms argument is large (>100) or (ii) a large number of site-pairs (and or variables) are being used in model fitting (note computation demand can be reduced using subsampling - see next arguments). The default is FALSE. 
 }
   \item{cores}{
 When the parallel argument is set to TRUE, the number of cores to be registered for parallel processing. Must be <= the number of cores in the machine running the function.
@@ -49,14 +49,16 @@ An optional character string to write the object returned by the function to dis
 }
 }
 \details{
-To test model significance, first a "full model" is fit using un-permuted environmental data. Next, the environmental data are permuted nPerm times (by randomizing the order of the rows) and a GDM is fit to each permuted table. Model significance is determined by comparing the deviance explained by GDM fit to the un-permuted table to the distribution of deviance explained values from GDM fit to the nPerm permuted tables. To assess variable significance, this process is repeated for each predictor individually (i.e., only the data for the variable being tested is permuted rather than the entire environmental table). Variable importance is quantified as the overall reduction in deviance between models fit with the variable permuted and un-permuted. If fullModelOnly=F, this process continues by then permutating the site-pair table nPerm times, but removing one variable at a time and reassessing variable importance and significance. At each step, the least important variable is dropped (backward elimination) and the process continues until all non-significant predictors are removed. 
+To test model significance, first a "full model" is fit using un-permuted environmental data. Next, the environmental data are permuted nPerm times (by randomizing the order of the rows) and a GDM is fit to each permuted table. Model significance is determined by comparing the deviance explained by GDM fit to the un-permuted table to the distribution of deviance explained values from GDM fit to the nPerm permuted tables. To assess variable significance, this process is repeated for each predictor individually (i.e., only the data for the variable being tested is permuted rather than the entire environmental table). Variable importance is quantified as the percent change in deviance explained between a model fit with and without that variable (technically speaking, with the variable permuted and un-permuted). If fullModelOnly=FALSE, this process continues by then permutating the site-pair table nPerm times, but removing one variable at a time and reassessing variable importance and significance. At each step, the least important variable is dropped (backward elimination) and the process continues until all non-significant predictors are removed. 
 }
 \value{
-A list of four tables. The first table summarizes model deviance, percent deviance explained, the p-value of the model, and the number of permutations used to calculate the statistics for each fitted model (i.e., the full model and each model with variables removed in succession during the backward elimination procedure). The remaining three tables summarize (1) variable importance, (2) variable significance, and (3) the number of permutations used to calculate the statistics for that model respectively (these values are provided because some number of nPerm GDMs may fail to fit for some permutations / variable combinations). 
+A list of four tables. The first table summarizes full model deviance, percent deviance explained by the full model, the p-value of the full model, and the number of permutations used to calculate the statistics for each fitted model (i.e., the full model and each model with variables removed in succession during the backward elimination procedure if fullModelOnly=F). The remaining three tables summarize (1) variable importance, (2) variable significance, and (3) the number of permutations used to calculate the statistics for that model, which is provided because some GDMs may fail to fit for some permutations / variable combinations and you might want to know how many permutations were used when clacuating statistics. Or maybe you don't, you decide. 
 
-Variable importance is measured as the amount full model deviance is reduced when that variable is permuted. Significance is estimated using the bootstrapped p-value when the variable has been permuted. For most cases, the number of permutations will equal the nPerm argument. However, the value may be less should any of the permutations fail to fit.
+Variable importance is measured as the percent change in deviance explained by the full model and the deviance explained by a model fit with that variable permuted. Significance is estimated using the bootstrapped p-value when the variable has been permuted. For most cases, the number of permutations will equal the nPerm argument. However, the value may be less should any of the permutations fail to fit. 
 
 If fullModelOnly=T, the tables will have values only in the first column and NAs elsewhere.    
+
+NOTE: In some cases, GDM may fail to fit if there is a weak relationship between the response and predictors (e.g., when an important variable is removed). Such cases are indicated by -9999 values in the variable importance, variable significance, and number of permutations tables.
 }
 \author{
 Karel Mokany, Matthew Lisk, and Matt Fitzpatrick
