@@ -1566,7 +1566,7 @@ static integer c__1 = 1;
 static integer c__0 = 0;
 static integer c__2 = 2;
 
-static integer myCount = 0;
+//static integer myCount = 0;
 
 
 int h12_( int *mode, int *lpivot, int *l1, int *m, 

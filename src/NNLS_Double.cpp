@@ -1190,7 +1190,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 	// show results
 	//
 	double *pCoeffs = NULL;
-	char buff[64];
+	//char buff[64];
 	if ( mode == 1 )
 	{
 		//sprintf( buff, "THE SOLUTION HAS BEEN COMPUTED SUCCESSFULLY." );

@@ -5,13 +5,17 @@
 #include "stdafx.h"
 #include "Gdmlib.h"
 #include "NNLS_Double.h"
-//#include "Message.h"
+
+#include "Message.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
-//#include <unistd.h>
+
+#include <unistd.h>
+#include <Rcpp.h>
+using namespace Rcpp;
 
 //#ifdef _WIN32
 //	#include <io.h>
@@ -120,7 +124,7 @@ void GDM_FitFromTable(char **wspath,
 	strncat(fullFile, cbin, sizeof(fullFile));
 	
 	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
-	
+	Rcpp::Rcout << lpTmpFile << std::endl;
 	int h = _open( lpTmpFile, _O_BINARY | _O_CREAT | _O_TRUNC | _O_RDWR, S_IREAD | S_IWRITE );
 	if ( h < 0 )
 	{
@@ -1850,7 +1854,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 	// Everything passed from R needs to be dereferenced...
 	//
 	int nRows = *pRows;
-	int nCols = *pCols;
+	//int nCols = *pCols;
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 

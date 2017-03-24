@@ -760,21 +760,21 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   #custWeights <- NULL
   #sampleSites <- 1
   #################
-  #bioData <- exFormat2a
-  #bioFormat <- 4
+  #bioData <- bio
+  #bioFormat <- 2
   #dist <- "bray"
-  #abundance <- F
+  #abundance <- T
   #siteColumn <- "site"
-  #XColumn <- NULL
-  #YColumn <- NULL
-  #sppColumn <- NULL
+  #XColumn <- "X"
+  #YColumn <- "Y"
+  #sppColumn <- "locus"
   #sppFilter <- 0
-  #abundColumn <- NULL
-  #predData <- envTab
-  #distPreds <- list(as.matrix(gdmDissim))
+  #abundColumn <- "abund"
+  #predData <- preds
+  #distPreds <- NULL
   #weightType <- "equal"
   #custWeights <- NULL
-  #sampleSites <- NULL
+  #sampleSites <- 1
   ###########################
   ##input error checking
   ##makes sure bioData is in an acceptable format
@@ -804,10 +804,11 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     stop("abundance argument must be either TRUE or FALSE")
   }
   ##if sampleSites is not a number, then exit function
-  if(is.null(sampleSites)==FALSE){
-    if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
-      stop("sampleSites argument must be a number between 0-1")
-    }
+  if(is.null(sampleSites)==TRUE){
+    stop("sampleSites argument must be a number between 0-1")
+  }
+  if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
+    stop("sampleSites argument must be a number between 0-1")
   }
   
   ##makes sure that sppFilter is a number, if not exit function
@@ -1027,8 +1028,10 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     colnames(bioData)[colnames(bioData)==siteColumn] <- "gettingCoolSiteColumn"
     colnames(predData)[colnames(predData)==siteColumn] <- "gettingCoolSiteColumn"
     predData <- unique(predData)
+    #predData3 <- predData[which(predData$gettingCoolSiteColumn %in% 
+    #                             as.character(as.numeric(bioData$gettingCoolSiteColumn))),]
     predData <- predData[which(predData$gettingCoolSiteColumn %in% 
-                                 as.character(as.numeric(bioData$gettingCoolSiteColumn))),]
+                                 as.character(bioData$gettingCoolSiteColumn)),]
     
     ##remove custom weights from any sites removed by species filtering and sampling
     if(weightType=="custom" & !is.null(custWeights)){
