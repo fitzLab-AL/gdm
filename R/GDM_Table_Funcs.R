@@ -281,7 +281,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   
   ##reports a warning should the model "fit", yet the sum of coefficients = 0
   if(sum(gdmModOb$coefficients)==0){
-    warning("Problem with model fitting, no solution obtained. Sum of spline coefficients = 0. Deviance explained = NULL.")
+    warning("Problem with model fitting, no solution obtained. Sum of spline coefficients = 0. Deviance explained = NULL. Returning NULL object.")
     ##sets the deviance explained to NULL, to reflect that the model didn't fit correctly
     gdmModOb <- NULL
   }
@@ -789,7 +789,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   
   ##makes sure predData is in an acceptable format
   if(!(class(predData)=="data.frame" | class(predData)=="matrix" | class(predData)=="RasterStack" | class(predData)=="RasterLayer" | class(predData)=="RasterBrick")){
-    "predData should be a data frame or matrix in one of the acceptable formats"
+    "predData should be a data frame, matrix, or raster in one of the acceptable formats"
   }
   if(class(predData)[1]=="data.frame" | class(predData)[1]=="matrix"){
     predData <- as.data.frame(predData, stringsAsFactors=F)
@@ -1665,15 +1665,15 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   #################
   #spTable <- sitePairTab         ##the input site-pair table to subsample from
   #load("M:/UAE/kavyaWorking/Code/GDM/GDMSitepairTable.RData")
-  #spTable <- gdmTab
+  #spTable <- ddd
   #spTable <- gdmTab[-c(samp),]
   #geo <- T              ##rather or not the gdm model takes geography into account, see gdm
   #splines <- NULL       ##splines gdm setting, see gdm
   #knots <- NULL         ##knots gdm setting, see gdm
-  #fullModelOnly <- F     ##rather to run the full calculations, or just once on the full model, acceptable values are TRUE and FALSE
-  #nPerm <- 5             ##number of permutations
+  #fullModelOnly <- T     ##rather to run the full calculations, or just once on the full model, acceptable values are TRUE and FALSE
+  #nPerm <- 10             ##number of permutations
   #parallel <- T          ##rather or not to run in parallel
-  #cores <- 5             ##if in parallel, the number of cores to run on
+  #cores <- 7             ##if in parallel, the number of cores to run on
   #sampleSites <- 1   ##the percent of sites to be retained before calculating
   #sampleSitePairs <- 1  ##the percent of site-pairs (rows) to be retained before calculating
   #outFile <- NULL
@@ -1880,6 +1880,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   
   ##assigns given site-pair table to new variable, to prevent changing the original input
   currSitePair <- spTable
+  nullGDMFullFit <- 0  ##a variable to track rather or not the fully fitted gdm model returned a NULL object
   
   for(v in 1:nVars){
     #v <- 1
@@ -1889,8 +1890,13 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     ##however as variables are removed the "full" site-pair table will have less varialbes in it
     fullGDM <- gdm(currSitePair, geo=geo, splines=splines, knots=knots)
     
+    if(is.null(fullGDM)==TRUE){
+      warning(paste("The model did not fit when testing variable number ", v, ". Terminating analysis. Returning output objects filled up to the point of termination.", sep=""))
+      break
+    }
+    
     ##create a series of permutated site-pair tables, randomized site comparisons
-    if(parallel == TRUE){
+    if(parallel==TRUE){
       #require(foreach)
       #require(doParallel)
       
@@ -1900,7 +1906,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       
       permSitePairs <- foreach(k=1:nPerm, .verbose=F, .packages=c("gdm"), .export=c("permutateSitePair")) %dopar%
         permutateSitePair(currSitePair, siteData, indexTab, varNames)
-      
+      ##runs gdm on the permuted tables
       permGDM <- try(foreach(k=1:length(permSitePairs), .verbose=F, .packages=c("gdm")) %dopar%
                        gdm(permSitePairs[[k]], geo=geo, splines=NULL, knots=NULL))
       ##closes cores
@@ -1909,10 +1915,11 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       ##non-parallel version
       permSitePairs <- lapply(1:nPerm, function(i, csp, sd, it, vn){permutateSitePair(csp,sd,it,vn)}, 
                               csp=currSitePair, sd=siteData, it=indexTab, vn=varNames)
+      ##runs gdm on the permuted tables
       permGDM <- lapply(permSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
     }
     
-    ##runs gdm on the permuted tables
+    ##extracts deviance of permuted gdms
     permModelDev <- sapply(permGDM, function(mod){mod$gdmdeviance})
     ##if needed, removes nulls from output permModelDev
     modPerms <- length(which(sapply(permModelDev,is.null)==TRUE))
@@ -2015,7 +2022,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
           permGDM <- lapply(noVarSitePairs, gdm, geo=geo, splines=NULL, knots=NULL)
         }
         
-        ##runs gdm on the permuted tables
+        ##extracts deviance of permuted gdms
         permModelDev <- sapply(permGDM, function(mod){mod$gdmdeviance})
         ##if needed, removes nulls from output permModelDev
         modPerms <- length(which(sapply(permModelDev,is.null)==TRUE))
@@ -2102,11 +2109,18 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
   ##randomizes the row order of the given siteXvar table
   randVarTab <- siteVarTab[sample(nrow(siteVarTab), nrow(siteVarTab)), ]
   
+  #site1x <- siteVarTab$xCoord[1]
+  #site1y <- siteVarTab$yCoord[1]
+  #checkingIn <- siteVarTab[siteVarTab$xCoord==site1x & siteVarTab$yCoord==site1y,]
+  #checkX <- siteVarTab[siteVarTab$xCoord==site1x,]
+  #checkingRand <- randVarTab[randVarTab$xCoord==site1x & randVarTab$yCoord==site1y,]
+  
   ##sets up the coordinate values for the randomized site-pair table
   s1xCoord <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,1],1]})
   s1yCoord <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,1],2]})
   s2xCoord <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,2],1]})
   s2yCoord <- sapply(1:nrow(spTab), function(i){randVarTab[indexTab[i,2],2]})
+  
   
   #print(vNames)
   ##extracts values of other variables 
@@ -2143,6 +2157,10 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
   newSP <- as.data.frame(cbind(spTab$distance, spTab$weights, s1xCoord, s1yCoord, s2xCoord, s2yCoord, site1Vars, site2Vars))
   colnames(newSP) <- colnames(spTab)
   class(newSP) <- c(class(spTab))
+  
+  #getCoords1 <- newSP[newSP$s1.xCoord==site1x,]
+  #getCoords2 <- newSP[newSP$s2.xCoord==site1x,]
+  
   return(newSP)
 }
 ##########################################################################
@@ -2159,6 +2177,12 @@ permutateVarSitePair <- function(spTab, siteVarTab, indexTab, vName){
   ##randomizes the row order of the given siteXvar table
   randVarTab <- siteVarTab[sample(nrow(siteVarTab), nrow(siteVarTab)), ]
   
+  #site1x <- siteVarTab$xCoord[1]
+  #site1y <- siteVarTab$yCoord[1]
+  #checkingIn <- siteVarTab[siteVarTab$xCoord==site1x & siteVarTab$yCoord==site1y,]
+  #checkX <- siteVarTab[siteVarTab$xCoord==site1x,]
+  #checkingRand <- randVarTab[randVarTab$xCoord==site1x & randVarTab$yCoord==site1y,]
+  
   ##identifies variable columns in randVarTab
   randCols <- grep(paste("^", vName, "$", sep=""), colnames(randVarTab))
   ##identifies variable columns in site-pair table
@@ -2171,6 +2195,9 @@ permutateVarSitePair <- function(spTab, siteVarTab, indexTab, vName){
   ##places values back into site-pair table
   spTab[,spCols1] <- s1var
   spTab[,spCols2] <- s2var
+  
+  #getCoords1 <- spTab[spTab$s1.xCoord==site1x,]
+  #getCoords2 <- spTab[spTab$s2.xCoord==site1x,]
   
   return(spTab)
 }

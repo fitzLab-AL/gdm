@@ -124,7 +124,7 @@ void GDM_FitFromTable(char **wspath,
 	strncat(fullFile, cbin, sizeof(fullFile));
 	
 	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
-	Rcpp::Rcout << lpTmpFile << std::endl;
+	//Rcpp::Rcout << lpTmpFile << std::endl;
 	int h = _open( lpTmpFile, _O_BINARY | _O_CREAT | _O_TRUNC | _O_RDWR, S_IREAD | S_IWRITE );
 	if ( h < 0 )
 	{
