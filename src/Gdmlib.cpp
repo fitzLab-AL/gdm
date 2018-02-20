@@ -35,6 +35,84 @@ void GetWordSize(int *p1)
 	*p1 = (int)(sizeof(int *));
 }
 
+#ifndef HAVE_STRLCAT
+/*
+ * '_cups_strlcat()' - Safely concatenate two strings.
+ */
+
+size_t                  /* O - Length of string */
+strlcat(char       *dst,        /* O - Destination string */
+              const char *src,      /* I - Source string */
+          size_t     size)      /* I - Size of destination string buffer */
+{
+  size_t    srclen;         /* Length of source string */
+  size_t    dstlen;         /* Length of destination string */
+
+
+ /*
+  * Figure out how much room is left...
+  */
+
+  dstlen = strlen(dst);
+  size   -= dstlen + 1;
+
+  if (!size)
+    return (dstlen);        /* No room, return immediately... */
+
+ /*
+  * Figure out how much room is needed...
+  */
+
+  srclen = strlen(src);
+
+ /*
+  * Copy the appropriate amount...
+  */
+
+  if (srclen > size)
+    srclen = size;
+
+  memcpy(dst + dstlen, src, srclen);
+  dst[dstlen + srclen] = '\0';
+
+  return (dstlen + srclen);
+}
+#endif /* !HAVE_STRLCAT */
+
+#ifndef HAVE_STRLCPY
+/*
+ * '_cups_strlcpy()' - Safely copy two strings.
+ */
+
+size_t                  /* O - Length of string */
+strlcpy(char       *dst,        /* O - Destination string */
+              const char *src,      /* I - Source string */
+          size_t      size)     /* I - Size of destination string buffer */
+{
+  size_t    srclen;         /* Length of source string */
+
+
+ /*
+  * Figure out how much room is needed...
+  */
+
+  size --;
+
+  srclen = strlen(src);
+
+ /*
+  * Copy the appropriate amount...
+  */
+
+  if (srclen > size)
+    srclen = size;
+
+  memcpy(dst, src, srclen);
+  dst[srclen] = '\0';
+
+  return (srclen);
+}
+#endif /* !HAVE_STRLCPY */
 
 #if defined _M_X64
 
@@ -120,8 +198,8 @@ void GDM_FitFromTable(char **wspath,
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
 	
-	strncpy(fullFile, s, sizeof(fullFile));
-	strncat(fullFile, cbin, sizeof(fullFile));
+	strlcpy(fullFile, s, sizeof(fullFile));
+	strlcat(fullFile, cbin, sizeof(fullFile));
 	
 	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
 	//Rcpp::Rcout << lpTmpFile << std::endl;
@@ -892,8 +970,8 @@ void GDM_FitFromTable(char **wspath,
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
 	
-	strncpy(fullFile, s, sizeof(fullFile));
-	strncat(fullFile, cbin, sizeof(fullFile));
+	strlcpy(fullFile, s, sizeof(fullFile));
+	strlcat(fullFile, cbin, sizeof(fullFile));
 	
 	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
 	
@@ -1661,8 +1739,8 @@ void GDM_FitFromTable(char **wspath,
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
 	
-	strncpy(lpTmpFile, s, sizeof(lpTmpFile));
-	strncat(lpTmpFile, cbin, sizeof(lpTmpFile));
+	strlcpy(lpTmpFile, s, sizeof(lpTmpFile));
+	strlcat(lpTmpFile, cbin, sizeof(lpTmpFile));
 	
 	int h = creat( lpTmpFile, PERMS );
 	if ( h < 0 )

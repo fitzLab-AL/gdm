@@ -1,8 +1,8 @@
 Package: gdm
 Type: Package
 Title: Generalized Dissimilarity Modeling
-Version: 1.3.4
-Date: 2017-09-15
+Version: 1.3.7
+Date: 2018-02-19
 Author: Glenn Manion, Matthew Lisk, Simon Ferrier, Diego Nieto-Lugilde, Karel Mokany, Matthew C. Fitzpatrick 
 Maintainer: Matthew C. Fitzpatrick <mfitzpatrick@umces.edu>
 Description: A toolkit with functions to fit, plot, and summarize Generalized Dissimilarity Models (Ferrier et al. 2007, <doi:10.1111/j.1472-4642.2007.00341.x>).
