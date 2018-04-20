@@ -920,7 +920,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       preCastBio <- bioData
       colnames(preCastBio)[which(colnames(preCastBio)==siteColumn)] <- "siteUltimateCoolness"
       colnames(preCastBio)[which(colnames(preCastBio)==sppColumn)] <- "spcodeUltimateCoolness"
-      castData <- reshape2::dcast(preCastBio, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
+      castData <- reshape2::dcast(preCastBio, fill=0, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
       ##adds coordinates to the cast data
       uniqueCoords <- unique(preCastBio[which(colnames(preCastBio) %in% c("siteUltimateCoolness", XColumn, YColumn))])
       bioData <- merge(castData, uniqueCoords, by="siteUltimateCoolness")
@@ -1211,7 +1211,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   distance <- as.vector(dist)
   ##calculates richness total, the sums of the two most populus sites
   if(weightsType[1]=="richness"){
-    sppOnly <- spdata[-c(1,2,3)]
+    sppOnly <- spdata[, -c(1,2,3)]
     sppSums <- rowSums(sppOnly)
     sppSiteSums <- cbind(spdata[1], sppSums)
     orderedSums <- sppSiteSums[order(-sppSiteSums[,2]),]
