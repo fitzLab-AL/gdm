@@ -240,7 +240,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
 
   ##Call the dll function, fitting the gdm model
   z <- .C( "GDM_FitFromTable",
-            paste(getwd()),
+            tempfile("gdmtmp_", tmpdir=getwd()), #paste(getwd()),
             as.matrix(data),
             as.integer(geo),
             as.integer(nPreds), 

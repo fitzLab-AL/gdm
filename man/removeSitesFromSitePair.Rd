@@ -36,7 +36,7 @@ envTab <- gdmExpData[c(2:ncol(gdmExpData))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species", 
 	siteColumn="site", predData=envTab)
 
-removeSitesFromSitePair(sitePairTab, sampleSites=0.7)
+rmSites <- removeSitesFromSitePair(sitePairTab, sampleSites=0.7)
 }
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the

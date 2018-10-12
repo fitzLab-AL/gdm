@@ -126,12 +126,12 @@ strlcpy(char       *dst,        /* O - Destination string */
 //
 // Note that pData represents a column major matrix
 //
-void GDM_FitFromTable(char **wspath, 
-				      double *pData, 
-	                  int *pDoGeo, int *pPreds, 
-				      int *pRows, int *pCols, 
+void GDM_FitFromTable(char **wspath,
+				      double *pData,
+	                  int *pDoGeo, int *pPreds,
+				      int *pRows, int *pCols,
 				      int *pSplines, double *pQuantiles,
-				      double *pGDMDev, double *pNullDev, double *pExpDev, 
+				      double *pGDMDev, double *pNullDev, double *pExpDev,
 				      double *pIntercept, double *pCoeffs,
 				      double *pY, // observed
 				      double *pX, // predicted
@@ -150,7 +150,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the response column
 	//
 	double *pResponse = &pData[COL_RESPONSE * nRows];
-	if ( NULL == pResponse ) 
+	if ( NULL == pResponse )
 	{
 		//Message("pResponse is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -161,7 +161,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the weights column
 	//
 	double *pWeights = &pData[COL_WEIGHTS * nRows];
-	if ( NULL == pWeights ) 
+	if ( NULL == pWeights )
 	{
 		//Message("pWeights is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -180,36 +180,30 @@ void GDM_FitFromTable(char **wspath,
 	// Sum the splines vector for the total number of splines
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	// Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	// ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
-	
+
 	//
 	// Write a binary file image of the predictor matrix
-	//
-	char lpTmpFile[256];
-	char fullFile[256];
-	char *s;
-	s = tmpnam(NULL);
-	
 	//file extension
 	std::string bin = ".bin";
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
-	
-	strlcpy(fullFile, s, sizeof(fullFile));
-	strlcat(fullFile, cbin, sizeof(fullFile));
-	
-	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
+
+	char lpTmpFile[1024];
+	strlcpy(lpTmpFile, *wspath, sizeof(lpTmpFile));
+	strlcat(lpTmpFile, cbin, sizeof(lpTmpFile));
 	//Rcpp::Rcout << lpTmpFile << std::endl;
+	
 	int h = _open( lpTmpFile, _O_BINARY | _O_CREAT | _O_TRUNC | _O_RDWR, S_IREAD | S_IWRITE );
 	if ( h < 0 )
 	{
 		//Message("Cannot create binary image file", "ERROR in GDM_FitFromTable");
 		if (pPredData) delete[] pPredData;
 		return;
-	}	
+	}
 	long nThis = 0;
 	for ( int i=0; i<(nTotalSplines+1); i++ )
 	{
@@ -219,17 +213,17 @@ void GDM_FitFromTable(char **wspath,
 	_close( h );
 
 
-		
+
 	//
 	// Do the matrix regression
 	//
 	double dGDMDeviance;
-	double *pCoefficients = WeightedNNLSRegression( lpTmpFile, 
-		                                            pPredData, 
-											        nRows, 
-											        nTotalSplines+1, 
-											        pResponse, 
-											        &dGDMDeviance, 
+	double *pCoefficients = WeightedNNLSRegression( lpTmpFile,
+		                                            pPredData,
+											        nRows,
+											        nTotalSplines+1,
+											        pResponse,
+											        &dGDMDeviance,
 											        pWeights);
 
 	//
@@ -291,8 +285,8 @@ void GDM_FitFromTable(char **wspath,
 //
 // Note that pData represents a column major matrix
 //
-void GDM_PredictFromTable(double *pData, 
-		                  int *pDoGeo, int *pPreds, int *pRows, 
+void GDM_PredictFromTable(double *pData,
+		                  int *pDoGeo, int *pPreds, int *pRows,
 					      double *pQuantiles, int *pSplines, double *pCoeffs,
 					      double *pX) // predicted
 {
@@ -302,7 +296,7 @@ void GDM_PredictFromTable(double *pData,
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 	long nRows  = *pRows;
-		
+
 
 	//
 	// Get the predictor matrix
@@ -316,7 +310,7 @@ void GDM_PredictFromTable(double *pData,
 
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	//Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	//ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
@@ -382,8 +376,8 @@ void GetPredictorPlotData( double *pPredData, int *pLength,
 // Transform a dataset using the coefficients and spline positions from a GDM model
 //
 //
-void GDM_TransformFromTable(int *pRows, int *pCols, 
-	                        int *pDoGeo, int *pPreds, 
+void GDM_TransformFromTable(int *pRows, int *pCols,
+	                        int *pDoGeo, int *pPreds,
 							int *pSplines, double *pQuants, double *pCoeffs,
 							double *pInData,
 							double *pOutData)
@@ -408,8 +402,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		double *pCoefficients = &pCoeffs[0];
 
 		//
-		// Setup a linear scalar to approximate the general slope of 
-		// the model curve to apply to the distance from the left edge. 
+		// Setup a linear scalar to approximate the general slope of
+		// the model curve to apply to the distance from the left edge.
 		// Distances exceeding this are simply extrapolated by the linear scalar.
 		//
 		double dTranX = 0.0;
@@ -421,7 +415,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 			// get the maximum quantile value here
 			if ( i == numSplines-1 )
 			{
-				dTranX = pQuantiles[i]; 
+				dTranX = pQuantiles[i];
 			}
 		}
 		double dScalar = dTranY / dTranX;
@@ -430,7 +424,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		// now find the euclidean distance from the left edge and top edge and transform
 		//
 		// get min easting
-		double *pXCol = &pInData[thisItem];  
+		double *pXCol = &pInData[thisItem];
 		double dMinX = pXCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -438,7 +432,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 		// get min northing
-		double *pYCol = &pInData[thisItem+nRows];  
+		double *pYCol = &pInData[thisItem+nRows];
 		double dMinY = pYCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -446,11 +440,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for X 
+		// Calculate the transform for X
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinX);
@@ -463,11 +457,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for Y 
+		// Calculate the transform for Y
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinY);
@@ -493,8 +487,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -524,8 +518,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -645,7 +639,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 	{
 		//
 		// Initialise the matrix for the geographic followed by the environmental predictors
-		//		
+		//
 		double dMin,dMid,dMax,dVal1,dVal2;
 		int CurrentSpline = 0;
 
@@ -663,7 +657,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double distY = fabs( pData[(COL_SITE1_Y0 * nRows)+i] - pData[(COL_SITE2_Y1 * nRows)+i] );
 
 					dVal1 = 0.0;
-					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) ); 							
+					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) );
 				}
 				else
 				{
@@ -677,9 +671,9 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 				
+						dMax = pQuants[CurrentSpline+spl+1];
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -699,7 +693,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -743,10 +737,10 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 
-					
+						dMax = pQuants[CurrentSpline+spl+1];
+
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -767,7 +761,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -819,7 +813,7 @@ double DoSplineCalc( double dVal, double q1, double q2, double q3 )
 //
 void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 {
-	char buff[256];
+	char buff[1024];
 	double *pTmp = &pQuants[0];
 	for ( int i=0; i<nPreds; i++ )
 	{
@@ -829,8 +823,8 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 		{
 
 			// Modified by DNL:
-			//sprintf( buff, "%s %lf ", buff, *pTmp);			
-			sprintf( buff, "%s %f ", buff, *pTmp);			
+			//sprintf( buff, "%s %lf ", buff, *pTmp);
+			sprintf( buff, "%s %f ", buff, *pTmp);
 			++pTmp;
 		}
 		//Message(buff);
@@ -848,12 +842,12 @@ void DebugPredMatrix(char *pPath, double *pPredData, long long nRows, int nPreds
 	FILE *fp = fopen(pPath, "w+t");
 
 	// write the header
-	fprintf( fp, "Intercept,");			
+	fprintf( fp, "Intercept,");
 	for ( int p=0; p<nPreds; p++ )
 	{
 		for ( int s=0; s<pSplines[p]; s++ )
 		{
-			fprintf( fp, "Pred%dSpline%d", p+1,s+1);			
+			fprintf( fp, "Pred%dSpline%d", p+1,s+1);
 			if ( s < pSplines[p]-1 )
 				fprintf( fp, "," );
 		}
@@ -863,7 +857,7 @@ void DebugPredMatrix(char *pPath, double *pPredData, long long nRows, int nPreds
 			fprintf( fp, "\n" );
 
 	}
-	
+
 	for ( long long i=0; i<nRows; i++ )
 	{
 		for ( int j=0; j<nCols; j++ )
@@ -872,7 +866,7 @@ void DebugPredMatrix(char *pPath, double *pPredData, long long nRows, int nPreds
 			//fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
 			fprintf( fp, "%f", pPredData[(j*nRows)+i]);
 
-			if ( j < nCols-1 ) 
+			if ( j < nCols-1 )
 				fprintf(fp, "," );
 			else
 				fprintf(fp, "\n" );
@@ -898,12 +892,12 @@ void DebugPredMatrix(char *pPath, double *pPredData, long long nRows, int nPreds
 //
 // Note that pData represents a column major matrix
 //
-void GDM_FitFromTable(char **wspath, 
-				      double *pData, 
-	                  int *pDoGeo, int *pPreds, 
-				      int *pRows, int *pCols, 
+void GDM_FitFromTable(char **wspath,
+				      double *pData,
+	                  int *pDoGeo, int *pPreds,
+				      int *pRows, int *pCols,
 				      int *pSplines, double *pQuantiles,
-				      double *pGDMDev, double *pNullDev, double *pExpDev, 
+				      double *pGDMDev, double *pNullDev, double *pExpDev,
 				      double *pIntercept, double *pCoeffs,
 				      double *pY, // observed
 				      double *pX, // predicted
@@ -922,7 +916,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the response column
 	//
 	double *pResponse = &pData[COL_RESPONSE * nRows];
-	if ( NULL == pResponse ) 
+	if ( NULL == pResponse )
 	{
 		//Message("pResponse is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -933,7 +927,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the weights column
 	//
 	double *pWeights = &pData[COL_WEIGHTS * nRows];
-	if ( NULL == pWeights ) 
+	if ( NULL == pWeights )
 	{
 		//Message("pWeights is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -952,28 +946,22 @@ void GDM_FitFromTable(char **wspath,
 	// Sum the splines vector for the total number of splines
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	// Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	// ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
-	
+
 	//
 	// Write a binary file image of the predictor matrix
-	//
-	char lpTmpFile[256];
-	char fullFile[256];
-	char *s;
-	s = tmpnam(NULL);
-	
 	//file extension
 	std::string bin = ".bin";
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
-	
-	strlcpy(fullFile, s, sizeof(fullFile));
-	strlcat(fullFile, cbin, sizeof(fullFile));
-	
-	sprintf(lpTmpFile, "%s/%s", *wspath, fullFile );
+
+	char lpTmpFile[1024];
+	strlcpy(lpTmpFile, *wspath, sizeof(lpTmpFile));
+	strlcat(lpTmpFile, cbin, sizeof(lpTmpFile));
+	//Rcpp::Rcout << lpTmpFile << std::endl;
 	
 	int h = _open( lpTmpFile, _O_BINARY | _O_CREAT | _O_TRUNC | _O_RDWR, S_IREAD | S_IWRITE );
 	if ( h < 0 )
@@ -981,23 +969,23 @@ void GDM_FitFromTable(char **wspath,
 		//Message("Cannot create binary image file", "ERROR in GDM_FitFromTable");
 		if (pPredData) delete[] pPredData;
 		return;
-	}	
+	}
 	int nSize = nRows * (nTotalSplines+1);
 	_write( h, pPredData, nSize * sizeof( double ) );
 	_close( h );
 
 
-		
+
 	//
 	// Do the matrix regression
 	//
 	double dGDMDeviance;
-	double *pCoefficients = WeightedNNLSRegression( lpTmpFile, 
-		                                            pPredData, 
-											        nRows, 
-											        nTotalSplines+1, 
-											        pResponse, 
-											        &dGDMDeviance, 
+	double *pCoefficients = WeightedNNLSRegression( lpTmpFile,
+		                                            pPredData,
+											        nRows,
+											        nTotalSplines+1,
+											        pResponse,
+											        &dGDMDeviance,
 											        pWeights);
 
 	//
@@ -1059,8 +1047,8 @@ void GDM_FitFromTable(char **wspath,
 //
 // Note that pData represents a column major matrix
 //
-void GDM_PredictFromTable(double *pData, 
-		                  int *pDoGeo, int *pPreds, int *pRows, 
+void GDM_PredictFromTable(double *pData,
+		                  int *pDoGeo, int *pPreds, int *pRows,
 					      double *pQuantiles, int *pSplines, double *pCoeffs,
 					      double *pX) // predicted
 {
@@ -1070,7 +1058,7 @@ void GDM_PredictFromTable(double *pData,
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 	int nRows  = *pRows;
-		
+
 
 	//
 	// Get the predictor matrix
@@ -1084,7 +1072,7 @@ void GDM_PredictFromTable(double *pData,
 
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	//Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	//ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
@@ -1150,8 +1138,8 @@ void GetPredictorPlotData( double *pPredData, int *pLength,
 // Transform a dataset using the coefficients and spline positions from a GDM model
 //
 //
-void GDM_TransformFromTable(int *pRows, int *pCols, 
-	                        int *pDoGeo, int *pPreds, 
+void GDM_TransformFromTable(int *pRows, int *pCols,
+	                        int *pDoGeo, int *pPreds,
 							int *pSplines, double *pQuants, double *pCoeffs,
 							double *pInData,
 							double *pOutData)
@@ -1176,8 +1164,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		double *pCoefficients = &pCoeffs[0];
 
 		//
-		// Setup a linear scalar to approximate the general slope of 
-		// the model curve to apply to the distance from the left edge. 
+		// Setup a linear scalar to approximate the general slope of
+		// the model curve to apply to the distance from the left edge.
 		// Distances exceeding this are simply extrapolated by the linear scalar.
 		//
 		double dTranX = 0.0;
@@ -1189,7 +1177,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 			// get the maximum quantile value here
 			if ( i == numSplines-1 )
 			{
-				dTranX = pQuantiles[i]; 
+				dTranX = pQuantiles[i];
 			}
 		}
 		double dScalar = dTranY / dTranX;
@@ -1198,7 +1186,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		// now find the euclidean distance from the left edge and top edge and transform
 		//
 		// get min easting
-		double *pXCol = &pInData[thisItem];  
+		double *pXCol = &pInData[thisItem];
 		double dMinX = pXCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -1206,7 +1194,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 		// get min northing
-		double *pYCol = &pInData[thisItem+nRows];  
+		double *pYCol = &pInData[thisItem+nRows];
 		double dMinY = pYCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -1214,11 +1202,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for X 
+		// Calculate the transform for X
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinX);
@@ -1231,11 +1219,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for Y 
+		// Calculate the transform for Y
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinY);
@@ -1261,8 +1249,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -1292,8 +1280,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -1414,7 +1402,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 	{
 		//
 		// Initialise the matrix for the geographic followed by the environmental predictors
-		//		
+		//
 		double dMin,dMid,dMax,dVal1,dVal2;
 		int CurrentSpline = 0;
 
@@ -1432,7 +1420,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double distY = fabs( pData[(COL_SITE1_Y0 * nRows)+i] - pData[(COL_SITE2_Y1 * nRows)+i] );
 
 					dVal1 = 0.0;
-					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) ); 							
+					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) );
 				}
 				else
 				{
@@ -1446,9 +1434,9 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 				
+						dMax = pQuants[CurrentSpline+spl+1];
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -1468,7 +1456,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -1512,10 +1500,10 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 
-					
+						dMax = pQuants[CurrentSpline+spl+1];
+
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -1536,7 +1524,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -1588,7 +1576,7 @@ double DoSplineCalc( double dVal, double q1, double q2, double q3 )
 //
 void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 {
-	char buff[256];
+	char buff[1024];
 	double *pTmp = &pQuants[0];
 	for ( int i=0; i<nPreds; i++ )
 	{
@@ -1597,8 +1585,8 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
 			// Modified by DNL:
-			//sprintf( buff, "%s %lf ", buff, *pTmp);			
-			sprintf( buff, "%s %f ", buff, *pTmp);			
+			//sprintf( buff, "%s %lf ", buff, *pTmp);
+			sprintf( buff, "%s %f ", buff, *pTmp);
 			++pTmp;
 		}
 		//Message(buff);
@@ -1616,12 +1604,12 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 	FILE *fp = fopen(pPath, "w+t");
 
 	// write the header
-	fprintf( fp, "Intercept,");			
+	fprintf( fp, "Intercept,");
 	for ( int p=0; p<nPreds; p++ )
 	{
 		for ( int s=0; s<pSplines[p]; s++ )
 		{
-			fprintf( fp, "Pred%dSpline%d", p+1,s+1);			
+			fprintf( fp, "Pred%dSpline%d", p+1,s+1);
 			if ( s < pSplines[p]-1 )
 				fprintf( fp, "," );
 		}
@@ -1631,7 +1619,7 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 			fprintf( fp, "\n" );
 
 	}
-	
+
 	for ( int i=0; i<nRows; i++ )
 	{
 		for ( int j=0; j<nCols; j++ )
@@ -1640,7 +1628,7 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 			//fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
 			fprintf( fp, "%f", pPredData[(j*nRows)+i]);
 
-			if ( j < nCols-1 ) 
+			if ( j < nCols-1 )
 				fprintf(fp, "," );
 			else
 				fprintf(fp, "\n" );
@@ -1666,12 +1654,12 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 //
 // Note that pData represents a column major matrix
 //
-void GDM_FitFromTable(char **wspath, 
-				      double *pData, 
-	                  int *pDoGeo, int *pPreds, 
-				      int *pRows, int *pCols, 
+void GDM_FitFromTable(char **wspath,
+				      double *pData,
+	                  int *pDoGeo, int *pPreds,
+				      int *pRows, int *pCols,
 				      int *pSplines, double *pQuantiles,
-				      double *pGDMDev, double *pNullDev, double *pExpDev, 
+				      double *pGDMDev, double *pNullDev, double *pExpDev,
 				      double *pIntercept, double *pCoeffs,
 				      double *pY, // observed
 				      double *pX, // predicted
@@ -1690,7 +1678,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the response column
 	//
 	double *pResponse = &pData[COL_RESPONSE * nRows];
-	if ( NULL == pResponse ) 
+	if ( NULL == pResponse )
 	{
 		//Message("pResponse is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -1701,7 +1689,7 @@ void GDM_FitFromTable(char **wspath,
 	// Get the weights column
 	//
 	double *pWeights = &pData[COL_WEIGHTS * nRows];
-	if ( NULL == pWeights ) 
+	if ( NULL == pWeights )
 	{
 		//Message("pWeights is NULL", "ERROR in GDM_FitFromTable");
 		return;
@@ -1720,35 +1708,30 @@ void GDM_FitFromTable(char **wspath,
 	// Sum the splines vector for the total number of splines
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	// Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	// ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
-	
+
 	//
 	// Write a binary file image of the predictor matrix
-	//
-	char lpTmpFile[256];
-	char *s;
-	char *dir = *wspath;
-	char const *headFile = "gdmTemp";
-	s = tempnam(dir, headFile);
-	
 	//file extension
 	std::string bin = ".bin";
 	char *cbin = new char[bin.length() + 1];
 	strcpy(cbin, bin.c_str());
-	
-	strlcpy(lpTmpFile, s, sizeof(lpTmpFile));
+
+	char lpTmpFile[1024];
+	strlcpy(lpTmpFile, *wspath, sizeof(lpTmpFile));
 	strlcat(lpTmpFile, cbin, sizeof(lpTmpFile));
-	
+	//Rcpp::Rcout << lpTmpFile << std::endl;
+
 	int h = creat( lpTmpFile, PERMS );
 	if ( h < 0 )
 	{
 		//Message("Cannot create binary image file", "ERROR in GDM_FitFromTable");
 		if (pPredData) delete[] pPredData;
 		return;
-	}	
+	}
 	int nThis = 0;
 	for ( int i=0; i<(nTotalSplines+1); i++ )
 	{
@@ -1758,17 +1741,17 @@ void GDM_FitFromTable(char **wspath,
 	close( h );
 
 
-		
+
 	//
 	// Do the matrix regression
 	//
 	double dGDMDeviance;
-	double *pCoefficients = WeightedNNLSRegression( lpTmpFile, 
-		                                            pPredData, 
-											        nRows, 
-											        nTotalSplines+1, 
-											        pResponse, 
-											        &dGDMDeviance, 
+	double *pCoefficients = WeightedNNLSRegression( lpTmpFile,
+		                                            pPredData,
+											        nRows,
+											        nTotalSplines+1,
+											        pResponse,
+											        &dGDMDeviance,
 											        pWeights);
 
 	//
@@ -1831,8 +1814,8 @@ void GDM_FitFromTable(char **wspath,
 //
 // Note that pData represents a column major matrix
 //
-void GDM_PredictFromTable(double *pData, 
-		                  int *pDoGeo, int *pPreds, int *pRows, 
+void GDM_PredictFromTable(double *pData,
+		                  int *pDoGeo, int *pPreds, int *pRows,
 					      double *pQuantiles, int *pSplines, double *pCoeffs,
 					      double *pX) // predicted
 {
@@ -1842,7 +1825,7 @@ void GDM_PredictFromTable(double *pData,
 	int nDoGeo = *pDoGeo;
 	int nPreds = *pPreds;
 	int nRows  = *pRows;
-		
+
 
 	//
 	// Get the predictor matrix
@@ -1856,7 +1839,7 @@ void GDM_PredictFromTable(double *pData,
 
 	int nTotalSplines = GetTotalSplineCount(pSplines, nPreds);
 	//Message(nTotalSplines, "nTotalSplines");
-	// pQuantiles will have a length of nPreds * nTotalSplines 
+	// pQuantiles will have a length of nPreds * nTotalSplines
 	//ShowQuantiles(pQuantiles, nPreds, pSplines);
 	//DebugPredMatrix("PredMatrix.csv", pPredData, nRows, nPreds, pSplines, nTotalSplines+1);
 
@@ -1922,8 +1905,8 @@ void GetPredictorPlotData( double *pPredData, int *pLength,
 // Transform a dataset using the coefficients and spline positions from a GDM model
 //
 //
-void GDM_TransformFromTable(int *pRows, int *pCols, 
-	                        int *pDoGeo, int *pPreds, 
+void GDM_TransformFromTable(int *pRows, int *pCols,
+	                        int *pDoGeo, int *pPreds,
 							int *pSplines, double *pQuants, double *pCoeffs,
 							double *pInData,
 							double *pOutData)
@@ -1947,8 +1930,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		double *pCoefficients = &pCoeffs[0];
 
 		//
-		// Setup a linear scalar to approximate the general slope of 
-		// the model curve to apply to the distance from the left edge. 
+		// Setup a linear scalar to approximate the general slope of
+		// the model curve to apply to the distance from the left edge.
 		// Distances exceeding this are simply extrapolated by the linear scalar.
 		//
 		double dTranX = 0.0;
@@ -1960,7 +1943,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 			// get the maximum quantile value here
 			if ( i == numSplines-1 )
 			{
-				dTranX = pQuantiles[i]; 
+				dTranX = pQuantiles[i];
 			}
 		}
 		double dScalar = dTranY / dTranX;
@@ -1969,7 +1952,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		// now find the euclidean distance from the left edge and top edge and transform
 		//
 		// get min easting
-		double *pXCol = &pInData[thisItem];  
+		double *pXCol = &pInData[thisItem];
 		double dMinX = pXCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -1977,7 +1960,7 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 		// get min northing
-		double *pYCol = &pInData[thisItem+nRows];  
+		double *pYCol = &pInData[thisItem+nRows];
 		double dMinY = pYCol[0];
 		for ( int i=1; i<nRows; i++ )
 		{
@@ -1985,11 +1968,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for X 
+		// Calculate the transform for X
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinX);
@@ -2002,11 +1985,11 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 		}
 
 
-		// Calculate the transform for Y 
+		// Calculate the transform for Y
 		for ( int i=0; i<nRows; i++ )
 		{
-			// get the data value 
-			double dDataVal = pInData[thisItem];  
+			// get the data value
+			double dDataVal = pInData[thisItem];
 
 			// calculate the transform
 			double dOutVal = dScalar * fabs(dDataVal-dMinY);
@@ -2032,8 +2015,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -2063,8 +2046,8 @@ void GDM_TransformFromTable(int *pRows, int *pCols,
 
 			for ( int i=0; i<nRows; i++ )
 			{
-				// get the data value 
-				double dDataVal = pInData[thisItem];  
+				// get the data value
+				double dDataVal = pInData[thisItem];
 
 				// calculate the transform
 				double dOutVal = CalculateGDMTransform(dDataVal, numSplines, pQuantiles, pCoefficients);
@@ -2184,7 +2167,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 	{
 		//
 		// Initialise the matrix for the geographic followed by the environmental predictors
-		//		
+		//
 		double dMin,dMid,dMax,dVal1,dVal2;
 		int CurrentSpline = 0;
 
@@ -2202,7 +2185,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double distY = fabs( pData[(COL_SITE1_Y0 * nRows)+i] - pData[(COL_SITE2_Y1 * nRows)+i] );
 
 					dVal1 = 0.0;
-					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) ); 							
+					dVal2 = sqrt( ( distX * distX ) + ( distY * distY ) );
 				}
 				else
 				{
@@ -2216,9 +2199,9 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 				
+						dMax = pQuants[CurrentSpline+spl+1];
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -2238,7 +2221,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -2282,10 +2265,10 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					{
 						dMin = pQuants[CurrentSpline+spl+0];
 						dMid = pQuants[CurrentSpline+spl+0];
-						dMax = pQuants[CurrentSpline+spl+1]; 
-					
+						dMax = pQuants[CurrentSpline+spl+1];
+
 					}
-		
+
 					else if ( spl == (pSplines[pred]-1) )        // last spline
 					{
 						dMin = pQuants[CurrentSpline+spl-1];
@@ -2306,7 +2289,7 @@ double *ConstructMatrix(int nDoGeo, double *pData, double *pQuants, int nPreds, 
 					double d2a = DoSplineCalc( dVal2, dMin, dMid, dMax );
 
 					// set the distance between sites for this spline
-					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );	
+					pLoc[ (spl * nRows) + nThis ] = fabs( d2a - d1a );
 
 				} // for ( int spl = 0; spl<pSplines[pred]; spl++ )
 
@@ -2358,7 +2341,7 @@ double DoSplineCalc( double dVal, double q1, double q2, double q3 )
 //
 void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 {
-	char buff[256];
+	char buff[1024];
 	double *pTmp = &pQuants[0];
 	for ( int i=0; i<nPreds; i++ )
 	{
@@ -2366,7 +2349,7 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
-			sprintf( buff, "%s %lf ", buff, *pTmp);			
+			sprintf( buff, "%s %lf ", buff, *pTmp);
 			++pTmp;
 		}
 		//Message(buff);
@@ -2384,12 +2367,12 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 	FILE *fp = fopen(pPath, "w+t");
 
 	// write the header
-	fprintf( fp, "Intercept,");			
+	fprintf( fp, "Intercept,");
 	for ( int p=0; p<nPreds; p++ )
 	{
 		for ( int s=0; s<pSplines[p]; s++ )
 		{
-			fprintf( fp, "Pred%dSpline%d", p+1,s+1);			
+			fprintf( fp, "Pred%dSpline%d", p+1,s+1);
 			if ( s < pSplines[p]-1 )
 				fprintf( fp, "," );
 		}
@@ -2399,14 +2382,14 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 			fprintf( fp, "\n" );
 
 	}
-	
+
 	for ( int i=0; i<nRows; i++ )
 	{
 		for ( int j=0; j<nCols; j++ )
 		{
 			fprintf( fp, "%lf", pPredData[(j*nRows)+i]);
 
-			if ( j < nCols-1 ) 
+			if ( j < nCols-1 )
 				fprintf(fp, "," );
 			else
 				fprintf(fp, "\n" );
@@ -2416,4 +2399,3 @@ void DebugPredMatrix(char *pPath, double *pPredData, int nRows, int nPreds, int 
 	if (fp) fclose(fp);
 }
 #endif
-
