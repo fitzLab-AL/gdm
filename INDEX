@@ -1,0 +1,29 @@
+formatsitepair          Converts Common Biological (Response) and
+                        Environmental (Predictor) Data Formats to a GDM
+                        Site-Pair Table
+gdm                     Fit a Generalized Dissimilarity Model to
+                        Tabular Site-Pair Data
+gdm-package             Overview of the functions in the gdm package
+gdm.transform           Transform Environmental Data Using a
+                        Generalized Dissimilarity Model
+gdm.varImp              Quantify model significance and variable
+                        importance/significance in gdm using matrix
+                        permutation.
+gdmDissim               A sample biological dissimilarity matrix for
+                        use in GDM examples
+gdmExpData              Species and environmental data used in GDM
+                        examples
+isplineExtract          Extract I-spline Values From a gdm Object.
+plot.gdm                Plot model fit and I-splines from a generalized
+                        dissimilarity model
+plotUncertainty         Plot I-splines with error bands using
+                        bootstrapping.
+predict.gdm             Predict Biological Dissimilarities Between
+                        Sites or Times Using a Generalized
+                        Dissimilarity Model
+removeSitesFromSitePair
+                        Remove Random Sites from Site-Pair Table
+stackedVars             Worldclim climate variables used to fit GDM in
+                        examples
+summary.gdm             Summarize a Fitted Generalized Dissimilarity
+                        Model
