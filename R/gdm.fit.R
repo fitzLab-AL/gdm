@@ -386,7 +386,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
            response = as.double(p6),
            preddata = as.double(p7),
            ecodist = as.double(p8),
-           PACKAGE = "gdmdev")
+           PACKAGE = "gdm")
 
   m <- match.call(expand.dots = F)
 

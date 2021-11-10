@@ -1,5 +1,5 @@
 ## usethis namespace: start
-#' @useDynLib gdmdev, .registration = TRUE
+#' @useDynLib gdm, .registration = TRUE
 ## usethis namespace: end
 NULL
 

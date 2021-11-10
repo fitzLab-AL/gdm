@@ -1,16 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gdmdev
+# gdm
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of gdmdev is to …
+The goal of gdm is to …
 
 ## Installation
 
-You can install the development version of gdmdev like so:
+You can install the development version of gdm like so:
 
 ``` r
 # FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
@@ -21,7 +21,7 @@ You can install the development version of gdmdev like so:
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(gdmdev)
+library(gdm)
 ## basic example code
 ```
 
