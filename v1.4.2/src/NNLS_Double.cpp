@@ -30,15 +30,15 @@ static double dEpsilon = 0.0001;
 #if defined _M_X64
 
 //
-// Do the WEIGHTED iterative NNLS regression process
+// Do the WEIGHTED iterative NNLS regression process 
 //
 // Takes a nRows X nCols matrix pEnvDataMatrix and a vector pRespVector
 // of length nRows and iteratively produces a non-negative
-// vector of coefficients representing the best fit of the matrix
+// vector of coefficients representing the best fit of the matrix 
 // against the vector using a default weights vector of ones.
 //
-double *WeightedNNLSRegression( char *lpTmpFile,
-							    double *pEnvDataMatrix, long long nRows, long long nCols,
+double *WeightedNNLSRegression( char *lpTmpFile, 
+							    double *pEnvDataMatrix, long long nRows, long long nCols, 
 								double *pRespVector, double *pDeviance, double *pWeights)
 {
 	long long i;
@@ -54,7 +54,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-
+	
 	// Modified by DNL:
 	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
@@ -74,12 +74,12 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//nCurrent = 0;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( i=0; i<nRows; i++ )
+		for ( i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
 
-			// recalculate the weights
+			// recalculate the weights			
 			pWW[i] = sqrt( pWeights[i] * (( 1.0 - pUU[i] ) / pUU[i]) );
 
 			// calculate the new weighted transform to send to nnls
@@ -91,12 +91,12 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		pCoeff = nnlsFITDouble( pEnvDataMatrix, nRows, nCols, pZZ, pWW );
 
-		//
+		// 
 		// restore values in the matrix data block
 		//
 		int h = _open( lpTmpFile, _O_BINARY | _O_RDWR, S_IREAD | S_IWRITE  );
@@ -128,7 +128,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
@@ -153,10 +153,10 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 
 				// set final solution for this row item
 				// Modified by DNL:
-				//pNN[i] = dVal;
-				pNN[h] = dVal;
+				//pNN[i] = dVal;				
+				pNN[h] = dVal;				
 			}
-		}
+		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
 
@@ -180,7 +180,7 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 	// The data matrix is just a single vector of ONES
 	//
 	double *pNullVector = new double [ nRows ];
-	for ( long long i=0; i<nRows; i++ )
+	for ( long long i=0; i<nRows; i++ ) 
 	{
 		pNullVector[i] = 1.0;
 	}
@@ -217,7 +217,7 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 	double dNewDev = 0.0;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( long long i=0; i<nRows; i++ )
+		for ( long long i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
@@ -234,7 +234,7 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		double *pCopyOfNullVector = CopyEnvMatrixDouble( pNullVector, nRows, 1 );
@@ -243,7 +243,7 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 		////////////////////////////////////////////////////////////////////////////////
 
 		//
-		// calculate the deviance for this fit
+		// calculate the deviance for this fit 
 		dNewDev = CalcGDMDevianceDouble( pRespVector, pUU, pWeights, nRows );
 
 		double dExitVal = ( dNewDev - dOldDev ) / ( dOldDev + dEpsilon );
@@ -252,7 +252,7 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
@@ -264,9 +264,9 @@ double GetWeightedNULLDeviance( long long nRows, double *pRespVector, double *pW
 			for ( long long i=0; i<nRows; i++ )
 			{
 				// set final solution for this row item
-				pNN[i] = pCoeff[0];
+				pNN[i] = pCoeff[0];				
 			}
-		}
+		} 		
 
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
@@ -293,7 +293,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, long long nLen
 	double t1, t2;
 	for ( long long i=0; i<nLen; i++ )
 	{
-		if ( pU[i] == 0.0 )
+		if ( pU[i] == 0.0 ) 
 			t1 = pY[i];
 
 		else if ( pY[i] == 0.0 )
@@ -303,7 +303,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, long long nLen
 			t1 = pY[i] * log( pY[i] / pU[i] );
 
 
-		if ( pU[i] == 1.0 )
+		if ( pU[i] == 1.0 ) 
 			t2 = 1.0 - pY[i];
 
 		else if ( pY[i] == 1.0 )
@@ -370,7 +370,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, long long nRows, long long nCols,
 
 	//
 	// setup the parameters for the call to nnls
-	//
+	// 
 	long long mda = nRows;
 	long long m = nRows;
 	long long n = nCols;
@@ -421,7 +421,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, long long nRows, long long nCols,
 		//Message( buff, "INFO" );
 	}
 
-
+	
 	//
 	// clean up local allocations...
 	//
@@ -438,15 +438,15 @@ double *nnlsFITDouble( double *pEnvDataMatrix, long long nRows, long long nCols,
 #elif defined _WIN32
 
 //
-// Do the WEIGHTED iterative NNLS regression process
+// Do the WEIGHTED iterative NNLS regression process 
 //
 // Takes a nRows X nCols matrix pEnvDataMatrix and a vector pRespVector
 // of length nRows and iteratively produces a non-negative
-// vector of coefficients representing the best fit of the matrix
+// vector of coefficients representing the best fit of the matrix 
 // against the vector using a default weights vector of ones.
 //
-double *WeightedNNLSRegression( char *lpTmpFile,
-							    double *pEnvDataMatrix, int nRows, int nCols,
+double *WeightedNNLSRegression( char *lpTmpFile, 
+							    double *pEnvDataMatrix, int nRows, int nCols, 
 								double *pRespVector, double *pDeviance, double *pWeights )
 {
 	int i;
@@ -463,7 +463,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-
+	
 	// Modified by DNL:
 	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
@@ -482,7 +482,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//nCurrent = 5;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( i=0; i<nRows; i++ )
+		for ( i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
@@ -499,7 +499,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		if (pCoeff) delete[] pCoeff;
@@ -514,7 +514,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		}
 
 
-		//
+		// 
 		// restore values in the matrix data block
 		//
 		int h = _open( lpTmpFile, _O_BINARY | _O_RDWR, S_IREAD | S_IWRITE  );
@@ -529,9 +529,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		}
 		_read( h, pEnvDataMatrix, nRows * nCols * sizeof( double ) );
 		_close( h );
-
+		
 		//
-		// calculate the deviance for this fit
+		// calculate the deviance for this fit 
 		//
 		dNewDev = CalcGDMDevianceDouble( pRespVector, pUU, pWeights, nRows );
 		double dExitVal = ( dNewDev - dOldDev ) / ( dOldDev + dEpsilon );
@@ -540,11 +540,11 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
-		{
+		{			
 			// setup for another loop iteration...
 			dOldDev = dNewDev;
 
@@ -560,9 +560,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 				}
 
 				// set final solution for this row item
-				pNN[i] = dVal;
-			}
-		}
+				pNN[i] = dVal;				
+			}			
+		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
 
@@ -585,7 +585,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 	// The data matrix is just a single vector of ONES
 	//
 	double *pNullVector = new double [ nRows ];
-	for ( int i=0; i<nRows; i++ )
+	for ( int i=0; i<nRows; i++ ) 
 	{
 		pNullVector[i] = 1.0;
 	}
@@ -614,7 +614,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 	double dNewDev = 0.0;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( int i=0; i<nRows; i++ )
+		for ( int i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
@@ -631,7 +631,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		double *pCopyOfNullVector = CopyEnvMatrixDouble( pNullVector, nRows, 1 );
@@ -641,7 +641,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		////////////////////////////////////////////////////////////////////////////////
 
 		//
-		// calculate the deviance for this fit
+		// calculate the deviance for this fit 
 		//
 		dNewDev = CalcGDMDevianceDouble( pRespVector, pUU, pWeights, nRows );
 		double dExitVal = ( dNewDev - dOldDev ) / ( dOldDev + dEpsilon );
@@ -650,7 +650,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
@@ -662,9 +662,9 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 			for ( int i=0; i<nRows; i++ )
 			{
 				// set final solution for this row item
-				pNN[i] = pCoeff[0];
+				pNN[i] = pCoeff[0];				
 			}
-		}
+		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
 
@@ -689,7 +689,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, int nLen )
 	double t1, t2;
 	for ( int i=0; i<nLen; i++ )
 	{
-		if ( pU[i] == 0.0 )
+		if ( pU[i] == 0.0 ) 
 			t1 = pY[i];
 
 		else if ( pY[i] == 0.0 )
@@ -699,7 +699,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, int nLen )
 			t1 = pY[i] * log( pY[i] / pU[i] );
 
 
-		if ( pU[i] == 1.0 )
+		if ( pU[i] == 1.0 ) 
 			t2 = 1.0 - pY[i];
 
 		else if ( pY[i] == 1.0 )
@@ -766,7 +766,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 
 	//
 	// setup the parameters for the call to nnls
-	//
+	// 
 	int mda = nRows;
 	int m = nRows;
 	int n = nCols;
@@ -790,7 +790,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 	// show results
 	//
 	double *pCoeffs = NULL;
-
+	
 	// Modified by DNL:
 	//char buff[64];
 	if ( mode == 1 )
@@ -819,7 +819,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 		//Message( buff, "INFO" );
 	}
 
-
+	
 	//
 	// clean up local allocations...
 	//
@@ -838,15 +838,15 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 #define PERMS 0644 // RW for owner R for others
 
 //
-// Do the WEIGHTED iterative NNLS regression process
+// Do the WEIGHTED iterative NNLS regression process 
 //
 // Takes a nRows X nCols matrix pEnvDataMatrix and a vector pRespVector
 // of length nRows and iteratively produces a non-negative
-// vector of coefficients representing the best fit of the matrix
+// vector of coefficients representing the best fit of the matrix 
 // against the vector using a default weights vector of ones.
 //
-double *WeightedNNLSRegression( char *lpTmpFile,
-							    double *pEnvDataMatrix, int nRows, int nCols,
+double *WeightedNNLSRegression( char *lpTmpFile, 
+							    double *pEnvDataMatrix, int nRows, int nCols, 
 								double *pRespVector, double *pDeviance, double *pWeights )
 {
 	int i;
@@ -863,7 +863,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//
 	// initialise pNN prior to regression loop
 	//
-
+	
 	// Modified by DNL:
 	//int nCurrent = 0;
 	for ( i=0; i<nRows; i++ )
@@ -882,7 +882,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 	//nCurrent = 5;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( i=0; i<nRows; i++ )
+		for ( i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
@@ -899,7 +899,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		if (pCoeff) delete[] pCoeff;
@@ -914,7 +914,7 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		}
 
 
-		//
+		// 
 		// restore values in the matrix data block
 		//
 		int h = open( lpTmpFile, PERMS  );
@@ -927,16 +927,11 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 			if ( pZZ ) delete[] pZZ;
 			return( NULL );
 		}
-		//read( h, pEnvDataMatrix, nRows * nCols * sizeof( double ) );
-		int readed = read( h, pEnvDataMatrix, nRows * nCols * sizeof( double ) );
-		if (readed != nRows * nCols * sizeof( double ))
-		{
-			//printf("Couldn't read everything!\n");
-		}
+		read( h, pEnvDataMatrix, nRows * nCols * sizeof( double ) );
 		close( h );
-
+		
 		//
-		// calculate the deviance for this fit
+		// calculate the deviance for this fit 
 		//
 		dNewDev = CalcGDMDevianceDouble( pRespVector, pUU, pWeights, nRows );
 		double dExitVal = ( dNewDev - dOldDev ) / ( dOldDev + dEpsilon );
@@ -945,11 +940,11 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
-		{
+		{			
 			// setup for another loop iteration...
 			dOldDev = dNewDev;
 
@@ -965,9 +960,9 @@ double *WeightedNNLSRegression( char *lpTmpFile,
 				}
 
 				// set final solution for this row item
-				pNN[i] = dVal;
-			}
-		}
+				pNN[i] = dVal;				
+			}			
+		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
 
@@ -990,7 +985,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 	// The data matrix is just a single vector of ONES
 	//
 	double *pNullVector = new double [ nRows ];
-	for ( int i=0; i<nRows; i++ )
+	for ( int i=0; i<nRows; i++ ) 
 	{
 		pNullVector[i] = 1.0;
 	}
@@ -1019,7 +1014,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 	double dNewDev = 0.0;
 	for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 	{
-		for ( int i=0; i<nRows; i++ )
+		for ( int i=0; i<nRows; i++ ) 
 		{
 			// do the initial transformation...
 			pUU[i] = 1.0 - exp( -pNN[i] );
@@ -1036,7 +1031,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		// check the deviance of the fit, compare to the previous deviance,
 		// and if convergence conditions are reached, exit the loop.
 		//
-		// NOTE: we send a copy of the environmental data matrix as
+		// NOTE: we send a copy of the environmental data matrix as 
 		//	     this data gets modified inside the called function
 		//
 		double *pCopyOfNullVector = CopyEnvMatrixDouble( pNullVector, nRows, 1 );
@@ -1046,7 +1041,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		////////////////////////////////////////////////////////////////////////////////
 
 		//
-		// calculate the deviance for this fit
+		// calculate the deviance for this fit 
 		//
 		dNewDev = CalcGDMDevianceDouble( pRespVector, pUU, pWeights, nRows );
 		double dExitVal = ( dNewDev - dOldDev ) / ( dOldDev + dEpsilon );
@@ -1055,7 +1050,7 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 		if ( dEpsilon > fabs( dExitVal ) )
 		{
 			// adequate convergence reached
-			break;
+			break;	
 		}
 
 		else
@@ -1067,9 +1062,9 @@ double GetWeightedNULLDeviance( int nRows, double *pRespVector, double *pWeights
 			for ( int i=0; i<nRows; i++ )
 			{
 				// set final solution for this row item
-				pNN[i] = pCoeff[0];
+				pNN[i] = pCoeff[0];				
 			}
-		}
+		} 	
 	} // for ( int nIter=0; nIter<nMaxIterations; nIter++ )
 
 
@@ -1094,7 +1089,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, int nLen )
 	double t1, t2;
 	for ( int i=0; i<nLen; i++ )
 	{
-		if ( pU[i] == 0.0 )
+		if ( pU[i] == 0.0 ) 
 			t1 = pY[i];
 
 		else if ( pY[i] == 0.0 )
@@ -1104,7 +1099,7 @@ double CalcGDMDevianceDouble( double *pY, double *pU, double *pW, int nLen )
 			t1 = pY[i] * log( pY[i] / pU[i] );
 
 
-		if ( pU[i] == 1.0 )
+		if ( pU[i] == 1.0 ) 
 			t2 = 1.0 - pY[i];
 
 		else if ( pY[i] == 1.0 )
@@ -1171,7 +1166,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 
 	//
 	// setup the parameters for the call to nnls
-	//
+	// 
 	int mda = nRows;
 	int m = nRows;
 	int n = nCols;
@@ -1222,7 +1217,7 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 		//Message( buff, "INFO" );
 	}
 
-
+	
 	//
 	// clean up local allocations...
 	//
@@ -1236,3 +1231,4 @@ double *nnlsFITDouble( double *pEnvDataMatrix, int nRows, int nCols, double *pRe
 
 
 #endif
+

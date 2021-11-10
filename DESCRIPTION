@@ -1,17 +1,20 @@
-Package: gdm
-Type: Package
+Package: gdmdev
 Title: Generalized Dissimilarity Modeling
-Version: 1.4.2
-Date: 2020-04-20
-Author: Matthew C. Fitzpatrick, Karel Mokany, Glenn Manion, Matthew Lisk, Simon Ferrier, Diego Nieto-Lugilde
-Maintainer: Matthew C. Fitzpatrick <mfitzpatrick@umces.edu>
+Version: 1.5.0
+Authors@R: 
+    person("Matt", "Fitzpatrick", , "mfitzpatrick@umces.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1911-8407"))
 Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
-License: GPL-2
-Depends: R (>= 2.15.2), raster, foreach, doParallel, parallel
-LinkingTo: Rcpp
-Imports: Rcpp (>= 0.10.4), reshape2, vegan, methods
-Suggests: R.rsp
-VignetteBuilder: R.rsp
-NeedsCompilation: yes
-Packaged: 2020-04-21 14:31:56 UTC; mfitzpatrick
-Built: R 3.6.3; x86_64-apple-darwin15.6.0; 2020-04-21 14:33:28 UTC; unix
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Config/testthat/edition: 3
+Imports: 
+    methods,
+    raster,
+    Rcpp,
+    reshape2,
+    vegan
+LinkingTo: 
+    Rcpp
