@@ -3,7 +3,7 @@
 \name{formatsitepair}
 \alias{formatsitepair}
 \title{Formats and Combines Biological and Environmental Data
-to a GDM Site-Pair Table}
+to Produce a GDM Site-Pair Table}
 \usage{
 formatsitepair(bioData, bioFormat, dist="bray", abundance=FALSE, siteColumn=NULL,
 XColumn, YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData,
@@ -108,7 +108,7 @@ Generalized Dissimilarity Models.
 \description{
 This function takes input biological data and environmental,
 geographic, and other predictor data and builds a site-pair table required
-for fitting a Generalized Dissimilarity Model using the \code{\link{gdm}}
+for fitting a Generalized Dissimilarity Model using the \code{\link[gdm]{gdm}}
 function. NOTE: x-y coordinates of sites MUST be present in either the
 biological or the environmental data. Site coordinates ideally should be in a
 projected coordinate system (i.e., not longitude-latitude) to ensure proper
@@ -198,7 +198,7 @@ envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
 ##environmental raster data
 ## not run
 # rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-# envRast <- stack(rastFile)
+# envRast <- raster::stack(rastFile)
 
 #########table type 1
 ## site-species table without coordinates
@@ -234,7 +234,7 @@ predData=envTab, siteColumn="site")
 
 #########table type 4
 ## adds a predictor matrix to an existing site-pair table, in this case,
-## predData needs to be filled, but is not actually used
+## predData needs to be provided, but is not actually used
 exFormat4 <- formatsitepair(exFormat2a, 4, predData=envTab, siteColumn="site",
                             distPreds=list(as.matrix(gdmDissim)))
 

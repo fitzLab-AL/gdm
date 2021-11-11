@@ -3,8 +3,6 @@
 export(createsitepair)
 export(formatsitepair)
 export(gdm)
-import(reshape2)
-import(vegan)
 importFrom(Rcpp,sourceCpp)
 importFrom(methods,is)
 importFrom(stats,as.dist)

@@ -1,9 +1,9 @@
-#' Formats and Combines Biological and Environmental Data
-#' to a GDM Site-Pair Table
+#' @title Formats and Combines Biological and Environmental Data
+#' to Produce a GDM Site-Pair Table
 #'
 #' @description This function takes input biological data and environmental,
 #' geographic, and other predictor data and builds a site-pair table required
-#' for fitting a Generalized Dissimilarity Model using the \code{\link{gdm}}
+#' for fitting a Generalized Dissimilarity Model using the \code{\link[gdm]{gdm}}
 #' function. NOTE: x-y coordinates of sites MUST be present in either the
 #' biological or the environmental data. Site coordinates ideally should be in a
 #' projected coordinate system (i.e., not longitude-latitude) to ensure proper
@@ -192,7 +192,7 @@
 #' ##environmental raster data
 #' ## not run
 #' # rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-#' # envRast <- stack(rastFile)
+#' # envRast <- raster::stack(rastFile)
 #'
 #' #########table type 1
 #' ## site-species table without coordinates
@@ -228,7 +228,7 @@
 #'
 #' #########table type 4
 #' ## adds a predictor matrix to an existing site-pair table, in this case,
-#' ## predData needs to be filled, but is not actually used
+#' ## predData needs to be provided, but is not actually used
 #' exFormat4 <- formatsitepair(exFormat2a, 4, predData=envTab, siteColumn="site",
 #'                             distPreds=list(as.matrix(gdmDissim)))
 #'
@@ -236,8 +236,6 @@
 #'
 #' @importFrom methods is
 #' @importFrom stats as.dist
-#' @import reshape2
-#' @import vegan
 #'
 #' @export
 formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
@@ -347,7 +345,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       stop("siteColumn argument needs to be of class = 'character'.")
       ##checks to see if siteColumn exists in the bioData for bioFormats 1 and 2
     }else if(!(siteColumn %in% colnames(bioData)) & (bioFormat==1 | bioFormat==2)){
-      stop("Cannot find a match for the name of the siteColumn in the columns of the bioData object.")
+      stop("Cannot find a match for the name of the siteColumn in the columns
+           of the bioData object.")
     }
     ##if the siteColumn is provided with input type 3, remove it
     #if(bioFormat==3 & siteColumn %in% colnames(bioData)){
@@ -355,8 +354,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     #  bioData <- bioData[-wSite]
     #}
   }
-  ##checks to make sure that the coordinate columns are characters and can be found in either the biological or
-  ##environmental data
+  ##checks to make sure that the coordinate columns are characters and can be
+  # found in either the biological or environmental data
   if(bioFormat!=4){
     if(!is(XColumn, "character")){
       stop("XColumn argument needs to be of class 'character'.")
@@ -371,16 +370,19 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   ##checks table type 3 specific requirements
   if(bioFormat==3){
     if(weightType=="richness"){
-      stop("Cannot weight by site richness when supplying the biological data as a distance matrix.")
+      stop("Cannot weight by site richness when supplying the biological data
+           as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
-      stop("Biological dissimilarity matrix must have the same number of rows and columns. Did you forget to add a column for site ID's?")
+      stop("Biological dissimilarity matrix must have the same number of rows
+           and columns. Did you forget to add a column for site ID's?")
     }
   }
 
   ##warns if distPreds are not matrices
   for(mat in distPreds){
     if(!is(mat, "matrix") & !is(mat, "data.frame")){
-      warning("One or more of the provided predictor distance matrices are not of class 'matrix'.")
+      warning("One or more of the provided predictor distance matrices are not
+              of class 'matrix'.")
     }
   }
   ##if a custom weight vector is provided, makes sure it is a vector
@@ -414,7 +416,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
       ##insert presence if abundance was not given
       if(is.null(abundColumn)){
-        warning("No abundance column was specified, so the species data are assumed to be presences.")
+        warning("No abundance column was specified, so the species data are
+                assumed to be presences.")
         bioData["reallysupercoolawesomedata"] <- 1
         abundColumn <- "reallysupercoolawesomedata"
       }
@@ -445,7 +448,10 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ##checks unique sites against rasters
     if(is(predData, "RasterStack") | is(predData, "RasterLayer") | is(predData, "RasterBrick")){
       ##when using rasters, uses the cell as the site
-      warning("When using rasters for prediction data, sites are assigned to the cells in which they are located and then aggreagted as necessary (e.g., if more than one site falls in the same raster cell - common for rasters with large cells).")
+      warning("When using rasters for prediction data, sites are assigned to the
+              cells in which they are located and then aggreagted as necessary (e.g.,
+              if more than one site falls in the same raster cell - common for rasters
+              with large cells).")
       ##gets the cell location of the given coordinates
       cellID <- as.data.frame(raster::cellFromXY(predData, locs))
       colnames(cellID)[which(colnames(cellID)=="cellFromXY(predData, locs)")] <- "cellName"
@@ -600,7 +606,14 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   ##With the dissim distance calculated, creates and fills the table in gdm format
   if(bioFormat!=4){
     ##creates base site-pair table
-    outTable <- as.data.frame(createsitepair(dist=distData, spdata=bioData, envInfo=predData, dXCol=XColumn, dYCol=YColumn, siteCol=siteColumn, weightsType=weightType, custWeights=custWeights))
+    outTable <- as.data.frame(createsitepair(dist=distData,
+                                             spdata=bioData,
+                                             envInfo=predData,
+                                             dXCol=XColumn,
+                                             dYCol=YColumn,
+                                             siteCol=siteColumn,
+                                             weightsType=weightType,
+                                             custWeights=custWeights))
   }else{
     outTable <- bioData
   }

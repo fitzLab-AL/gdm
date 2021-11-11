@@ -2,28 +2,28 @@
 % Please edit documentation in R/gdm.createsitepair.R
 \name{createsitepair}
 \alias{createsitepair}
-\title{Creates Site-Pair Table}
+\title{Create Site-Pair Table}
 \usage{
 createsitepair(dist, spdata, envInfo, dXCol, dYCol, siteCol, weightsType,
 custWeights)
 }
 \arguments{
 \item{dist}{The lower half of a site-by-site distance (dissimilarity) matrix,
-provided by the \code{\link{formatsitepair}} function.}
+provided by the \code{\link[gdm]{formatsitepair}} function.}
 
 \item{spdata}{Input species data, the same as the bioData input to the
-\code{\link{formatsitepair}} function.}
+\code{\link[gdm]{formatsitepair}} function.}
 
 \item{envInfo}{Input environmental data. Only accepts data tables as input.
-If the environmental data for \code{\link{formatsitepair}} are rasters, the
+If the environmental data for \code{\link[gdm]{formatsitepair}} are rasters, the
 data would have been extracted into table format within
-\code{\link{formatsitepair}}.}
+\code{\link[gdm]{formatsitepair}}.}
 
 \item{dXCol}{Input x coordinate, the same as the XColumn input to the
-\code{\link{formatsitepair}} function.}
+\code{\link[gdm]{formatsitepair}} function.}
 
 \item{dYCol}{Input y coordinate, the same as the YColumn input to the
-\code{\link{formatsitepair}} function.}
+\code{\link[gdm]{formatsitepair}} function.}
 
 \item{siteCol}{Site column, taken from either the species or environmental
 tables.}
@@ -42,7 +42,7 @@ Creates a site-pair table from the lower half of a site-by-site distance
 \code{\link{formatsitepair}} function and not needed by the user.
 }
 \note{
-This function is called from the \code{\link{formatsitepair}} function
+This function is called from the \code{\link[gdm]{formatsitepair}} function
 and not needed by the user.
 }
 \seealso{

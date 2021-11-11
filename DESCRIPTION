@@ -1,20 +1,25 @@
 Package: gdm
 Title: Generalized Dissimilarity Modeling
 Version: 1.5.0
+Date: 2021-11-12
 Authors@R: 
     person("Matt", "Fitzpatrick", , "mfitzpatrick@umces.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-1911-8407"))
 Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
 License: GPL (>= 3)
+Depends: R (>= 2.15.2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
 Imports: 
+    parallel,
     methods,
     raster,
     Rcpp,
     reshape2,
-    vegan
+    vegan,
+    doParallel,
+    foreach
 LinkingTo: 
     Rcpp

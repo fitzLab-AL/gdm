@@ -1,6 +1,6 @@
-#' Creates Site-Pair Table
+#' @title Create Site-Pair Table
 #'
-#' Creates a site-pair table from the lower half of a site-by-site distance
+#' @description Creates a site-pair table from the lower half of a site-by-site distance
 #' (dissimilarity) matrix. This function is called from the
 #'  \code{\link{formatsitepair}} function and not needed by the user.
 #'
@@ -9,21 +9,21 @@
 #' custWeights)
 #'
 #' @param dist The lower half of a site-by-site distance (dissimilarity) matrix,
-#' provided by the \code{\link{formatsitepair}} function.
+#' provided by the \code{\link[gdm]{formatsitepair}} function.
 #'
 #' @param spdata Input species data, the same as the bioData input to the
-#' \code{\link{formatsitepair}} function.
+#' \code{\link[gdm]{formatsitepair}} function.
 #'
 #' @param envInfo Input environmental data. Only accepts data tables as input.
-#' If the environmental data for \code{\link{formatsitepair}} are rasters, the
+#' If the environmental data for \code{\link[gdm]{formatsitepair}} are rasters, the
 #' data would have been extracted into table format within
-#'  \code{\link{formatsitepair}}.
+#'  \code{\link[gdm]{formatsitepair}}.
 #'
 #' @param dXCol Input x coordinate, the same as the XColumn input to the
-#' \code{\link{formatsitepair}} function.
+#' \code{\link[gdm]{formatsitepair}} function.
 #'
 #' @param dYCol Input y coordinate, the same as the YColumn input to the
-#' \code{\link{formatsitepair}} function.
+#' \code{\link[gdm]{formatsitepair}} function.
 #'
 #' @param siteCol Site column, taken from either the species or environmental
 #' tables.
@@ -35,7 +35,7 @@
 #' @return A site-pair table with appropriate distance (dissimilarity) and
 #' weight columns used for fitting GDM.
 #'
-#' @note This function is called from the \code{\link{formatsitepair}} function
+#' @note This function is called from the \code{\link[gdm]{formatsitepair}} function
 #' and not needed by the user.
 #'
 #' @seealso \code{\link[gdm]{formatsitepair}}
@@ -43,7 +43,8 @@
 #' @keywords gdm internal
 #'
 #' @export
-createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol, weightsType, custWeights){
+createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
+                           weightsType, custWeights){
   ###########################
   ##lines used to quickly test function
   #dist = distData
@@ -120,7 +121,8 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol, weights
     s1.yCoord <- spdata[s1, dYCol]
     s2.yCoord <- spdata[s2, dYCol]
   }else{
-    stop("The function failed because multiple sites have the same coordinates.")
+    stop("The function failed because multiple sites have the same coordinates. In other
+    words, sites with different names occur in the same location.")
   }
 
   ##sets up output table

@@ -5,11 +5,10 @@
 \title{Fit a Generalized Dissimilarity Model to Tabular Site-Pair Data}
 \usage{
 gdm(data, geo=FALSE, splines=NULL, knots=NULL)
-% maybe also 'usage' for other objects documented here.
 }
 \arguments{
 \item{data}{A data frame containing the site pairs to be used to fit the GDM
-(obtained using the \code{\link{formatsitepair}} function). The
+(obtained using the \code{\link[gdm]{formatsitepair}} function). The
 observed response data must be located in the first column. The weights to
 be applied to each site pair must be located in the second column. If geo
 is TRUE, then the s1.xCoord, s1.yCoord and s2.xCoord, s2.yCoord columns
@@ -43,7 +42,7 @@ functions are 0 (minimum), 50 (median), and 100 (maximum) quantiles.}
 }
 \value{
 gdm returns a gdm model object. The function
-\code{\link{summary.gdm}} can be used to obtain or print a synopsis of the
+\code{\link[gdm]{summary.gdm}} can be used to obtain or print a synopsis of the
 results. A gdm model object is a list containing at least the following
 components:
 
@@ -68,10 +67,10 @@ function).} }
 }
 \description{
 For an overview of the functions in the gdm package have a look
-here: \code{\link{gdm-package}}. \cr
+here: \code{\link[gdm]{gdm-package}}. \cr
 
 The gdm function is used to fit a generalized dissimilarity model to tabular
-site-pair data formatted as follows using the \code{\link{formatsitepair}}
+site-pair data formatted as follows using the \code{\link[gdm]{formatsitepair}}
 function: distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord,
 s1.Pred1, s1.Pred2, ...,s1.PredN, s2.Pred1, s2.Pred2, ..., s2.PredN. The
 distance column contains the response variable must be any ratio-based
@@ -100,6 +99,7 @@ s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock
  load(system.file("./data/gdm.RData", package="gdm"))
  sppData <- gdmExpData[c(1,2,13,14)]
  envTab <- gdmExpData[c(2:ncol(gdmExpData))]
+
  sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
                                siteColumn="site", predData=envTab)
 
