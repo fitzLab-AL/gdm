@@ -128,6 +128,8 @@
 #'
 #' @keywords gdm
 #'
+#' @importFrom stats median quantile
+#'
 #' @export
 # fit a gdm object from a sitepair table
 gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
