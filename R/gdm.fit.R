@@ -112,7 +112,7 @@
 #'  ##fit raster environmental data
 #'  ##sets up site-pair table
 #'  rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-#'  envRast <- stack(rastFile)
+#'  envRast <- raster::stack(rastFile)
 #'
 #'  ##environmental raster data
 #'  sitePairRast <- formatsitepair(sppData, 2, XColumn="Long",
