@@ -185,9 +185,9 @@
 #'
 #' @examples
 #' ## table data, species and environmental
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[, c(1,2,13,14)]
-#' envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[, c(1,2,13,14)]
+#' envTab <- southwest[, c(2:ncol(southwest))]
 #'
 #' ##environmental raster data
 #' ## not run
@@ -221,6 +221,7 @@
 #'
 #' #########table type 3
 #' ## dissim matrix model
+#' load(system.file("./data/gdmDissim.RData", package="gdm"))
 #' site <- unique(sppData$site)
 #' gdmDissim <- cbind(site, gdmDissim)
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",

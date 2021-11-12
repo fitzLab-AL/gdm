@@ -1,7 +1,7 @@
-#' Predict Biological Dissimilarities Between Sites or Times Using a Generalized Dissimilarity Model
+#' @title Predict Biological Dissimilarities Between Sites or Times Using a Generalized Dissimilarity Model
 #'
-#' This function predicts biological distances between sites or times using a
-#'  model object returned from \code{\link{gdm}}. Predictions between site
+#' @description This function predicts biological distances between sites or times using a
+#'  model object returned from \code{\link[gdm]{gdm}}. Predictions between site
 #'  pairs require a data frame containing the values of predictors for pairs
 #'  of locations, formatted as follows: distance, weights, s1.X, s1.Y, s2.X,
 #'  s2.Y, s1.Pred1, s1.Pred2, ..., s1.PredN, s2.Pred1, s2.Pred2, ..., s2.PredN, ...,
@@ -11,9 +11,9 @@
 #'
 #' @usage \method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, ...)
 #'
-#' @param object A gdm model object resulting from a call to \code{\link{gdm}}.
+#' @param object A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
-#' @param data Either a data frame containing the values of predictors for pairs of sites, in the same format and structure as used to fit the model using \code{\link{gdm}} or a raster stack if a prediction of biological change through time is needed.
+#' @param data Either a data frame containing the values of predictors for pairs of sites, in the same format and structure as used to fit the model using \code{\link[gdm]{gdm}} or a raster stack if a prediction of biological change through time is needed.
 #'
 #'For a data frame, the first two columns - distance and weights - are required by the function but are not used in the prediction and can therefore be filled with dummy data (e.g. all zeros). If geo is TRUE, then the s1.X, s1.Y and s2.X, s2.Y columns will be used for calculating the geographical distance between each site for inclusion of the geographic predictor term into the GDM model. If geo is FALSE, then the s1.X, s1.Y, s2.X and s2.Y data columns are ignored. However these columns are still REQUIRED and can be filled with dummy data (e.g. all zeroes). The remaining columns are for N predictors for Site 1 and followed by N predictors for Site 2. The order of the columns must match those in the site-pair table used to fit the model.
 #'
@@ -28,13 +28,13 @@
 #' @return
 #' predict returns either a response vector with the same length as the number of rows in the input data frame or a raster depicting change through time across the study region.
 #'
-#' @seealso \code{\link{gdm.transform}}
+#' @seealso \code{\link[gdm]{gdm.transform}}
 #'
 #' @examples
 #' ##sets up site-pair table
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[, c(1,2,14,13)]
-#' envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[, c(1,2,14,13)]
+#' envTab <- southwest[, c(2:ncol(southwest))]
 #'
 #' # remove soils (no rasters for these)
 #' envTab <- envTab[,-c(2:6)]
@@ -117,8 +117,8 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
 
     ##sets up sitepair table with current and future data
     predLayer <- data[[1]]
-    currXY <- as.data.frame(na.omit(rasterToPoints(data, progress='text')))
-    predXY <- as.data.frame(na.omit(rasterToPoints(predRasts, progress='text')))
+    currXY <- as.data.frame(na.omit(raster::rasterToPoints(data, progress='text')))
+    predXY <- as.data.frame(na.omit(raster::rasterToPoints(predRasts, progress='text')))
     cells <- raster::cellFromXY(predLayer, cbind(currXY$x, currXY$y))
     dummData <- rep.int(0, nrow(currXY))
     data <- cbind(dummData, dummData, currXY[,1:2], currXY, predXY[,-c(1,2)])

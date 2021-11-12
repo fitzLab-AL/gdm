@@ -1,9 +1,6 @@
 #' Fit a Generalized Dissimilarity Model to Tabular Site-Pair Data
 #'
-#' @description For an overview of the functions in the gdm package have a look
-#' here: \code{\link[gdm]{gdm-package}}. \cr
-#'
-#' The gdm function is used to fit a generalized dissimilarity model to tabular
+#' @description The gdm function is used to fit a generalized dissimilarity model to tabular
 #' site-pair data formatted as follows using the \code{\link[gdm]{formatsitepair}}
 #' function: distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord,
 #' s1.Pred1, s1.Pred2, ...,s1.PredN, s2.Pred1, s2.Pred2, ..., s2.PredN. The
@@ -26,7 +23,6 @@
 #'
 #' distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord, s1.Temp,
 #' s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock
-#'
 #'
 #' @usage gdm(data, geo=FALSE, splines=NULL, knots=NULL)
 #'
@@ -98,9 +94,9 @@
 #' @examples
 #'  ##fit table environmental data
 #'  ##sets up site-pair table, environmental tabular data
-#'  load(system.file("./data/gdm.RData", package="gdm"))
-#'  sppData <- gdmExpData[c(1,2,13,14)]
-#'  envTab <- gdmExpData[c(2:ncol(gdmExpData))]
+#'  load(system.file("./data/southwest.RData", package="gdm"))
+#'  sppData <- southwest[c(1,2,13,14)]
+#'  envTab <- southwest[c(2:ncol(southwest))]
 #'
 #'  sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                                siteColumn="site", predData=envTab)

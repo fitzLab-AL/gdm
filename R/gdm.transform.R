@@ -1,12 +1,12 @@
-#' Transform Environmental Data Using a Generalized Dissimilarity Model
+#' @title Transform Environmental Data Using a Generalized Dissimilarity Model
 #'
-#' This function transforms geographic and environmental predictors using (1) the
-#' fitted functions from a model object returned from \code{\link{gdm}} and (2) a
+#' @description This function transforms geographic and environmental predictors using (1) the
+#' fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2) a
 #' data frame or raster stack containing predictor data for a set of sites.
 #'
 #' @usage gdm.transform(model, data)
 #'
-#' @param model A gdm model object resulting from a call to \code{\link{gdm}}.
+#' @param model A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
 #' @param data Either (i) a data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN or (ii) a raster stack with one layer per predictor variable used in the model, excluding X and Y (rasters for x- and y-coordinates are built automatically from the input rasters if the model was fit with geo=T). The order of the columns (data frame) or raster layers (raster stack) MUST be the same as the order of the predictors in the site-pair table used in model fitting. There is currently no checking to ensure that the order of the variables to be transformed are the same as those in the site-pair table used in model fitting. If geographic distance was not used as a predictor in model fitting, the x- and y-columns need to be removed from the data to be transformed. Output is provided in the same format as the input data.
 #'
@@ -18,13 +18,13 @@
 #' Fitzpatrick MC, Keller SR (2015) Ecological genomics meets community-level modeling of biodiversity: Mapping the genomic landscape of current and future environmental adaptation. \emph{Ecology Letters} 18: 1-16
 #'
 #' @examples
-#' load(system.file("./data/gdm.RData", package="gdm"))
+#' load(system.file("./data/southwest.RData", package="gdm"))
 #' # grab the columns with xy, site ID, and species data
-#' sppTab <- gdmExpData[, c("species", "site", "Lat", "Long")]
+#' sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 #'
 #' ##fit gdm using rasters
 #' rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-#' envRast <- stack(rastFile)
+#' envRast <- raster::stack(rastFile)
 #' sitePairRast <- formatsitepair(sppTab, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                                siteColumn="site", predData=envRast)
 #' ##remove NA values
@@ -56,7 +56,6 @@
 #' @keywords gdm
 #'
 #' @export
-##function to transform input data into biological space based on a given gdm
 gdm.transform <- function(model, data){
   #################
   ##lines used to quickly test function
@@ -176,7 +175,7 @@ gdm.transform <- function(model, data){
     ##maps the transformed data back to the input rasters
     rastLay <- rastDat[[1]]
     rastLay[] <- NA
-    outputRasts <- stack()
+    outputRasts <- raster::stack()
     for(nn in 1:ncol(fullTrans)){
       #print(nn)
       #nn=1
@@ -184,7 +183,7 @@ gdm.transform <- function(model, data){
       holdLay[rastCells] <- fullTrans[,nn]
       #holdLay[rastCells] <- holdData[,nn]
 
-      outputRasts <- stack(outputRasts, holdLay)
+      outputRasts <- raster::stack(outputRasts, holdLay)
     }
     ##renames raster layers to be the same as the input
     if(geo){

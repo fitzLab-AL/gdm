@@ -1,27 +1,32 @@
-#' @title Perform deviance partitioning for up to two variable sets
+#' @title Perform Deviance Partitioning of a Fitted GDM
+#'
+#' @description Partitions deviance explained into different components
 #' (e.g., soils and climate), plus (optionally) space.
-#' @rdname gdm.partition.deviance
-#' @name gdm.partition.deviance
-#' @description Partitions deviance...
+#'
 #' @param sitePairTable A correctly formatted site-pair table from
-#' \code{\link{formatsitepair}}.
+#' \code{\link[gdm]{formatsitepair}}.
+#'
 #' @param varSets A list in which each element is a vector of variable names
 #' across which deviance partitioning is to be performed, excluding
 #' geographic distance (which is set by the partSpace argument). Variable names
 #' must match those used to build the site-pair table. See example.
+#'
 #' @param partSpace Whether or not to perform the partitioning using
-#' geographic space.
+#' geographic space. Default=TRUE.
+#'
+#' @usage gdm.partition.deviance(sitePairTable, varSets=list(), partSpace=T)
+#'
 #' @return A dataframe summarizing partitioning results.
-#' @export
+#'
 #' @author Matt Fitzpatrick and Karel Mokany
 #'
 #' @examples
 #' # set up site-pair table
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[c(1,2,13,14)]
-#' envTab <- gdmExpData[c(2:ncol(gdmExpData))]
-#' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
-#' siteColumn="site", predData=envTab)
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[c(1,2,13,14)]
+#' envTab <- southwest[c(2:ncol(southwest))]
+#' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
+#' sppColumn="species", siteColumn="site", predData=envTab)
 #'
 #' # Make list of variable sets for partitioning
 #' varSet <- vector("list", 3)
@@ -29,16 +34,17 @@
 #' varSet[[2]] <- c("bio5", "bio6")#, "bio15", "bio18", "bio19")
 #' varSet[[3]] <- c("bio15", "bio18", "bio19")
 #'
-#' # name sets
+#' # variable name sets
 #' names(varSet) <- c("soil", "climate")
-#' names(varSet) <- c("soil", "temp", "precip")
+#' # names(varSet) <- c("soil", "temp", "precip")
 #'
 #' # partition soils, climate, and space
 #' scgPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=T)
 #'
 #' # partition soils and climate only
 #' scPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=F)
-
+#'
+#' @export
 gdm.partition.deviance <- function(sitePairTable, varSets=list(), partSpace=T){
 
   #require(VennDiagram)

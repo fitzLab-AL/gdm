@@ -1,6 +1,9 @@
-#' Permutate the Values of a Site-Pair Table Variable
+#' @title Permutate the Values of a Site-Pair Table Variable
 #'
-#' A function which randomizes the values of the given variables within a site-pair table. This function is called from the \code{\link{gdm.varImp}} function and should not need to be called directly by the user.
+#' @description A function which randomizes the values of the given variables
+#' within a site-pair table. This function is called from the
+#' \code{\link[gdm]{gdm.varImp}} function and should not need to be called directly
+#' by the user.
 #'
 #' @usage permutateVarSitePair(spTab, siteVarTab, indexTab, vName)
 #'
@@ -10,11 +13,14 @@
 #'
 #' @param indexTab A table of index values for the given site-pair table.
 #'
-#' @param vName Vector of variable names in both the site-pair and site x variable tables.
+#' @param vName Vector of variable names in both the site-pair and site-by-variable
+#' tables.
 #'
-#' @return A site-pair table, with variable values randomized from the original site-pair table.
+#' @return A site-pair table, with variable values randomized from the original
+#' site-pair table.
 #'
-#' @note This function is called from the \code{\link{gdm.varImp}} function and the user should not need to access directly.
+#' @note This function is called from the \code{\link[gdm]{gdm.varImp}} function and
+#' the user should not need to access directly.
 #'
 #' @seealso \code{\link[gdm]{gdm.varImp}}
 #'

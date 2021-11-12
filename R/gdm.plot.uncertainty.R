@@ -1,44 +1,60 @@
 #' @title Plot I-splines with error bands using bootstrapping.
 #'
-#' @description This function estimates uncertainty in the fitted I-splines using bootstrapping. The function can run in parallel on multicore machines to reduce computation time (recommended for large number of iterations). I-spline plots with error bands (+/- one standard deviation) are produced showing (1) the variance of I-spline coefficients and (2) a rug plot indicating how sites used in model fitting are distributed along each gradient.
+#' @description This function estimates uncertainty in the fitted I-splines
+#' using bootstrapping. The function can run in parallel on multicore machines
+#' to reduce computation time (recommended for large number of iterations).
+#' I-spline plots with error bands (+/- one standard deviation) are produced
+#' showing (1) the variance of I-spline coefficients and (2) a rug plot
+#' indicating how sites used in model fitting are distributed along each gradient.
 #'
-#' @usage plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL, knots=NULL,
-#'                        splineCol="blue", errCol="grey80", plot.linewidth=2.0,
-#'                        plot.layout=c(2,2), parallel=FALSE, cores=2)
+#' @usage plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE,
+#' splines=NULL, knots=NULL, splineCol="blue", errCol="grey80",
+#' plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE, cores=2)
 #'
-#' @param spTable A site-pair table, same as used to fit a \code{\link{gdm}}.
+#' @param spTable A site-pair table, same as used to fit a \code{\link[gdm]{gdm}}.
 #'
-#' @param sampleSites The fraction (0-1) of sites to retain from the full site-pair table when subsampling.
+#' @param sampleSites The fraction (0-1) of sites to retain from the full
+#' site-pair table when subsampling.
 #'
 #' @param bsIters The number of bootstrap iterations to perform.
 #'
-#' @param geo Same as the \code{\link{gdm}} geo argument.
+#' @param geo Same as the \code{\link[gdm]{gdm}} geo argument.
 #'
-#' @param splines Same as the \code{\link{gdm}} splines argument.
+#' @param splines Same as the \code{\link[gdm]{gdm}} splines argument.
 #'
-#' @param knots Same as the \code{\link{gdm}} knots argument.
+#' @param knots Same as the \code{\link[gdm]{gdm}} knots argument.
 #'
 #' @param splineCol The color of the plotted mean spline. The default is "blue".
 #'
-#' @param errCol The color of shading for the error bands (+/- one standard deviation around the mean line). The default is "grey80".
+#' @param errCol The color of shading for the error bands (+/- one standard
+#' deviation around the mean line). The default is "grey80".
 #'
-#' @param plot.linewidth The line width of the plotted mean spline line. The default is 2.
+#' @param plot.linewidth The line width of the plotted mean spline line. The
+#' default is 2.
 #'
-#' @param plot.layout Same as the \code{\link{plot.gdm}} plot.layout argument.
+#' @param plot.layout Same as the \code{\link[gdm]{plot.gdm}} plot.layout argument.
 #'
-#' @param parallel When the parallel argument is set to TRUE, the number of cores to be registered for the foreach loop. Must be <= the number of cores in the machine running the function.
+#' @param parallel Perform the uncertainty assessment using multiple
+#' cores? Default = FALSE.
+#'
+#' @param cores When the parallel argument is set to TRUE, the number of
+#' cores to be registered for the foreach loop. Must be <= the number of cores
+#' in the machine running the function.
 #'
 #' @return plotUncertainty returns NULL.
 #'
-#' @references Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque, N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua} in the Mojave Desert: a multivariate, spatially-explicit approach to guide ecological restoration. \emph{Conservation Genetics} 16:1303-1317.
+#' @references Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque,
+#' N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua}
+#' in the Mojave Desert: a multivariate, spatially-explicit approach to guide
+#' ecological restoration. \emph{Conservation Genetics} 16:1303-1317.
 #'
-#' @seealso \code{\link{plot.gdm}, \link{formatsitepair}, \link{removeSitesFromSitePair}}
+#' @seealso \code{\link[gdm]{plot.gdm}, \link[gdm]{formatsitepair}, \link[gdm]{subsample.sitepair}}
 #'
 #' @examples
 #' ##sets up site-pair table
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[c(1,2,13,14)]
-#' envTab <- gdmExpData[c(2:ncol(gdmExpData))]
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[c(1,2,13,14)]
+#' envTab <- southwest[c(2:ncol(gdmExpData))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 #'                               sppColumn="species", siteColumn="site", predData=envTab)
 #'
@@ -57,6 +73,7 @@
 #' @importFrom graphics points
 #' @importFrom graphics polygon
 #' @importFrom graphics rug
+#' @importFrom stats sd
 #'
 #' @export
 plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL,
@@ -164,7 +181,7 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
     registerDoParallel(cl)
     ##first removes a number of sites according to input
     subSamps <- foreach::foreach(k=1:length(lstSP), .verbose=F, .packages=c("gdm")) %dopar%
-      removeSitesFromSitePair(spTable[[k]], sampleSites=sampleSites)
+      subsample.sitepair(spTable[[k]], sampleSites=sampleSites)
     ##models the subsamples
     gdmMods <- foreach::foreach(k=1:length(subSamps), .verbose=F, .packages=c("gdm")) %dopar%
       #gdmMods <- try(foreach(k=1, .verbose=F, .packages=c("gdm")) %dopar%
@@ -172,7 +189,7 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
     stopCluster(cl)
   }else{
     ##first removes a number of sites according to input
-    subSamps <- lapply(lstSP, removeSitesFromSitePair, sampleSites=sampleSites)
+    subSamps <- lapply(lstSP, subsample.sitepair, sampleSites=sampleSites)
     ##models the subsamples
     gdmMods <- lapply(subSamps, gdm, geo=geo, splines=splines, knots=knots)
   }

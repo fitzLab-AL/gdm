@@ -1,20 +1,22 @@
 #' Summarize a Fitted Generalized Dissimilarity Model
 #'
-#' This function summarizes the gdm model object returned from \code{\link{gdm}}.
+#' This function summarizes the gdm model object returned from \code{\link[gdm]{gdm}}.
 #'
 #' @usage \method{summary}{gdm}(object, ...)
 #'
-#' @param object A gdm model object resulting from a call to \code{\link{gdm}}.
-#'#'
+#' @param object A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
+#'
+#' @param ... Ignored.
+#'
 #' @return summary prints its output to the R Console window and returns no value.
 #'
-#' @seealso \code{\link{gdm}}
+#' @seealso \code{\link[gdm]{gdm}}
 #'
 #' @examples
 #' ##sets up site-pair table
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[, c(1,2,14,13)]
-#' envTab <- gdmExpData[, c(2:ncol(gdmExpData))]
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[, c(1,2,14,13)]
+#' envTab <- southwest[, c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                               siteColumn="site", predData=envTab)
 #'

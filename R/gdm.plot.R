@@ -1,14 +1,14 @@
-#' Plot model fit and I-splines from a generalized dissimilarity model
+#' @title Plot model fit and I-splines from a generalized dissimilarity model
 #'
-#' @description
-#' plot is used to plot the I-splines and fit of a generalized dissimilarity model created using the \code{\link{gdm}} function.
+#' @description plot is used to plot the I-splines and fit of a generalized
+#' dissimilarity model created using the \code{\link[gdm]{gdm}} function.
 #'
 #' @usage
 #' ## S3 method for class 'gdm'
 #' \method{plot}{gdm}(x, plot.layout = c(2, 2), plot.color = "blue",
 #'   plot.linewidth = 2, include.rug = FALSE, rug.sitepair = NULL, ...)
 #'
-#' @param x A gdm model object returned from \code{\link{gdm}}.
+#' @param x A gdm model object returned from \code{\link[gdm]{gdm}}.
 #'
 #' @param plot.layout This argument specifies the row and column layout for the plots, including: (1) a single page plot of observed response data against the raw linear predictor (ecological distance) from the model, and (2) a single page plot of the observed response against the predicted response from the model, i.e. after applying the link function, 1.0 - exp(-y), to the linear predictor, and (3) the I-splines fitted to the individual predictors. Default is 2 rows by 2 columns. To produce one predictor plot per page set plot.layout to c(1,1). The first two model plots are always produced on a single page each and therefore the layout parameter affects only the layout of the I-spline plots for those predictors that featured in the model fitting process (i.e., predictors with all-zero I-spline coefficients are not plotted).
 #'
@@ -22,7 +22,7 @@
 #'
 #' @param ... Ignored.
 #'
-#' @return plot returns NULL. Use \code{\link{summary.gdm}} to obtain a synopsis of the model object.
+#' @return plot returns NULL. Use \code{\link[gdm]{summary.gdm}} to obtain a synopsis of the model object.
 #'
 #' @references Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
 #'
@@ -30,9 +30,9 @@
 #'
 #' @examples
 #' ##sets up site-pair table
-#' load(system.file("./data/gdm.RData", package="gdm"))
-#' sppData <- gdmExpData[c(1,2,13,14)]
-#' envTab <- gdmExpData[c(2:ncol(gdmExpData))]
+#' load(system.file("./data/southwest.RData", package="gdm"))
+#' sppData <- southwest[c(1,2,13,14)]
+#' envTab <- southwest[c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 #'                               sppColumn="species", siteColumn="site",
 #'                               predData=envTab)
@@ -44,6 +44,14 @@
 #' plot(gdmMod, plot.layout=c(3,3))
 #'
 #' @keywords gdm
+#'
+#' @importFrom stats na.omit
+#' @importFrom grDevices dev.new
+#' @importFrom grDevices dev.next
+#' @importFrom graphics lines
+#' @importFrom graphics points
+#' @importFrom graphics rug
+#' @importFrom graphics par
 #'
 #' @export
 ##function to plot the splines of a gdm object

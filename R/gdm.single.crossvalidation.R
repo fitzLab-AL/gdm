@@ -3,14 +3,28 @@
 #'@description Undertake a cross-validation assessment of a GDM, using a single
 #'training and testing dataset.
 #'
-#'@param spTable_train (dataframe) A dataframe holding the GDM input table for model fitting.
-#'@param spTable_test (dataframe) A dataframe holding the GDM input table for model testing, having identical column names to 'spTable_train' but using different site-pairs.
-#'@param geo (boolean) Geographic distance to be used in model fitting (default = FALSE) .
-#'@param splines (vector) An optional vector of the number of I-spline basis functions to be used for each predictor in fitting the model.
-#'@param knots (vector) An optional vector of knots in units of the predictor variables to be used in the fitting process.
+#' @usage gdm.single.crossvalidation(spTable_train, spTable_test, geo=FALSE,
+#' splines=NULL, knots=NULL)
 #'
-#'@return List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
-#' sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
+#'@param spTable_train (dataframe) A dataframe holding the GDM input table for
+#'model fitting.
+#'
+#'@param spTable_test (dataframe) A dataframe holding the GDM input table for
+#'model testing, having identical column names to 'spTable_train' but using
+#'different site-pairs.
+#'
+#'@param geo (boolean) Geographic distance to be used in model fitting
+#'(default = FALSE).
+#'
+#'@param splines (vector) An optional vector of the number of I-spline basis
+#'functions to be used for each predictor in fitting the model.
+#'
+#'@param knots (vector) An optional vector of knots in units of the predictor
+#'variables to be used in the fitting process.
+#'
+#'@return List, providing cross-validation statistics. These are metrics that
+#'describe how well the model fit using the sitepair training table predicts
+#'the dissimilarities in the sitepair testing table. Metrics provided include:
 #' 'Deviance.Explained' (the deviance explained for the training data);
 #' 'Test.Deviance.Explained' (the deviance explained for the test data);
 #' 'Mean.Error';
@@ -19,8 +33,6 @@
 #' 'Obs.Pred.Correlation' (Pearson's correlation coefficient between observed and predicted values);
 #' 'Equalised.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimialrity units));
 #' 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
-#'
-#'@examples output = gdm.single.crossvalidation(My.training.table, My.testing.table, geo=TRUE)
 #'
 #'@importFrom stats complete.cases
 #'@importFrom stats cor

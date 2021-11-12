@@ -6,12 +6,27 @@
 #' The test is repeated a specified number of times (n.crossvalid.tests), with a unique random sample taken each time. Outputs
 #' are a number of cross-validation test metrics.
 #'
-#'@param spTable (dataframe) A dataframe holding the GDM input table for model fitting.
-#'@param train.proportion (float) The proportion of sites in 'spTable' to use in training the GDM, with the remaining proportion used to test the model. (default = 0.9)
-#'@param n.crossvalid.tests (integer) The number of cross-validation sets to use in testing the GDM. (default = 1)
-#'@param geo (boolean) Geographic distance to be used in model fitting (default = FALSE) .
-#'@param splines (vector) An optional vector of the number of I-spline basis functions to be used for each predictor in fitting the model.
-#'@param knots (vector) An optional vector of knots in units of the predictor variables to be used in the fitting process.
+#' @usage gdm.crossvalidation(spTable, train.proportion=0.9, n.crossvalid.tests=1,
+#' geo=FALSE, splines=NULL, knots=NULL)
+#'
+#' @param spTable (dataframe) A dataframe holding the GDM input table for model
+#' fitting.
+#'
+#' @param train.proportion (float) The proportion of sites in 'spTable' to use
+#' in training the GDM, with the remaining proportion used to test the model.
+#' (default = 0.9)
+#'
+#'@param n.crossvalid.tests (integer) The number of cross-validation sets to
+#'use in testing the GDM. (default = 1)
+#'
+#'@param geo (boolean) Geographic distance to be used in model fitting
+#'(default = FALSE).
+#'
+#'@param splines (vector) An optional vector of the number of I-spline basis
+#'functions to be used for each predictor in fitting the model.
+#'
+#'@param knots (vector) An optional vector of knots in units of the predictor
+#'variables to be used in the fitting process.
 #'
 #'@return List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
 #' sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
@@ -24,10 +39,8 @@
 #' 'Equalised.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimialrity units));
 #' 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
 #'
-#'@examples output = gdm_crossvalidation(My.GDM.input.table, n.crossvalid.tests=10)
-#'
 #'@export
-gdm.crossvalidation=function(spTable,
+gdm.crossvalidation <- function(spTable,
                              train.proportion=0.9,
                              n.crossvalid.tests=1,
                              geo=FALSE,
