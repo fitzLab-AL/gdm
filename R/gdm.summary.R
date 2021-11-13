@@ -70,6 +70,9 @@ summary.gdm <- function (object, ...){
       print( paste( "Coefficient[",j,"]: ", round(object$coefficients[[thiscoeff]], 3), sep="" ), quote=F )
       thiscoeff <- thiscoeff + 1
     }
+    #print( "", quote=F )
+    print(paste0("Sum of coefficients for ", object$predictors[[i]], ": ",
+                 round(object$sumCoeff[i], 3)), quote=F)
     print( "", quote=F )
   }
 }

@@ -238,7 +238,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
         }
       }
     }else{
-      ##otherwise check that the supplied splines vector has enough data and minumum spline values of 3
+      ##otherwise check that the supplied splines vector has enough data and minimum spline values of 3
       if(length(splines) != nPreds){
         stop(paste("Number of splines does not equal the number of predictors.
               Splines argument has", length(splines), "items but needs", nPreds, "items."))
@@ -286,7 +286,6 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
               quantvec[current_quant_index+i] <- stats::quantile(v,quant_increment*this_increment)
               this_increment <- this_increment + 1
             }
-
             current_quant_index <- current_quant_index + num_splines
           }
         }
@@ -399,6 +398,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
                              predictors = predlist,
                              coefficients = z$coeffs,
                              knots = quantvec,
+                             sumCoeff = NULL,
                              splines = splinvec,
                              creationdate = date(),
                              observed = z$response,
@@ -425,8 +425,8 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   schism <- NULL
   orderPreds <- order(sumCoeff, decreasing = T)
   for(op in orderPreds){
-    parabol <- 1+(op*gdmModOb$splines[op]-(gdmModOb$splines[op]))
-    parabola <- op*gdmModOb$splines[op]
+    parabol <- 1+(cumsum(gdmModOb$splines)[op]-gdmModOb$splines[op])#1+(op*gdmModOb$splines[op]-(gdmModOb$splines[op]))
+    parabola <- cumsum(gdmModOb$splines)[op]#op*gdmModOb$splines[op]
     lateralus <- c(lateralus, gdmModOb$coefficients[parabol:parabola])
     schism <- c(schism, gdmModOb$knots[parabol:parabola])
   }
@@ -435,6 +435,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   gdmModOb$splines <- gdmModOb$splines[orderPreds]
   gdmModOb$coefficients <- lateralus
   gdmModOb$knots <- schism
+  gdmModOb$sumCoeff <- sumCoeff[orderPreds]
   #########################
 
   ##sets gdm object class

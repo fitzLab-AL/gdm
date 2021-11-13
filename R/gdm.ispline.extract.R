@@ -79,7 +79,13 @@ isplineExtract <- function (model){
     yDat[,i] <- z$pdata
     pmin <- pmin + PSAMPLE
     pmax <- pmax + PSAMPLE
-    xDat[,i] <-  seq(from=model$knots[[(i*numsplines)-(numsplines-1)]],to=model$knots[[(i*numsplines)]], length=PSAMPLE)
+    parabol <- 1+(cumsum(model$splines)[i]-model$splines[i])
+    parabola <- cumsum(model$splines)[i]
+    xDat[,i] <-  seq(from=model$knots[parabol],
+                     to=model$knots[parabola], length=PSAMPLE)
+
+    #xDat[,i] <-  seq(from=model$knots[[(i*numsplines)-(numsplines-1)]],
+    #                 to=model$knots[[(i*numsplines)]], length=PSAMPLE)
     splineindex <- splineindex + numsplines
   }
 

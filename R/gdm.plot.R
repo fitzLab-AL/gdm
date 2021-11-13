@@ -171,8 +171,17 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
         }
       }
 
-      plot(seq(from=x$knots[[(i*numsplines)-(numsplines-1)]], to=x$knots[[(i*numsplines)]], length=PSAMPLE), z$pdata,
-           xlab=varNam, ylab=paste("f(", varNam, ")", sep="" ), ylim=c(0,predmax), type="l")
+      parabol <- 1+(cumsum(x$splines)[i]-x$splines[i])
+      parabola <- cumsum(x$splines)[i]
+
+      plot(seq(from=x$knots[parabol],
+               to=x$knots[parabola], length=PSAMPLE),
+           z$pdata,
+           xlab=varNam,
+           ylab=paste("f(", varNam, ")", sep="" ),
+           ylim=c(0,predmax),
+           type="l")
+
       #plot(seq(from=x$knots[[(i*3)-2]], to=x$knots[[(i*3)]], length=PSAMPLE), z$pdata,
       #     xlab=varNam, ylab=paste("f(", varNam, ")", sep="" ), ylim=c(0,predmax), type="l")
       if(include.rug==TRUE){
