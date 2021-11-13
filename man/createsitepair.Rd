@@ -28,7 +28,8 @@ data would have been extracted into table format within
 \item{siteCol}{Site column, taken from either the species or environmental
 tables.}
 
-\item{weightsType}{The method of determining the site-pair weights.}
+\item{weightsType}{The method of determining the site-pair weights used in
+model fitting.}
 
 \item{custWeights}{Custom weights, as a vector, if given by the user.}
 }
@@ -39,7 +40,7 @@ weight columns used for fitting GDM.
 \description{
 Creates a site-pair table from the lower half of a site-by-site distance
 (dissimilarity) matrix. This function is called from the
-\code{\link{formatsitepair}} function and not needed by the user.
+\code{\link[gdm]{formatsitepair}} function and not needed by the user.
 }
 \note{
 This function is called from the \code{\link[gdm]{formatsitepair}} function

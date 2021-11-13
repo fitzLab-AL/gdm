@@ -35,8 +35,7 @@ bricks for environmental conditions at two time periods, each with a
 layer for each environmental predictor in the fitted model.
 }
 \examples{
-##sets up site-pair table
-load(system.file("./data/southwest.RData", package="gdm"))
+##set up site-pair table using the southwest data set
 sppData <- southwest[, c(1,2,14,13)]
 envTab <- southwest[, c(2:ncol(southwest))]
 
@@ -52,7 +51,7 @@ predDiss <- predict(gdmMod, sitePairTab)
 
 ##time example
 rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-envRast <- stack(rastFile)
+envRast <- raster::stack(rastFile)
 
 ##make some fake climate change data
 futRasts <- envRast
@@ -60,7 +59,7 @@ futRasts <- envRast
 futRasts[[3]] <- futRasts[[3]]*0.75
 
 timePred <- predict(gdmMod, envRast, time=TRUE, predRasts=futRasts)
-plot(timePred)
+raster::plot(timePred)
 
 }
 \seealso{

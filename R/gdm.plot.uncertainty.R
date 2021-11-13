@@ -51,10 +51,9 @@
 #' @seealso \code{\link[gdm]{plot.gdm}, \link[gdm]{formatsitepair}, \link[gdm]{subsample.sitepair}}
 #'
 #' @examples
-#' ##sets up site-pair table
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' ##set up site-pair table using the southwest data set
 #' sppData <- southwest[c(1,2,13,14)]
-#' envTab <- southwest[c(2:ncol(gdmExpData))]
+#' envTab <- southwest[c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 #'                               sppColumn="species", siteColumn="site", predData=envTab)
 #'
@@ -74,13 +73,17 @@
 #' @importFrom graphics polygon
 #' @importFrom graphics rug
 #' @importFrom stats sd
+#' @importFrom parallel makeCluster
+#' @importFrom parallel stopCluster
+#' @importFrom foreach %dopar%
+#' @importFrom foreach foreach
+#' @importFrom doParallel registerDoParallel
 #'
 #' @export
 plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL,
                             knots=NULL, splineCol="blue", errCol="grey80",
                             plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE,
                             cores=2){
-  ##A function to plot the uncertantiy of each variable from a GDM model
   #################
   #spTable <- sitePairTab          ##the input site-pair table to subsample from
   #sampleSites <- 0.9     ##fraction of sites that should be retained from site pair table
@@ -177,13 +180,13 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
     #requireNamespace("doParallel")
 
     ##sets cores
-    cl <- parallel::makeCluster(cores, outfile="")
+    cl <- makeCluster(cores, outfile="")
     registerDoParallel(cl)
     ##first removes a number of sites according to input
-    subSamps <- foreach::foreach(k=1:length(lstSP), .verbose=F, .packages=c("gdm")) %dopar%
+    subSamps <- foreach(k=1:length(lstSP), .verbose=F, .packages=c("gdm")) %dopar%
       subsample.sitepair(spTable[[k]], sampleSites=sampleSites)
     ##models the subsamples
-    gdmMods <- foreach::foreach(k=1:length(subSamps), .verbose=F, .packages=c("gdm")) %dopar%
+    gdmMods <- foreach(k=1:length(subSamps), .verbose=F, .packages=c("gdm")) %dopar%
       #gdmMods <- try(foreach(k=1, .verbose=F, .packages=c("gdm")) %dopar%
       gdm(subSamps[[k]], geo=geo, splines=splines, knots=knots)
     stopCluster(cl)

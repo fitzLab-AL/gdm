@@ -1,20 +1,29 @@
 #' @title Extract I-spline Values From a gdm Object.
 #'
-#' @description Extracts the I-spline values from a gdm object. There is one I-spline for each predictor that has at least one non-zero coefficient in the fitted model.
+#' @description Extracts the I-spline values from a gdm object. There is one
+#' I-spline for each predictor that has at least one non-zero coefficient in
+#' the fitted model.
 #'
 #' @usage isplineExtract(model)
 #'
 #' @param model A gdm object from \code{\link[gdm]{gdm}}.
 #'
-#' @return A list with two items. The first item contains the x-values (actual values of the predictors) of the I-splines and the second item contains the y-values (partial ecological distances) of the fitted I-splines.
+#' @return A list with two items. The first item contains the x-values (actual
+#' values of the predictors) of the I-splines and the second item contains the
+#' y-values (partial ecological distances) of the fitted I-splines.
 #'
-#' @references Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. \emph{Diversity & Distributions} 13, 252-264.
+#' @references Ferrier S, Manion G, Elith J, Richardson, K (2007) Using
+#' generalized dissimilarity modelling to analyse and predict patterns of beta
+#' diversity in regional biodiversity assessment. \emph{Diversity & Distributions}
+#' 13, 252-264.
 #'
-#' Fitzpatrick MC, Sanders NJ, Normand S, Svenning J-C, Ferrier S, Gove AD, Dunn RR (2013). Environmental and historical imprints on beta diversity: insights from variation in rates of species turnover along gradients. Proceedings of the Royal Society: Series B 280, art. 1768
+#' Fitzpatrick MC, Sanders NJ, Normand S, Svenning J-C, Ferrier S, Gove AD,
+#' Dunn RR (2013). Environmental and historical imprints on beta diversity: insights
+#' from variation in rates of species turnover along gradients. Proceedings of the
+#' Royal Society: Series B 280, art. 1768
 #'
 #' @examples
-#' ##sets up site-pair table
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' ##set up site-pair table using the southwest data set
 #' sppData <- southwest[, c(1,2,14,13)]
 #' envTab <- southwest[, c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",

@@ -112,8 +112,7 @@
 #'
 #' @examples
 #' ##fit table environmental data
-#' ##sets up site-pair table, environmental tabular data
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' ##set up site-pair table using the southwest data set
 #' sppData <- southwest[c(1,2,13,14)]
 #' envTab <- southwest[c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
@@ -125,9 +124,11 @@
 #'
 #' @keywords gdm
 #'
-#' @import parallel
-#' @import foreach
-#' @import doParallel
+#' @importFrom parallel makeCluster
+#' @importFrom parallel stopCluster
+#' @importFrom foreach %dopar%
+#' @importFrom foreach foreach
+#' @importFrom doParallel registerDoParallel
 #'
 #' @export
 gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FALSE,

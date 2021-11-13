@@ -1,7 +1,9 @@
 #' @title Perform Deviance Partitioning of a Fitted GDM
 #'
-#' @description Partitions deviance explained into different components
-#' (e.g., soils and climate), plus (optionally) space.
+#' @description Partitions deviance explained from GDM into different
+#' user specified components - most typically environment versus space.
+#'
+#' @usage gdm.partition.deviance(sitePairTable, varSets=list(), partSpace=TRUE)
 #'
 #' @param sitePairTable A correctly formatted site-pair table from
 #' \code{\link[gdm]{formatsitepair}}.
@@ -14,38 +16,51 @@
 #' @param partSpace Whether or not to perform the partitioning using
 #' geographic space. Default=TRUE.
 #'
-#' @usage gdm.partition.deviance(sitePairTable, varSets=list(), partSpace=T)
-#'
-#' @return A dataframe summarizing partitioning results.
+#' @return A dataframe summarizing deviance partitioning results.
 #'
 #' @author Matt Fitzpatrick and Karel Mokany
 #'
 #' @examples
-#' # set up site-pair table
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' # set up site-pair table using the southwest data set
 #' sppData <- southwest[c(1,2,13,14)]
 #' envTab <- southwest[c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 #' sppColumn="species", siteColumn="site", predData=envTab)
 #'
+#' # EXAMPLE - Partition two groups of variables
+#' # Make list of variable sets for partitioning
+#' varSet <- vector("list", 2)
+#'
+#' # now, name the variable groups for partitioning
+#' # note you do not need to add "space" as this is only needed
+#' # for environmental variables
+#'
+#' # two groups (soils & climate)
+#' names(varSet) <- c("soil", "climate")
+#'
+#' # lastly, add variable names for
+#' varSet$soil <- c("awcA", "phTotal", "sandA", "shcA", "solumDepth")
+#' varSet$climate <- c("bio5", "bio6", "bio15", "bio18", "bio19")
+#' varSet
+#'
+#' # run the function to partition soils, climate, and space (partSpace=TRUE)
+#' scgPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=TRUE)
+#'
+#' # EXAMPLE - Partition three groups of variables
 #' # Make list of variable sets for partitioning
 #' varSet <- vector("list", 3)
-#' varSet[[1]] <- c("awcA", "phTotal", "sandA", "shcA", "solumDepth")
-#' varSet[[2]] <- c("bio5", "bio6")#, "bio15", "bio18", "bio19")
-#' varSet[[3]] <- c("bio15", "bio18", "bio19")
+#' names(varSet) <- c("soil", "temp", "precip")
+#' varSet$soil <- c("awcA", "phTotal", "sandA", "shcA", "solumDepth")
+#' varSet$temp <- c("bio5", "bio6")
+#' varSet$precip <- c("bio15", "bio18", "bio19")
 #'
-#' # variable name sets
-#' names(varSet) <- c("soil", "climate")
-#' # names(varSet) <- c("soil", "temp", "precip")
-#'
-#' # partition soils, climate, and space
-#' scgPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=T)
-#'
-#' # partition soils and climate only
-#' scPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=F)
+#' # partition soils, temperature, and precip
+#' # note we can't also partition space given the function's limit to a
+#' # maximum of three variable sets, so we set partSpace=FALSE
+#' scPart <- gdm.partition.deviance(sitePairTab, varSet, partSpace=FALSE)
 #'
 #' @export
-gdm.partition.deviance <- function(sitePairTable, varSets=list(), partSpace=T){
+gdm.partition.deviance <- function(sitePairTable, varSets=list(), partSpace=TRUE){
 
   #require(VennDiagram)
   #sitePairTable <- sitePairTab

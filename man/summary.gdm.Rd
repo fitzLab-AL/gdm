@@ -18,8 +18,7 @@ summary prints its output to the R Console window and returns no value.
 This function summarizes the gdm model object returned from \code{\link[gdm]{gdm}}.
 }
 \examples{
-##sets up site-pair table
-load(system.file("./data/southwest.RData", package="gdm"))
+##set up site-pair table using the southwest data set
 sppData <- southwest[, c(1,2,14,13)]
 envTab <- southwest[, c(2:ncol(southwest))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",

@@ -31,8 +31,7 @@
 #' @seealso \code{\link[gdm]{gdm.transform}}
 #'
 #' @examples
-#' ##sets up site-pair table
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' ##set up site-pair table using the southwest data set
 #' sppData <- southwest[, c(1,2,14,13)]
 #' envTab <- southwest[, c(2:ncol(southwest))]
 #'
@@ -49,7 +48,7 @@
 #'
 #' ##time example
 #' rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-#' envRast <- stack(rastFile)
+#' envRast <- raster::stack(rastFile)
 #'
 #' ##make some fake climate change data
 #' futRasts <- envRast
@@ -57,15 +56,18 @@
 #' futRasts[[3]] <- futRasts[[3]]*0.75
 #'
 #' timePred <- predict(gdmMod, envRast, time=TRUE, predRasts=futRasts)
-#' plot(timePred)
+#' raster::plot(timePred)
 #'
 #' @keywords gdm
 #'
+#' @importFrom methods is
+#' @importFrom raster nlayers
+#' @importFrom raster stack
+#' @importFrom raster rasterToPoints
+#' @importFrom raster cellFromXY
+#'
 #' @export
-##function to either predict the biological dissimilarities between sites,
-##or to predict the dissimilarity of the same sites between two time periods,
-##based on a gdm
-predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
+predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, ...){
   #################
   ##lines used to quickly test function
   ##object = gdm model
@@ -77,8 +79,8 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
   #################
   options(warn.FPU = FALSE)
 
-  ##if making a time prediction, makes sure all data is in the correct format,
-  ##and then transforms the raster data into data tables in order to utalize
+  ##if making a time prediction, check if all data are in the correct format,
+  ##and then transforms the raster data into data tables in order to utilize
   ##the C predict utility
   if(time==TRUE){
     ##checks to make sure the inputs are correct
@@ -91,35 +93,35 @@ predict.gdm <- function (object, data, time=FALSE, predRasts=NULL, ...){
     if(!is(predRasts, "RasterStack") & !is(predRasts, "RasterLayer") & !is(predRasts, "RasterBrick")){
       stop("predRasts need to be a raster object when time = TRUE")
     }
-    if(raster::nlayers(data)!=raster::nlayers(predRasts)){
+    if(nlayers(data)!=nlayers(predRasts)){
       stop("Current and future raster objects must have the same number of layers")
     }
     if(object$geo==TRUE){
-      if(raster::nlayers(data)!=length(object$predictors)-1 | raster::nlayers(predRasts)!=length(object$predictors)-1){
+      if(nlayers(data)!=length(object$predictors)-1 | nlayers(predRasts)!=length(object$predictors)-1){
         stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
       }
     }else{
-      if(raster::nlayers(data)!=length(object$predictors) | raster::nlayers(predRasts)!=length(object$predictors)){
+      if(nlayers(data)!=length(object$predictors) | nlayers(predRasts)!=length(object$predictors)){
         stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
       }
     }
 
-    for(i in 1:raster::nlayers(data)){
+    for(i in 1:nlayers(data)){
       if(names(data)[i]!=names(predRasts)[i]){
         stop("Layer names do not match the variables used to fit the model.")
       }
     }
     ##tests to see if raster data is stackable
-    tryRasts <- try(raster::stack(data[[1]], predRasts[[1]]), silent=TRUE)
+    tryRasts <- try(stack(data[[1]], predRasts[[1]]), silent=TRUE)
     if(is(tryRasts, "try-error")){
       stop("Current and prediction rasters differ in extent, resolution, and / or origin and therefore are not stackable.")
     }
 
     ##sets up sitepair table with current and future data
     predLayer <- data[[1]]
-    currXY <- as.data.frame(na.omit(raster::rasterToPoints(data, progress='text')))
-    predXY <- as.data.frame(na.omit(raster::rasterToPoints(predRasts, progress='text')))
-    cells <- raster::cellFromXY(predLayer, cbind(currXY$x, currXY$y))
+    currXY <- as.data.frame(na.omit(rasterToPoints(data, progress='text')))
+    predXY <- as.data.frame(na.omit(rasterToPoints(predRasts, progress='text')))
+    cells <- cellFromXY(predLayer, cbind(currXY$x, currXY$y))
     dummData <- rep.int(0, nrow(currXY))
     data <- cbind(dummData, dummData, currXY[,1:2], currXY, predXY[,-c(1,2)])
     ##adds s1 or s2 to the variables name of the data

@@ -190,15 +190,11 @@ coordinates associated with it, as well as multiple sites being given the
 exact same coordinates.
 }
 \examples{
-## table data, species and environmental
-load(system.file("./data/southwest.RData", package="gdm"))
-sppData <- southwest[, c(1,2,13,14)]
-envTab <- southwest[, c(2:ncol(southwest))]
-
-##environmental raster data
-## not run
-# rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-# envRast <- raster::stack(rastFile)
+## tabular data
+# start with the southwest data table
+ head(southwest)
+ sppData <- southwest[c(1,2,13,14)]
+ envTab <- southwest[c(2:ncol(southwest))]
 
 #########table type 1
 ## site-species table without coordinates
@@ -209,6 +205,11 @@ testData1b <- merge(testData1a, coords, by="site")
 ## site-species, table-table
 exFormat1a <- formatsitepair(testData1a, 1, siteColumn="site", XColumn="Long",
 YColumn="Lat", predData=envTab)
+
+#' # next, let's try environmental raster data
+## not run
+# rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+# envRast <- stack(rastFile)
 
 ## site-species, table-raster
 ## not run
@@ -226,8 +227,10 @@ sppColumn="species", siteColumn="site", predData=envTab)
 # sppColumn="species", siteColumn="site", predData=envRast)
 
 #########table type 3
-## dissim matrix model
-load(system.file("./data/gdmDissim.RData", package="gdm"))
+## starting from a distance matrix only using the provided
+## example distance matrix gdmDissim provided with gdm
+dim(gdmDissim) #square pairwise distance matrix
+gdmDissim[1:5, 1:5]
 site <- unique(sppData$site)
 gdmDissim <- cbind(site, gdmDissim)
 exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",

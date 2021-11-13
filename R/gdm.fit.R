@@ -93,8 +93,8 @@
 #'
 #' @examples
 #'  ##fit table environmental data
-#'  ##sets up site-pair table, environmental tabular data
-#'  load(system.file("./data/southwest.RData", package="gdm"))
+#'  # format site-pair table using the southwest data table
+#'  head(southwest)
 #'  sppData <- southwest[c(1,2,13,14)]
 #'  envTab <- southwest[c(2:ncol(southwest))]
 #'
@@ -115,8 +115,8 @@
 #'                                 YColumn="Lat", sppColumn="species",
 #'                                 siteColumn="site", predData=envRast)
 #'  ##sometimes raster data returns NA in the site-pair table, these rows will
-#'  ##have to be removed before fitting gdm sitePairRast <-
-#'  na.omit(sitePairRast)
+#'  ##have to be removed before fitting gdm
+#'  sitePairRast <- na.omit(sitePairRast)
 #'
 #'  ##fit raster GDM
 #'  gdmRastMod <- gdm(sitePairRast, geo=TRUE)

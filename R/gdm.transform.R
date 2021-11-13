@@ -18,7 +18,7 @@
 #' Fitzpatrick MC, Keller SR (2015) Ecological genomics meets community-level modeling of biodiversity: Mapping the genomic landscape of current and future environmental adaptation. \emph{Ecology Letters} 18: 1-16
 #'
 #' @examples
-#' load(system.file("./data/southwest.RData", package="gdm"))
+#' # start with the southwest data set
 #' # grab the columns with xy, site ID, and species data
 #' sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 #'
@@ -37,11 +37,11 @@
 #' transRasts <- gdm.transform(gdmRastMod, envRast)
 #'
 #' # map biological patterns
-#' rastDat <- sampleRandom(transRasts, 10000)
+#' rastDat <- raster::sampleRandom(transRasts, 10000)
 #' pcaSamp <- prcomp(rastDat)
 #'
 #' # note the use of the 'index' argument
-#' pcaRast <- predict(transRasts, pcaSamp, index=1:3)
+#' pcaRast <- raster::predict(transRasts, pcaSamp, index=1:3)
 #'
 #' # scale rasters
 #' pcaRast[[1]] <- (pcaRast[[1]]-pcaRast[[1]]@data@min) /
@@ -51,10 +51,14 @@
 #' pcaRast[[3]] <- (pcaRast[[3]]-pcaRast[[3]]@data@min) /
 #'   (pcaRast[[3]]@data@max-pcaRast[[3]]@data@min)*255
 #'
-#' plotRGB(pcaRast, r=1, g=2, b=3)
+#' raster::plotRGB(pcaRast, r=1, g=2, b=3)
 #'
 #' @keywords gdm
 #'
+#' @importFrom raster sampleRandom
+#' @importFrom raster stack
+#' @importFrom raster rasterToPoints
+#' @importFrom raster cellFromXY
 #' @export
 gdm.transform <- function(model, data){
   #################
@@ -84,9 +88,9 @@ gdm.transform <- function(model, data){
   if(dataCheck=="RasterStack" | dataCheck=="RasterLayer" | dataCheck=="RasterBrick"){
     ##converts the raster object into a dataframe, for the gdm transformation
     rastDat <- data
-    data <- raster::rasterToPoints(rastDat)
+    data <- rasterToPoints(rastDat)
     ##determines the cell number of the xy coordinates
-    rastCells <- raster::cellFromXY(rastDat, xy=data[,1:2])
+    rastCells <- cellFromXY(rastDat, xy=data[,1:2])
 
     ##checks for NA in the
     checkNAs <- as.data.frame(which(is.na(data), arr.ind=T))
@@ -175,7 +179,7 @@ gdm.transform <- function(model, data){
     ##maps the transformed data back to the input rasters
     rastLay <- rastDat[[1]]
     rastLay[] <- NA
-    outputRasts <- raster::stack()
+    outputRasts <- stack()
     for(nn in 1:ncol(fullTrans)){
       #print(nn)
       #nn=1
@@ -183,7 +187,7 @@ gdm.transform <- function(model, data){
       holdLay[rastCells] <- fullTrans[,nn]
       #holdLay[rastCells] <- holdData[,nn]
 
-      outputRasts <- raster::stack(outputRasts, holdLay)
+      outputRasts <- stack(outputRasts, holdLay)
     }
     ##renames raster layers to be the same as the input
     if(geo){

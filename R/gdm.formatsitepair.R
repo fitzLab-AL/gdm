@@ -184,15 +184,11 @@
 #' Generalized Dissimilarity Models.
 #'
 #' @examples
-#' ## table data, species and environmental
-#' load(system.file("./data/southwest.RData", package="gdm"))
-#' sppData <- southwest[, c(1,2,13,14)]
-#' envTab <- southwest[, c(2:ncol(southwest))]
-#'
-#' ##environmental raster data
-#' ## not run
-#' # rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
-#' # envRast <- raster::stack(rastFile)
+#' ## tabular data
+#' # start with the southwest data table
+#'  head(southwest)
+#'  sppData <- southwest[c(1,2,13,14)]
+#'  envTab <- southwest[c(2:ncol(southwest))]
 #'
 #' #########table type 1
 #' ## site-species table without coordinates
@@ -203,6 +199,11 @@
 #' ## site-species, table-table
 #' exFormat1a <- formatsitepair(testData1a, 1, siteColumn="site", XColumn="Long",
 #' YColumn="Lat", predData=envTab)
+#'
+#' #' # next, let's try environmental raster data
+#' ## not run
+#' # rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#' # envRast <- stack(rastFile)
 #'
 #' ## site-species, table-raster
 #' ## not run
@@ -220,8 +221,10 @@
 #' # sppColumn="species", siteColumn="site", predData=envRast)
 #'
 #' #########table type 3
-#' ## dissim matrix model
-#' load(system.file("./data/gdmDissim.RData", package="gdm"))
+#' ## starting from a distance matrix only using the provided
+#' ## example distance matrix gdmDissim provided with gdm
+#' dim(gdmDissim) #square pairwise distance matrix
+#' gdmDissim[1:5, 1:5]
 #' site <- unique(sppData$site)
 #' gdmDissim <- cbind(site, gdmDissim)
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
@@ -237,6 +240,12 @@
 #'
 #' @importFrom methods is
 #' @importFrom stats as.dist
+#' @importFrom vegan vegdist
+#' @importFrom reshape2 dcast
+#' @importFrom raster cellFromXY
+#' @importFrom raster xyFromCell
+#' @importFrom raster extract
+#' @importFrom raster aggregate
 #'
 #' @export
 formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
@@ -427,7 +436,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       preCastBio <- bioData
       colnames(preCastBio)[which(colnames(preCastBio)==siteColumn)] <- "siteUltimateCoolness"
       colnames(preCastBio)[which(colnames(preCastBio)==sppColumn)] <- "spcodeUltimateCoolness"
-      castData <- reshape2::dcast(preCastBio, fill=0, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
+      castData <- dcast(preCastBio, fill=0, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
       ##adds coordinates to the cast data
       uniqueCoords <- unique(preCastBio[which(colnames(preCastBio) %in% c("siteUltimateCoolness", XColumn, YColumn))])
       bioData <- merge(castData, uniqueCoords, by="siteUltimateCoolness")
@@ -454,13 +463,13 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
               if more than one site falls in the same raster cell - common for rasters
               with large cells).")
       ##gets the cell location of the given coordinates
-      cellID <- as.data.frame(raster::cellFromXY(predData, locs))
+      cellID <- as.data.frame(cellFromXY(predData, locs))
       colnames(cellID)[which(colnames(cellID)=="cellFromXY(predData, locs)")] <- "cellName"
       ##if none of the points intersected with the prediction raster
       if(nrow(cellID)==sum(is.na(cellID$cellName))){
         stop("None of the data points provided intersect with the rasters. Double check spatial data.")
       }
-      cellLocs <- as.data.frame(raster::xyFromCell(predData, cellID$cellName))
+      cellLocs <- as.data.frame(xyFromCell(predData, cellID$cellName))
       ##temporarily keeps old site in to identify what to remove from other objects
       rastBioData <- cbind(cellID, cellLocs, bioData[-c(which(colnames(bioData) %in% c(XColumn, YColumn)))])
 
@@ -478,11 +487,11 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
       ##aggregates species data by cell
       cellNum <- which(colnames(rastBioData)=="cellName")
-      bioData <- raster::aggregate(rastBioData, rastBioData[cellNum], FUN=mean)
+      bioData <- aggregate(rastBioData, rastBioData[cellNum], FUN=mean)
       bioData <- bioData[-cellNum]
 
       ##extracts raster data into environmental prediction data table
-      rastEx <- as.data.frame(raster::extract(predData, bioData$cellName))
+      rastEx <- as.data.frame(extract(predData, bioData$cellName))
 
       ##renames bioData columns which have been updated from rasters
       colnames(bioData)[which(colnames(bioData)=="cellName")] <- siteColumn
@@ -571,10 +580,10 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       sppData[sppData>=1] <- 1
       sppData[sppData==0] <- 0
       sppData[is.na(sppData)] <- 0
-      distData <- vegan::vegdist(sppData, dist, binary=T)
+      distData <- vegdist(sppData, dist, binary=T)
     }else{
       sppData[is.na(sppData)] <- 0
-      distData <- vegan::vegdist(sppData, dist, binary=F)
+      distData <- vegdist(sppData, dist, binary=F)
     }
 
     ########################################################################

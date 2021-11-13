@@ -20,7 +20,7 @@ fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2
 data frame or raster stack containing predictor data for a set of sites.
 }
 \examples{
-load(system.file("./data/southwest.RData", package="gdm"))
+# start with the southwest data set
 # grab the columns with xy, site ID, and species data
 sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 
@@ -39,11 +39,11 @@ gdmRastMod <- gdm(sitePairRast, geo=TRUE)
 transRasts <- gdm.transform(gdmRastMod, envRast)
 
 # map biological patterns
-rastDat <- sampleRandom(transRasts, 10000)
+rastDat <- raster::sampleRandom(transRasts, 10000)
 pcaSamp <- prcomp(rastDat)
 
 # note the use of the 'index' argument
-pcaRast <- predict(transRasts, pcaSamp, index=1:3)
+pcaRast <- raster::predict(transRasts, pcaSamp, index=1:3)
 
 # scale rasters
 pcaRast[[1]] <- (pcaRast[[1]]-pcaRast[[1]]@data@min) /
@@ -53,7 +53,7 @@ pcaRast[[2]] <- (pcaRast[[2]]-pcaRast[[2]]@data@min) /
 pcaRast[[3]] <- (pcaRast[[3]]-pcaRast[[3]]@data@min) /
   (pcaRast[[3]]@data@max-pcaRast[[3]]@data@min)*255
 
-plotRGB(pcaRast, r=1, g=2, b=3)
+raster::plotRGB(pcaRast, r=1, g=2, b=3)
 
 }
 \references{

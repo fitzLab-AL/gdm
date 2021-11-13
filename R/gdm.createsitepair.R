@@ -2,10 +2,9 @@
 #'
 #' @description Creates a site-pair table from the lower half of a site-by-site distance
 #' (dissimilarity) matrix. This function is called from the
-#'  \code{\link{formatsitepair}} function and not needed by the user.
+#'  \code{\link[gdm]{formatsitepair}} function and not needed by the user.
 #'
-#' @usage
-#' createsitepair(dist, spdata, envInfo, dXCol, dYCol, siteCol, weightsType,
+#' @usage createsitepair(dist, spdata, envInfo, dXCol, dYCol, siteCol, weightsType,
 #' custWeights)
 #'
 #' @param dist The lower half of a site-by-site distance (dissimilarity) matrix,
@@ -28,7 +27,8 @@
 #' @param siteCol Site column, taken from either the species or environmental
 #' tables.
 #'
-#' @param weightsType The method of determining the site-pair weights.
+#' @param weightsType The method of determining the site-pair weights used in
+#' model fitting.
 #'
 #' @param custWeights Custom weights, as a vector, if given by the user.
 #'

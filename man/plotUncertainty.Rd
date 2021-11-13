@@ -51,10 +51,9 @@ showing (1) the variance of I-spline coefficients and (2) a rug plot
 indicating how sites used in model fitting are distributed along each gradient.
 }
 \examples{
-##sets up site-pair table
-load(system.file("./data/southwest.RData", package="gdm"))
+##set up site-pair table using the southwest data set
 sppData <- southwest[c(1,2,13,14)]
-envTab <- southwest[c(2:ncol(gdmExpData))]
+envTab <- southwest[c(2:ncol(southwest))]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
                               sppColumn="species", siteColumn="site", predData=envTab)
 

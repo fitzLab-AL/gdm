@@ -3,8 +3,16 @@ Title: Generalized Dissimilarity Modeling
 Version: 1.5.0
 Date: 2021-11-12
 Authors@R: 
-    person("Matt", "Fitzpatrick", , "mfitzpatrick@umces.edu", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-1911-8407"))
+    c(person("Matt", "Fitzpatrick", email="mfitzpatrick@umces.edu", 
+    role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-1911-8407")),
+           	person("Karel", "Mokany", role="aut",
+           	comment = c(ORCID = "0000-0003-4199-3697")),
+		    person("Glenn", "Manion", role="aut"),
+		    person("Simon", "Ferrier", role="aut",
+		    comment = c(ORCID = "0000-0001-7884-2388")),
+		    person("Diego", "Nieto-Lugilde", role="ctb"),
+		    person("Matthew", "Lisk", role="ctb"))
 Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
