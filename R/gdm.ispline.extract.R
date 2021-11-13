@@ -43,7 +43,6 @@
 #' @keywords gdm
 #'
 #' @export
-##Extracts Ispline data from a gdm model
 isplineExtract <- function (model){
   ###########################
   #model = gdmOb

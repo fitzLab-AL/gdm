@@ -4,7 +4,6 @@
 \alias{plot.gdm}
 \title{Plot model fit and I-splines from a generalized dissimilarity model}
 \usage{
-## S3 method for class 'gdm'
 \method{plot}{gdm}(x, plot.layout = c(2, 2), plot.color = "blue",
   plot.linewidth = 2, include.rug = FALSE, rug.sitepair = NULL, ...)
 }

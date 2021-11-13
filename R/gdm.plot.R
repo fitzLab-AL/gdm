@@ -3,9 +3,7 @@
 #' @description plot is used to plot the I-splines and fit of a generalized
 #' dissimilarity model created using the \code{\link[gdm]{gdm}} function.
 #'
-#' @usage
-#' ## S3 method for class 'gdm'
-#' \method{plot}{gdm}(x, plot.layout = c(2, 2), plot.color = "blue",
+#' @usage \method{plot}{gdm}(x, plot.layout = c(2, 2), plot.color = "blue",
 #'   plot.linewidth = 2, include.rug = FALSE, rug.sitepair = NULL, ...)
 #'
 #' @param x A gdm model object returned from \code{\link[gdm]{gdm}}.
@@ -88,7 +86,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
   lines( overlayX, overlayY, lwd=plot.linewidth )
   thisplot <- thisplot + 1
 
-  ##determines rather or not to put mulitiple plots on one page or not
+  ##determines rather or not to put multiple plots on one page or not
   if(one_page_per_plot){
     dev.new()
     dev.next()
@@ -158,7 +156,7 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
                as.integer(numsplines),
                PACKAGE = "gdm")
 
-      if(x$geo & i==1){
+      if(x$geo & x$predictors[i]=="Geographic"){
         varNam <- "Geographic Distance"
         ##calculates rug plot data
         if(include.rug==TRUE){

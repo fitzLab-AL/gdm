@@ -127,7 +127,6 @@
 #' @importFrom stats median quantile
 #'
 #' @export
-# fit a gdm object from a sitepair table
 gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
   #################
   ##lines used to quickly test function
@@ -388,7 +387,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
 
   m <- match.call(expand.dots = F)
 
-  ##creates the gdm object, and fills its parts
+  ##creates and populates the gdm model object
   gdmModOb <- structure(list(dataname = m[[2]],
                              geo = geo,
                              sample = nrow(data),
@@ -404,13 +403,48 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
                              observed = z$response,
                              predicted = z$preddata,
                              ecological = z$ecodist))
+
+  #########################
+  # reorder the predictors, splines, coeffs in order of
+  # importance based on sum(coeffs) using a Tool-based theme
+  thiscoeff <- 1
+  thisquant <- 1
+  sumCoeff <- NULL
+  for(i in 1:length(gdmModOb$predictors)){
+    numsplines <- gdmModOb$splines[[i]]
+    holdCoeff <- NULL
+    for(j in 1:numsplines){
+      holdCoeff[j] <- gdmModOb$coefficients[[thiscoeff]]
+      thiscoeff <- thiscoeff + 1
+    }
+    sumCoeff[i] <- sum(holdCoeff)
+  }
+
+  lateralus <- NULL
+  schism <- NULL
+  orderPreds <- order(sumCoeff, decreasing = T)
+  for(op in orderPreds){
+    parabol <- 1+(op*gdmModOb$splines[op]-(gdmModOb$splines[op]))
+    parabola <- op*gdmModOb$splines[op]
+    lateralus <- c(lateralus, gdmModOb$coefficients[parabol:parabola])
+    schism <- c(schism, gdmModOb$knots[parabol:parabola])
+  }
+
+  gdmModOb$predictors <- gdmModOb$predictors[orderPreds]
+  gdmModOb$splines <- gdmModOb$splines[orderPreds]
+  gdmModOb$coefficients <- lateralus
+  gdmModOb$knots <- schism
+  #########################
+
   ##sets gdm object class
   class(gdmModOb) <- c("gdm", "list")
 
   ##reports a warning should the model "fit", yet the sum of coefficients = 0
   if(sum(gdmModOb$coefficients)==0){
-    warning("The algorithm was unable to fit a model to your data. The sum of the spline coefficients = 0 and deviance explained = NULL. Returning NULL object.")
-    ##sets the deviance explained to NULL, to reflect that the model didn't fit correctly
+    warning("The algorithm was unable to fit a model to your data.
+            The sum of all spline coefficients = 0 and deviance explained = NULL.
+            Returning NULL object.")
+    ##sets the deviance explained to NULL, to reflect that the model didn't converge.
     gdmModOb <- NULL
   }
 

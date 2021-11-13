@@ -56,8 +56,6 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   #weightsType = weightType
   #custWeights = custWeights
   ###########################
-  ##required libraries
-  #require(raster)
 
   weightsType <- as.character(weightsType)
   distance <- as.vector(dist)

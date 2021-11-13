@@ -62,7 +62,6 @@
 #' @export
 gdm.partition.deviance <- function(sitePairTable, varSets=list(), partSpace=TRUE){
 
-  #require(VennDiagram)
   #sitePairTable <- sitePairTab
   #varSets <- varSet
   #partSpace <- F
