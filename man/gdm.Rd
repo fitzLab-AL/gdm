@@ -53,7 +53,8 @@ model.} \item{nulldeviance}{ The deviance of the null model.}
 \item{explained}{The percentage of null deviance explained by the fitted
 GDM model.} \item{intercept}{The fitted value for the intercept term in the
 model.} \item{predictors}{A list of the names of the predictors that were
-used to fit the model.} \item{coefficients}{A list of the coefficients for
+used to fit the model, in order of the amount of turnover associated with
+each predictor (based on the sum of the I-spline coefficients).} \item{coefficients}{A list of the coefficients for
 each spline for each of the predictors considered in model fitting.}
 \item{knots}{A vector of the knots derived from the x data (or user
 defined), for each predictor.} \item{splines}{ A vector of the number of
