@@ -6,7 +6,8 @@
 \usage{
 plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE,
 splines=NULL, knots=NULL, splineCol="blue", errCol="grey80",
-plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE, cores=2)
+plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE, cores=2, save=FALSE,
+fileName="gdm.plotUncertainy.csv")
 }
 \arguments{
 \item{spTable}{A site-pair table, same as used to fit a \code{\link[gdm]{gdm}}.}
@@ -38,17 +39,25 @@ cores? Default = FALSE.}
 \item{cores}{When the parallel argument is set to TRUE, the number of
 cores to be registered for the foreach loop. Must be <= the number of cores
 in the machine running the function.}
+
+\item{save}{Save the function result (e.g., for custom plotting)? Default=FALSE.}
+
+\item{fileName}{Name of the csv file to save the data frame that contains the function
+result. Default = gdm.plotUncertainy.csv. Ignored if save=FALSE.}
 }
 \value{
-plotUncertainty returns NULL.
+plotUncertainty returns NULL. Saves a csv to disk if save=TRUE.
 }
 \description{
 This function estimates uncertainty in the fitted I-splines
-using bootstrapping. The function can run in parallel on multicore machines
-to reduce computation time (recommended for large number of iterations).
-I-spline plots with error bands (+/- one standard deviation) are produced
-showing (1) the variance of I-spline coefficients and (2) a rug plot
+by fitting many GDMs using a subsample of the data. The function can run in parallel
+on multicore machines to reduce computation time (recommended for large number
+of iterations). I-spline plots with error bands (+/- one standard deviation)
+are produced showing (1) the variance of I-spline coefficients and (2) a rug plot
 indicating how sites used in model fitting are distributed along each gradient.
+Function result optionally can be saved to disk as a csv for custom plotting, etc.
+The result output table will have 6 columns per predictor, three each for the
+x and y values containing the lower bound, full model, and upper bound.
 }
 \examples{
 ##set up site-pair table using the southwest data set

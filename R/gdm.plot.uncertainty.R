@@ -1,15 +1,19 @@
 #' @title Plot I-splines with error bands using bootstrapping.
 #'
 #' @description This function estimates uncertainty in the fitted I-splines
-#' using bootstrapping. The function can run in parallel on multicore machines
-#' to reduce computation time (recommended for large number of iterations).
-#' I-spline plots with error bands (+/- one standard deviation) are produced
-#' showing (1) the variance of I-spline coefficients and (2) a rug plot
+#' by fitting many GDMs using a subsample of the data. The function can run in parallel
+#' on multicore machines to reduce computation time (recommended for large number
+#' of iterations). I-spline plots with error bands (+/- one standard deviation)
+#' are produced showing (1) the variance of I-spline coefficients and (2) a rug plot
 #' indicating how sites used in model fitting are distributed along each gradient.
+#' Function result optionally can be saved to disk as a csv for custom plotting, etc.
+#' The result output table will have 6 columns per predictor, three each for the
+#' x and y values containing the lower bound, full model, and upper bound.
 #'
 #' @usage plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE,
 #' splines=NULL, knots=NULL, splineCol="blue", errCol="grey80",
-#' plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE, cores=2)
+#' plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE, cores=2, save=FALSE,
+#' fileName="gdm.plotUncertainy.csv")
 #'
 #' @param spTable A site-pair table, same as used to fit a \code{\link[gdm]{gdm}}.
 #'
@@ -41,7 +45,12 @@
 #' cores to be registered for the foreach loop. Must be <= the number of cores
 #' in the machine running the function.
 #'
-#' @return plotUncertainty returns NULL.
+#' @param save Save the function result (e.g., for custom plotting)? Default=FALSE.
+#'
+#' @param fileName Name of the csv file to save the data frame that contains the function
+#' result. Default = gdm.plotUncertainy.csv. Ignored if save=FALSE.
+#'
+#' @return plotUncertainty returns NULL. Saves a csv to disk if save=TRUE.
 #'
 #' @references Shryock, D. F., C. A. Havrilla, L. A. DeFalco, T. C. Esque,
 #' N. A. Custer, and T. E. Wood. 2015. Landscape genomics of \emph{Sphaeralcea ambigua}
@@ -68,6 +77,7 @@
 #'
 #' @keywords gdm
 #'
+#' @importFrom utils write.csv
 #' @importFrom graphics par
 #' @importFrom graphics points
 #' @importFrom graphics polygon
@@ -83,7 +93,7 @@
 plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NULL,
                             knots=NULL, splineCol="blue", errCol="grey80",
                             plot.linewidth=2.0, plot.layout=c(2,2), parallel=FALSE,
-                            cores=2){
+                            cores=2, save=FALSE, fileName="gdm.plotUncertainy.csv"){
   #################
   #spTable <- sitePairTab          ##the input site-pair table to subsample from
   #sampleSites <- 0.9     ##fraction of sites that should be retained from site pair table
@@ -99,7 +109,7 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
   #cores <- 6               ##number of cores to if parallel processing
   #################
   ##function breaks and warnings
-  ##makes sure that table is a properly formated site-pair table
+  ##makes sure that table is a properly formatted site-pair table
   if(!is(spTable, "gdmData")){
     warning("The spTable object is not of class 'gdmData'. See the formatsitepair function for help.")
   }
@@ -160,7 +170,12 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
   if(sampleSites==0){
     stop("a sampleSites value of 0 will remove all sites from the analysis (bad).")
   }
-  ##double makes sure these values are integers, seems to truncate if not
+
+  if(save & is.null(fileName)){
+    stop("Save is TRUE, but no fileName provided.")
+  }
+
+  ##check again that these values are integers, seems to truncate if not
   cores <- as.integer(cores)
   bsIters <- as.integer(bsIters)
 
@@ -170,21 +185,15 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
   ##makes copies of the site-pair table in order to randomly subsample each one differently
   lstSP <- lapply(1:bsIters, function(i){spTable})
 
-  ##runs parallel if desired by the users
+  ##runs parallel if selected
   if(parallel==TRUE){
-    ##loads libraries
-    #require(foreach)
-    #require(doParallel)
-    #requireNamespace("foreach")
-    #requireNamespace("parallel")
-    #requireNamespace("doParallel")
 
     ##sets cores
     cl <- makeCluster(cores, outfile="")
     registerDoParallel(cl)
     ##first removes a number of sites according to input
     subSamps <- foreach(k=1:length(lstSP), .verbose=F, .packages=c("gdm")) %dopar%
-      subsample.sitepair(spTable[[k]], sampleSites=sampleSites)
+      subsample.sitepair(lstSP[[k]], sampleSites=sampleSites)
     ##models the subsamples
     gdmMods <- foreach(k=1:length(subSamps), .verbose=F, .packages=c("gdm")) %dopar%
       #gdmMods <- try(foreach(k=1, .verbose=F, .packages=c("gdm")) %dopar%
@@ -199,6 +208,12 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
 
   ##models the full gdm
   fullGDMmodel <- gdm(spTable, geo=geo, splines=splines, knots=knots)
+
+  #get deviance explained by each model
+  devExps <- lapply(gdmMods, function(x){
+    x$explained
+  })
+  devExps <- unlist(devExps)
 
   ##Extracts the splines for each model
   exUncertSplines <- lapply(gdmMods, isplineExtract)
@@ -222,7 +237,6 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
 
   ##determines the bounds of the plots
   for(p in 1:length(predVars)){
-    #p=1
     predV <- predVars[p]
 
     ##gets the minimum and maximum, to set the ploting extent
@@ -239,8 +253,8 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
   }
 
   ##plots by variable
+  outData <- data.frame(matrix(nrow=200, ncol=length(predVars)*6))
   for(p in 1:length(predVars)){
-    #p <- 1
     predV <- predVars[p]
 
     ##sets the plotting minimum and maximum x-values
@@ -267,7 +281,6 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
       byVarMatY <- NULL
       ##create matrices based on the variable and its x and y location for each model iteration
       for(nn in 1:length(exUncertSplines)){
-        #nn=1
         plotX[[nn]] <- exUncertSplines[[nn]][[1]]
         plotY[[nn]] <- exUncertSplines[[nn]][[2]]
         byVarMatY <- cbind(byVarMatY, plotY[[nn]][,predV])
@@ -287,9 +300,30 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
       highBoundY <- fullPlotY + sdY
       lowBoundY <- fullPlotY - sdY
 
+      if(p==1){
+        start <- p
+        end <- p*6
+      } else {
+        start <- end+1
+        end <- p*6
+      }
+      outData[,start:end] <- cbind(lowBoundX,
+                                   fullPlotX,
+                                   highBoundX,
+                                   lowBoundY,
+                                   fullPlotY,
+                                   highBoundY)
+      colnames(outData)[start:end] <- paste(predV,
+                                          c("minusSD_X",
+                                            "fullModel_X",
+                                            "plusSD_X",
+                                            "minusSD_Y",
+                                            "fullModel_Y",
+                                            "plusSD_Y"), sep="_")
+
       ##collects the data to be used in the rug plot
       if(predV=="Geographic"){
-        ##calculates unique eucildian distance between sites
+        ##calculates unique euclidean distance between sites
         rugData <- unique(sqrt(((spTable$s1.xCoord-spTable$s2.xCoord)^2)+((spTable$s1.yCoord-spTable$s2.yCoord)^2)))
       }else{
         ##gets unique values of variable data
@@ -309,11 +343,15 @@ plotUncertainty <- function(spTable, sampleSites, bsIters, geo=FALSE, splines=NU
         }
       }
       #settings <- par(pars)
-      ##plots mean data line and polygon of uncertanty
+      ##plots mean data line and polygon of uncertainty
       plot(NULL, xlim=c(totalXmin, totalXmax), ylim=c(totalYmin, totalYmax), xlab=predV, ylab="Partial Ecological Distance")
       polygon(c(lowBoundX, rev(highBoundX)), c(lowBoundY, rev(highBoundY)), col=errCol, border=NA)
       lines(fullPlotX, fullPlotY, col=splineCol, lwd=plot.linewidth)
       rug(rugData)
     }
+  }
+
+  if(save){
+    write.csv(outData, fileName, row.names = F)
   }
 }
