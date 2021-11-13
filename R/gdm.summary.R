@@ -1,6 +1,6 @@
-#' Summarize a Fitted Generalized Dissimilarity Model
+#' @title Summarize a Fitted Generalized Dissimilarity Model
 #'
-#' This function summarizes the gdm model object returned from \code{\link[gdm]{gdm}}.
+#' @description This function summarizes the gdm model object returned from \code{\link[gdm]{gdm}}.
 #'
 #' @usage \method{summary}{gdm}(object, ...)
 #'
@@ -45,11 +45,14 @@ summary.gdm <- function (object, ...){
   print( "", quote=F )
   print( paste( "Geographical distance used in model fitting? ", object$geo ), quote=F )
   print( "", quote=F )
-  print( paste( "NULL Deviance: ", object$nulldeviance ), quote=F )
-  print( paste( "GDM Deviance: ", object$gdmdeviance ), quote=F )
-  print( paste( "Percent Deviance Explained: ", object$explained ), quote=F )
+  print( paste( "NULL Deviance: ", round(object$nulldeviance,3) ), quote=F )
+  print( paste( "GDM Deviance: ",  round(object$gdmdeviance,3) ), quote=F )
+  print( paste( "Percent Deviance Explained: ", round(object$explained, 3)),
+         quote=F )
   print( "", quote=F )
-  print( paste( "Intercept: ", object$intercept ), quote=F )
+  print( paste( "Intercept: ", round(object$intercept, 3) ), quote=F )
+  print( "", quote=F )
+  print("PREDICTOR ORDER BY SUM OF I-SPLINE COEFFICIENTS:", quote=F)
   print( "", quote=F )
   thiscoeff <- 1
   thisquant <- 1
@@ -58,13 +61,13 @@ summary.gdm <- function (object, ...){
     print( paste( "Splines: ",object$splines[[i]], sep="" ), quote=F )
     numsplines <- object$splines[[i]]
     for(j in 1:numsplines){
-      if ( j == 1 ) print( paste( "Min Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
-      else if ( j == numsplines ) print( paste( "Max Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
-      else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ",object$knots[[thisquant]], sep="" ), quote=F )
+      if ( j == 1 ) print( paste( "Min Knot: ", round(object$knots[[thisquant]], 3), sep="" ), quote=F )
+      else if ( j == numsplines ) print( paste( "Max Knot: ", round(object$knots[[thisquant]], 3), sep="" ), quote=F )
+      else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ", round(object$knots[[thisquant]], 3), sep="" ), quote=F )
       thisquant <- thisquant + 1
     }
     for(j in 1:numsplines){
-      print( paste( "Coefficient[",j,"]: ",object$coefficients[[thiscoeff]], sep="" ), quote=F )
+      print( paste( "Coefficient[",j,"]: ", round(object$coefficients[[thiscoeff]], 3), sep="" ), quote=F )
       thiscoeff <- thiscoeff + 1
     }
     print( "", quote=F )
