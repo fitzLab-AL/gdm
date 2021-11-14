@@ -707,7 +707,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     }
   }
   print(paste0("Site-pair table created with ", nrow(outTable), " rows ",
-  "(", nrow(unique(outTable[,3:4])), " unique sites)", " and ",
+  "(", nrow(unique(outTable[,3:4]))+1, " unique sites)", " and ",
                ncol(outTable) , " columns (", (ncol(outTable)-6)/2,
                " environmental variables)."))
   ##return output table
