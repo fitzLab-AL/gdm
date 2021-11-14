@@ -2,7 +2,8 @@
 % Please edit documentation in R/gdm.ispline.extract.R
 \name{isplineExtract}
 \alias{isplineExtract}
-\title{Extract I-spline Values From a gdm Object.}
+\title{Extract I-spline Values From a Fitted Generalized Dissimilarity
+Model.}
 \usage{
 isplineExtract(model)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.calculate.deviance.R
 \name{calculate.gdm.deviance}
 \alias{calculate.gdm.deviance}
-\title{Calculate GDM deviance for observed & predicted dissimilarities}
+\title{Calculate GDM Deviance for Observed & Predicted Dissimilarities}
 \usage{
 calculate.gdm.deviance(predDiss, obsDiss)
 }

@@ -1,4 +1,4 @@
-#' @title Remove Random Sites from Site-Pair Table
+#' @title Remove Sites at Random from a Site-Pair Table
 #'
 #' @description Randomly selects a number of sites from a given site-pair table
 #' and removes them from the site-pair table. It will remove all instances of

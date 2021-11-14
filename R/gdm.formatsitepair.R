@@ -1,5 +1,5 @@
-#' @title Formats and Combines Biological and Environmental Data
-#' to Produce a GDM Site-Pair Table
+#' @title Combines Biological and Environmental Data to Produce a GDM-formatted
+#' Site-Pair Table
 #'
 #' @description This function takes input biological data and environmental,
 #' geographic, and other predictor data and builds a site-pair table required

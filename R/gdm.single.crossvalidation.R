@@ -1,4 +1,4 @@
-#'@title Single GDM cross-validation test, core function
+#'@title Single GDM Cross-Validation Test, Internal Function
 #'
 #'@description Undertake a cross-validation assessment of a GDM, using a single
 #'training and testing dataset.
@@ -34,13 +34,14 @@
 #' 'Equalised.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimialrity units));
 #' 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
 #'
+#' @keywords gdm internal
+#'
 #'@importFrom stats complete.cases
 #'@importFrom stats cor
 #'@importFrom stats na.omit
 #'@importFrom stats predict
 #'@importFrom stats sd
 #'
-#'@export
 gdm.single.crossvalidation=function(spTable_train,
                                          spTable_test,
                                          geo=FALSE,

@@ -1,4 +1,4 @@
-#' Fit a Generalized Dissimilarity Model to Tabular Site-Pair Data
+#' @title Fit a Generalized Dissimilarity Model to Tabular Site-Pair Data
 #'
 #' @description The gdm function is used to fit a generalized dissimilarity model to tabular
 #' site-pair data formatted as follows using the \code{\link[gdm]{formatsitepair}}
@@ -407,7 +407,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
 
   #########################
   # reorder the predictors, splines, coeffs in order of
-  # importance based on sum(coeffs) using a Tool-based theme
+  # importance based on sum(coeffs)
   thiscoeff <- 1
   thisquant <- 1
   sumCoeff <- NULL

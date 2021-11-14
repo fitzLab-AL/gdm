@@ -1,4 +1,4 @@
-#' @title Permutate the Values of a Site-Pair Table Variable
+#' @title Permutate the Values of a Site-Pair Table Variable, Internal Function
 #'
 #' @description A function which randomizes the values of the given variables
 #' within a site-pair table. This function is called from the
@@ -26,7 +26,6 @@
 #'
 #' @keywords gdm internal
 #'
-#' @export
 permutateVarSitePair <- function(spTab, siteVarTab, indexTab, vName){
   ##only randomizes the values for a particular variable
   #################

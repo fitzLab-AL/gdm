@@ -1,4 +1,4 @@
-#' @title Plot I-splines with error bands using bootstrapping.
+#' @title Plot I-splines With Error Bands Using Bootstrapping.
 #'
 #' @description This function estimates uncertainty in the fitted I-splines
 #' by fitting many GDMs using a subsample of the data. The function can run in parallel

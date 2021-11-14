@@ -1,4 +1,4 @@
-#' @title Permutate Site-Pair Table Rows
+#' @title Permutate Site-Pair Table Rows, Internal Function
 #'
 #' @description A function which randomizes the rows of a given site-pair table. This function
 #' is called from the \code{\link[gdm]{gdm.varImp}} function and not needed by the user.
@@ -24,7 +24,6 @@
 #'
 #' @keywords gdm internal
 #'
-#' @export
 permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
 
   #################

@@ -42,7 +42,6 @@
 #'
 #' @keywords gdm internal
 #'
-#' @export
 createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
                            weightsType, custWeights){
   ###########################

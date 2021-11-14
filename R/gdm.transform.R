@@ -1,4 +1,4 @@
-#' @title Transform Environmental Data Using a Generalized Dissimilarity Model
+#' @title Transform Environmental Data Using a Fitted Generalized Dissimilarity Model
 #'
 #' @description This function transforms geographic and environmental predictors using (1) the
 #' fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2) a

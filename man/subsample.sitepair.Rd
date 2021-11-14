@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.subsample.sitepair.R
 \name{subsample.sitepair}
 \alias{subsample.sitepair}
-\title{Remove Random Sites from Site-Pair Table}
+\title{Remove Sites at Random from a Site-Pair Table}
 \usage{
 subsample.sitepair(spTable, sampleSites)
 }

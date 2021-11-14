@@ -2,8 +2,8 @@
 % Please edit documentation in R/gdm.variable.importance.R
 \name{gdm.varImp}
 \alias{gdm.varImp}
-\title{Quantify model significance and variable importance/significance in
-gdm using matrix permutation.}
+\title{Quantify Model Significance and Variable Importance in a Fitted
+Generalized Dissimilarity Model Using Matrix Permutation.}
 \usage{
 gdm.varImp(spTable, geo, splines = NULL, knots = NULL,
 fullModelOnly = FALSE, nPerm = 50, parallel = FALSE, cores = 2,
@@ -131,6 +131,6 @@ Fitzpatrick, MC, Sanders NJ, Ferrier S, Longino JT, Weiser MD, and RR Dunn.
 Multi-Species Models for Ants in North America. \emph{Ecography} 34: 836-47.
 }
 \author{
-Karel Mokany, Matthew Lisk, and Matt Fitzpatrick
+Karel Mokany and Matt Fitzpatrick
 }
 \keyword{gdm}

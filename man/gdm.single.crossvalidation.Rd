@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.single.crossvalidation.R
 \name{gdm.single.crossvalidation}
 \alias{gdm.single.crossvalidation}
-\title{Single GDM cross-validation test, core function}
+\title{Single GDM Cross-Validation Test, Internal Function}
 \usage{
 gdm.single.crossvalidation(spTable_train, spTable_test, geo=FALSE,
 splines=NULL, knots=NULL)
@@ -41,3 +41,5 @@ the dissimilarities in the sitepair testing table. Metrics provided include:
 Undertake a cross-validation assessment of a GDM, using a single
 training and testing dataset.
 }
+\keyword{gdm}
+\keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.transform.R
 \name{gdm.transform}
 \alias{gdm.transform}
-\title{Transform Environmental Data Using a Generalized Dissimilarity Model}
+\title{Transform Environmental Data Using a Fitted Generalized Dissimilarity Model}
 \usage{
 gdm.transform(model, data)
 }

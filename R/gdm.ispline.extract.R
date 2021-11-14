@@ -1,4 +1,5 @@
-#' @title Extract I-spline Values From a gdm Object.
+#' @title Extract I-spline Values From a Fitted Generalized Dissimilarity
+#' Model.
 #'
 #' @description Extracts the I-spline values from a gdm object. There is one
 #' I-spline for each predictor that has at least one non-zero coefficient in

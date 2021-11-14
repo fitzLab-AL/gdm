@@ -1,10 +1,13 @@
-#'@title GDM cross-validation test
+#' @title Cross-Validation Assessment of a Fitted GDM
 #'
-#'@description Undertake a cross-validation assessment of a GDM fit using all the predictors included in the formated GDM input
-#' table (spTable). The cross-validation is run using a specified proportion (train.proportion) of the randomly selected sites
-#' included in spTable to train the model, with the remaining sites being used to test the performance of the model predictions.
-#' The test is repeated a specified number of times (n.crossvalid.tests), with a unique random sample taken each time. Outputs
-#' are a number of cross-validation test metrics.
+#' @description Undertake a cross-validation assessment of a GDM fit using all
+#' the predictors included in the formated GDM input table (spTable). The
+#' cross-validation is run using a specified proportion (train.proportion) of
+#' the randomly selected sites included in spTable to train the model, with the
+#' remaining sites being used to test the performance of the model predictions.
+#' The test is repeated a specified number of times (n.crossvalid.tests), with
+#' a unique random sample taken each time. Outputs are a number of
+#' cross-validation test metrics.
 #'
 #' @usage gdm.crossvalidation(spTable, train.proportion=0.9, n.crossvalid.tests=1,
 #' geo=FALSE, splines=NULL, knots=NULL)
@@ -16,19 +19,19 @@
 #' in training the GDM, with the remaining proportion used to test the model.
 #' (default = 0.9)
 #'
-#'@param n.crossvalid.tests (integer) The number of cross-validation sets to
-#'use in testing the GDM. (default = 1)
+#' @param n.crossvalid.tests (integer) The number of cross-validation sets to
+#' use in testing the GDM. (default = 1)
 #'
-#'@param geo (boolean) Geographic distance to be used in model fitting
-#'(default = FALSE).
+#' @param geo (boolean) Geographic distance to be used in model fitting
+#' (default = FALSE).
 #'
-#'@param splines (vector) An optional vector of the number of I-spline basis
-#'functions to be used for each predictor in fitting the model.
+#' @param splines (vector) An optional vector of the number of I-spline basis
+#' functions to be used for each predictor in fitting the model.
 #'
-#'@param knots (vector) An optional vector of knots in units of the predictor
-#'variables to be used in the fitting process.
+#' @param knots (vector) An optional vector of knots in units of the predictor
+#' variables to be used in the fitting process.
 #'
-#'@return List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
+#' @return List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
 #' sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
 #' 'Deviance.Explained' (the deviance explained for the training data);
 #' 'Test.Deviance.Explained' (the deviance explained for the test data);
@@ -47,7 +50,6 @@ gdm.crossvalidation <- function(spTable,
                              splines=NULL,
                              knots=NULL)
 {
-  ##adds error checking to gdm function
   ##checks to see if in site-pair format from formatsitepair function
   if(class(spTable)[1] != "gdmData"){
     warning("spTable class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model will not fit.")
@@ -65,8 +67,6 @@ gdm.crossvalidation <- function(spTable,
   if(n.crossvalid.tests<1){
     stop("set 'n.crossvalid.tests' to 1 or greater")
   }
-
-
   sortMatX <- sapply(1:nrow(spTable), function(i, spTab){c(spTab[i,3], spTab[i,5])}, spTab=spTable)
   sortMatY <- sapply(1:nrow(spTable), function(i, spTab){c(spTab[i,4], spTab[i,6])}, spTab=spTable)
   sortMatNum <- sapply(1:nrow(spTable), function(i){c(1,2)})

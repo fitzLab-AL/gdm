@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.permutate.variable.R
 \name{permutateVarSitePair}
 \alias{permutateVarSitePair}
-\title{Permutate the Values of a Site-Pair Table Variable}
+\title{Permutate the Values of a Site-Pair Table Variable, Internal Function}
 \usage{
 permutateVarSitePair(spTab, siteVarTab, indexTab, vName)
 }

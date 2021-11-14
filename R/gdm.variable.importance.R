@@ -1,5 +1,5 @@
-#' @title Quantify model significance and variable importance/significance in
-#' gdm using matrix permutation.
+#' @title Quantify Model Significance and Variable Importance in a Fitted
+#' Generalized Dissimilarity Model Using Matrix Permutation.
 #'
 #' @description This function uses matrix permutation to perform model and
 #' variable significance testing and to estimate variable importance in a
@@ -99,7 +99,7 @@
 #' removed). Such cases are indicated by -9999 values in the variable importance,
 #' variable significance, and number of permutations tables.
 #'
-#' @author Karel Mokany, Matthew Lisk, and Matt Fitzpatrick
+#' @author Karel Mokany and Matt Fitzpatrick
 #'
 #' @references Ferrier S, Manion G, Elith J, Richardson, K (2007) Using
 #' generalized dissimilarity modelling to analyse and predict patterns of

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.plot.uncertainty.R
 \name{plotUncertainty}
 \alias{plotUncertainty}
-\title{Plot I-splines with error bands using bootstrapping.}
+\title{Plot I-splines With Error Bands Using Bootstrapping.}
 \usage{
 plotUncertainty(spTable, sampleSites, bsIters, geo=FALSE,
 splines=NULL, knots=NULL, splineCol="blue", errCol="grey80",

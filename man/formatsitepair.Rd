@@ -2,8 +2,8 @@
 % Please edit documentation in R/gdm.formatsitepair.R
 \name{formatsitepair}
 \alias{formatsitepair}
-\title{Formats and Combines Biological and Environmental Data
-to Produce a GDM Site-Pair Table}
+\title{Combines Biological and Environmental Data to Produce a GDM-formatted
+Site-Pair Table}
 \usage{
 formatsitepair(bioData, bioFormat, dist="bray", abundance=FALSE, siteColumn=NULL,
 XColumn, YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData,

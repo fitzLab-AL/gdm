@@ -1,4 +1,4 @@
-#' @title Calculate GDM deviance for observed & predicted dissimilarities
+#' @title Calculate GDM Deviance for Observed & Predicted Dissimilarities
 #'
 #' @description Calculate GDM deviance for observed & predicted dissimilarities.
 #'Can be used for assessing cross-validation data. Translated from the c++

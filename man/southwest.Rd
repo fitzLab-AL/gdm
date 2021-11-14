@@ -3,24 +3,24 @@
 \docType{data}
 \name{southwest}
 \alias{southwest}
-\title{Species and environmental data from southwestern Australia.}
+\title{Species and Environmental Data from Southwestern Australia.}
 \format{
 A data frame with 29364 rows and 14 variables:
 \describe{
 \item{species}{species name}
 \item{site}{site name}
-\item{awcA}{weight of the diamond, in carats}
-\item{phTotal}{weight of the diamond, in carats}
-\item{sandA}{weight of the diamond, in carats}
-\item{shcA}{weight of the diamond, in carats}
+\item{awcA}{plant-available water capacity in soil horizon A}
+\item{phTotal}{soil pH}
+\item{sandA}{percent sand content in soil horizon A}
+\item{shcA}{saturated hydraulic conductivity in soil horizon A}
 \item{solumDepth}{weight of the diamond, in carats}
-\item{bio5}{weight of the diamond, in carats}
-\item{bio6}{weight of the diamond, in carats}
-\item{bio15}{weight of the diamond, in carats}
-\item{bio18}{weight of the diamond, in carats}
-\item{bio19}{weight of the diamond, in carats}
-\item{Lat}{weight of the diamond, in carats}
-\item{Long}{weight of the diamond, in carats}
+\item{bio5}{maximum temperature of the coldest month}
+\item{bio6}{minimum temperature of the coldest month}
+\item{bio15}{precipitation seasonality}
+\item{bio18}{precipitation of warmest quarter}
+\item{bio19}{precipitation of coldest quarter}
+\item{Lat}{latitude}
+\item{Long}{longitude}
 }
 }
 \usage{

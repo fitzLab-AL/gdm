@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.crossvalidation.R
 \name{gdm.crossvalidation}
 \alias{gdm.crossvalidation}
-\title{GDM cross-validation test}
+\title{Cross-Validation Assessment of a Fitted GDM}
 \usage{
 gdm.crossvalidation(spTable, train.proportion=0.9, n.crossvalid.tests=1,
 geo=FALSE, splines=NULL, knots=NULL)
@@ -40,9 +40,12 @@ sitepair training table predicts the dissimilarities in the sitepair testing tab
 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
 }
 \description{
-Undertake a cross-validation assessment of a GDM fit using all the predictors included in the formated GDM input
-table (spTable). The cross-validation is run using a specified proportion (train.proportion) of the randomly selected sites
-included in spTable to train the model, with the remaining sites being used to test the performance of the model predictions.
-The test is repeated a specified number of times (n.crossvalid.tests), with a unique random sample taken each time. Outputs
-are a number of cross-validation test metrics.
+Undertake a cross-validation assessment of a GDM fit using all
+the predictors included in the formated GDM input table (spTable). The
+cross-validation is run using a specified proportion (train.proportion) of
+the randomly selected sites included in spTable to train the model, with the
+remaining sites being used to test the performance of the model predictions.
+The test is repeated a specified number of times (n.crossvalid.tests), with
+a unique random sample taken each time. Outputs are a number of
+cross-validation test metrics.
 }

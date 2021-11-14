@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdm.permutate.sitepairtable.R
 \name{permutateSitePair}
 \alias{permutateSitePair}
-\title{Permutate Site-Pair Table Rows}
+\title{Permutate Site-Pair Table Rows, Internal Function}
 \usage{
 permutateSitePair(spTab, siteVarTab, indexTab, vNames)
 }
