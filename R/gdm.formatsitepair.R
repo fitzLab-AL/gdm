@@ -221,12 +221,14 @@
 #' # sppColumn="species", siteColumn="site", predData=envRast)
 #'
 #' #########table type 3
-#' ## starting from a distance matrix only using the provided
-#' ## example distance matrix gdmDissim provided with gdm
+#' ## It is possible to format a site-pair table by starting
+#' # with a pre-calculated matrix of biological distances
 #' dim(gdmDissim) #square pairwise distance matrix
 #' gdmDissim[1:5, 1:5]
+#' # need to add a site ID column
 #' site <- unique(sppData$site)
 #' gdmDissim <- cbind(site, gdmDissim)
+#' # now we can format the table:
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
 #' predData=envTab, siteColumn="site")
 #'
@@ -556,7 +558,9 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     if(weightType=="custom" & !is.null(custWeights)){
       colnames(custWeights)[colnames(custWeights)==siteColumn] <- "gettingCoolSiteColumn"
       custWeights <- custWeights[which(predData$gettingCoolSiteColumn %in% custWeights[,"gettingCoolSiteColumn"]),]
-      custWeights <- custWeights[order(custWeights[,"gettingCoolSiteColumn"]),]
+      hwap <- custWeights[,"gettingCoolSiteColumn"]
+      hwap <- order(hwap)
+      custWeights <- custWeights[hwap,]
       colnames(custWeights)[colnames(custWeights)=="gettingCoolSiteColumn"] <- siteColumn
     }
 
@@ -567,8 +571,12 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ##as a final check, makes sure bioData and predData sites are in same order
     predSite <- which(names(predData) == siteColumn)
     bioSite <- which(names(bioData)==siteColumn)
-    predData <- predData[order(predData[,predSite]),]
-    bioData <- bioData[order(bioData[,bioSite]),]
+    hwap <- predData[,predSite]
+    hwap <- order(hwap)
+    predData <- predData[hwap,]
+    rosetta <- bioData[,bioSite]
+    rosetta <- order(rosetta)
+    bioData <- bioData[rosetta,]
 
     ##sets up species data for calculating dissimilarity
     bx <- which(names(bioData)==XColumn)
@@ -599,7 +607,9 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     distData <- as.vector(orderedData[distData])
     predData <- unique(predData)
     ##orders the prediction data by site
-    predData <- predData[order(predData[siteColumn]),]
+    hwap <- predData[siteColumn]
+    hwap <- order(hwap)
+    predData <- predData[hwap,]
     ########################################################################
     ##site pair table, already preped
   }else if(bioFormat==4){
@@ -646,8 +656,9 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     #remove site column from matrices
     distPreds <- lapply(distPreds, function(dP){dP[,-which(siteColumn %in% colnames(dP))]})
     #print(dim(distPreds[[1]]))
-    ##orders the distance matices of distPreds
-    distPreds <- mapply(function(dP, hSC){as.matrix(as.dist(dP[order(hSC),order(hSC)]))}, dP=distPreds, hSC=holdSiteCols, SIMPLIFY=FALSE)
+    ##orders the distance matrices of distPreds
+    distPreds <- mapply(function(dP, hSC){as.matrix(as.dist(dP[order(hSC),order(hSC)]))},
+                        dP=distPreds, hSC=holdSiteCols, SIMPLIFY=FALSE)
     #print(dim(distPreds[[1]]))
     ##orders the site columns to match the distance matrices
     orderSiteCols <- lapply(holdSiteCols, function(hSC){hSC[order(hSC)]})

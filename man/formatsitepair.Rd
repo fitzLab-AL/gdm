@@ -227,12 +227,14 @@ sppColumn="species", siteColumn="site", predData=envTab)
 # sppColumn="species", siteColumn="site", predData=envRast)
 
 #########table type 3
-## starting from a distance matrix only using the provided
-## example distance matrix gdmDissim provided with gdm
+## It is possible to format a site-pair table by starting
+# with a pre-calculated matrix of biological distances
 dim(gdmDissim) #square pairwise distance matrix
 gdmDissim[1:5, 1:5]
+# need to add a site ID column
 site <- unique(sppData$site)
 gdmDissim <- cbind(site, gdmDissim)
+# now we can format the table:
 exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
 predData=envTab, siteColumn="site")
 
