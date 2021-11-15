@@ -558,7 +558,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     if(weightType=="custom" & !is.null(custWeights)){
       colnames(custWeights)[colnames(custWeights)==siteColumn] <- "gettingCoolSiteColumn"
       custWeights <- custWeights[which(predData$gettingCoolSiteColumn %in% custWeights[,"gettingCoolSiteColumn"]),]
-      hwap <- custWeights[,"gettingCoolSiteColumn"]
+      hwap <- custWeights[,"gettingCoolSiteColumn"][,1]
       hwap <- order(hwap)
       custWeights <- custWeights[hwap,]
       colnames(custWeights)[colnames(custWeights)=="gettingCoolSiteColumn"] <- siteColumn
@@ -607,11 +607,11 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     distData <- as.vector(orderedData[distData])
     predData <- unique(predData)
     ##orders the prediction data by site
-    hwap <- predData[siteColumn]
+    hwap <- predData[siteColumn][,1]
     hwap <- order(hwap)
     predData <- predData[hwap,]
     ########################################################################
-    ##site pair table, already preped
+    ##site pair table, already prepped
   }else if(bioFormat==4){
     ##site-pair distance value
     outTable <- bioData
