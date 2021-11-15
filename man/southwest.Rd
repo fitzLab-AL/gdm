@@ -13,7 +13,7 @@ A data frame with 29364 rows and 14 variables:
 \item{phTotal}{soil pH}
 \item{sandA}{percent sand content in soil horizon A}
 \item{shcA}{saturated hydraulic conductivity in soil horizon A}
-\item{solumDepth}{weight of the diamond, in carats}
+\item{solumDepth}{soil depth to unweathered parent material}
 \item{bio5}{maximum temperature of the coldest month}
 \item{bio6}{minimum temperature of the coldest month}
 \item{bio15}{precipitation seasonality}
