@@ -4,6 +4,9 @@
 # gdm
 
 <!-- badges: start -->
+
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://cran.r-project.org/web/packages/gdm)
+[![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://cran.rstudio.com/package=gdm)
 <!-- badges: end -->
 
 The `gdm` package provides function to fit, plot, summarize, and apply
