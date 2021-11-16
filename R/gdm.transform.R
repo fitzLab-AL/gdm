@@ -23,7 +23,7 @@
 #' sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 #'
 #' ##fit gdm using rasters
-#' rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#' rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
 #' envRast <- raster::stack(rastFile)
 #' sitePairRast <- formatsitepair(sppTab, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                                siteColumn="site", predData=envRast)

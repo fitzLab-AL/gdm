@@ -64,7 +64,7 @@
 #' predDiss <- predict(gdmMod, sitePairTab)
 #'
 #' ##time example
-#' rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#' rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
 #' envRast <- raster::stack(rastFile)
 #'
 #' ##make some fake climate change data

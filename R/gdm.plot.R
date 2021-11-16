@@ -119,6 +119,39 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
   lines( overlayX, overlayY, lwd=plot.linewidth )
   thisplot <- thisplot + 1
 
+  #########################
+  # reorder the predictors, splines, coeffs in order of
+  # importance based on sum(coeffs)
+  thiscoeff <- 1
+  thisquant <- 1
+  sumCoeff <- NULL
+  for(i in 1:length(x$predictors)){
+    numsplines <- x$splines[[i]]
+    holdCoeff <- NULL
+    for(j in 1:numsplines){
+      holdCoeff[j] <- x$coefficients[[thiscoeff]]
+      thiscoeff <- thiscoeff + 1
+    }
+    sumCoeff[i] <- sum(holdCoeff)
+  }
+
+  lateralus <- NULL
+  schism <- NULL
+  orderPreds <- order(sumCoeff, decreasing = T)
+  for(op in orderPreds){
+    parabol <- 1+(cumsum(x$splines)[op]-x$splines[op])#1+(op*x$splines[op]-(x$splines[op]))
+    parabola <- cumsum(x$splines)[op]#op*x$splines[op]
+    lateralus <- c(lateralus, x$coefficients[parabol:parabola])
+    schism <- c(schism, x$knots[parabol:parabola])
+  }
+
+  x$predictors <- x$predictors[orderPreds]
+  x$splines <- x$splines[orderPreds]
+  x$coefficients <- lateralus
+  x$knots <- schism
+  x$sumCoeff <- sumCoeff[orderPreds]
+  #########################
+
   ##determine the max of all the predictor data, to be used in the plotting below
   preds <- length(x$predictors)
   predmax <- 0
@@ -213,3 +246,4 @@ plot.gdm <- function (x, plot.layout = c(2,2), plot.color = "blue",
     splineindex <- splineindex + numsplines
   }
 }
+

@@ -108,7 +108,7 @@
 #'
 #'  ##fit raster environmental data
 #'  ##sets up site-pair table
-#'  rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#'  rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
 #'  envRast <- raster::stack(rastFile)
 #'
 #'  ##environmental raster data
@@ -404,39 +404,6 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
                              observed = z$response,
                              predicted = z$preddata,
                              ecological = z$ecodist))
-
-  #########################
-  # reorder the predictors, splines, coeffs in order of
-  # importance based on sum(coeffs)
-  thiscoeff <- 1
-  thisquant <- 1
-  sumCoeff <- NULL
-  for(i in 1:length(gdmModOb$predictors)){
-    numsplines <- gdmModOb$splines[[i]]
-    holdCoeff <- NULL
-    for(j in 1:numsplines){
-      holdCoeff[j] <- gdmModOb$coefficients[[thiscoeff]]
-      thiscoeff <- thiscoeff + 1
-    }
-    sumCoeff[i] <- sum(holdCoeff)
-  }
-
-  lateralus <- NULL
-  schism <- NULL
-  orderPreds <- order(sumCoeff, decreasing = T)
-  for(op in orderPreds){
-    parabol <- 1+(cumsum(gdmModOb$splines)[op]-gdmModOb$splines[op])#1+(op*gdmModOb$splines[op]-(gdmModOb$splines[op]))
-    parabola <- cumsum(gdmModOb$splines)[op]#op*gdmModOb$splines[op]
-    lateralus <- c(lateralus, gdmModOb$coefficients[parabol:parabola])
-    schism <- c(schism, gdmModOb$knots[parabol:parabola])
-  }
-
-  gdmModOb$predictors <- gdmModOb$predictors[orderPreds]
-  gdmModOb$splines <- gdmModOb$splines[orderPreds]
-  gdmModOb$coefficients <- lateralus
-  gdmModOb$knots <- schism
-  gdmModOb$sumCoeff <- sumCoeff[orderPreds]
-  #########################
 
   ##sets gdm object class
   class(gdmModOb) <- c("gdm", "list")

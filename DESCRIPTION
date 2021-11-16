@@ -1,7 +1,7 @@
 Package: gdm
 Title: Generalized Dissimilarity Modeling
-Version: 1.5.0
-Date: 2021-11-15
+Version: 1.5.0-1
+Date: 2021-11-16
 Authors@R: 
     c(person("Matt", "Fitzpatrick", email="mfitzpatrick@umces.edu", 
     role = c("aut", "cre"),
@@ -14,9 +14,9 @@ Authors@R:
 		    person("Simon", "Ferrier", role="aut",
 		    comment = c(ORCID = "0000-0001-7884-2388")),
 		    person("Matthew", "Lisk", role="ctb"),
-		    person("Ware", "Chris", role="ctb"),
-		    person("Woolley", "Skip", role="ctb"),
-		    person("Harwood", "Tom", role="ctb"))
+		    person("Chris", "Ware", role="ctb"),
+		    person("Skip", "Woolley", role="ctb"),
+		    person("Tom", "Harwood", role="ctb"))
 Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)

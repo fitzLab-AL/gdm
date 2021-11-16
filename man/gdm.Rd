@@ -107,7 +107,7 @@ s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock
 
  ##fit raster environmental data
  ##sets up site-pair table
- rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+ rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
  envRast <- raster::stack(rastFile)
 
  ##environmental raster data

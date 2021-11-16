@@ -202,7 +202,7 @@
 #'
 #' #' # next, let's try environmental raster data
 #' ## not run
-#' # rastFile <- system.file("./extdata/stackedVars.grd", package="gdm")
+#' # rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
 #' # envRast <- stack(rastFile)
 #'
 #' ## site-species, table-raster
