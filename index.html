@@ -235,7 +235,7 @@
                               predData<span class="op">=</span><span class="va">swBioclims</span><span class="op">)</span> <span class="co">#raster stack</span>
 <span class="co">#&gt; [1] "Site weighting type: Equal"</span>
 <span class="co">#&gt; [1] "Site-pair table created with 4371 rows (94 unique sites) and 16 columns (5 environmental variables)."</span></code></pre></div>
-<p>Because some sites might not overlap with the rasters, we should check for and remove NA values from teh site-pair table:</p>
+<p>Because some sites might not overlap with the rasters, we should check for and remove NA values from the site-pair table:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">gdmTab.rast</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 465</span>
@@ -297,7 +297,7 @@
 <span class="co">#&gt; [1] </span>
 <span class="co">#&gt; [1] </span>
 <span class="co">#&gt; [1] GDM Modelling Summary</span>
-<span class="co">#&gt; [1] Creation Date:  Wed Nov 17 15:11:09 2021</span>
+<span class="co">#&gt; [1] Creation Date:  Wed Nov 17 15:55:26 2021</span>
 <span class="co">#&gt; [1] </span>
 <span class="co">#&gt; [1] Name:  gdm.1</span>
 <span class="co">#&gt; [1] </span>
