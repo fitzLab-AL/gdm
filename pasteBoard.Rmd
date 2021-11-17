@@ -1,0 +1,52 @@
+---
+title: "holdCutText"
+author: "Matt Fitzpatrick"
+date: "11/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\pagebreak  
+
+## Examining variable uncertainty
+
+Something about Uncertainty in predictive modeling?
+
+The `plotUncertainty` function is provides a means to test the uncertainty in the values used to create a **gdm**. The function randomly removes sites from a given site-pair table equal to a number of defined iterations [@shryock_2015] (??). Each iteration the remaining sites are used to construct a new site-pair table, which is then used to fit a **gdm**. The I-spline values are extracted from each **gdm** and used to plot a cloud of uncertainty for each variable with, the cloud representing one standard deviation, and a solid line plotted along the mean. In addition, a rug plot is provided in order to see the actual distribution of the data from the given site-pair table.
+
+While not demonstrated here, the `plotUncertainty` function has the option to be ran in parallel utalizing an internal `foreach` loop. Using the functions multicore capabilities is highly recommended for a large number of iterations. 
+
+```{r plotUncertainty, warning=FALSE, message=FALSE, fig.height=9, fig.width=6, fig.cap="Plotted uncertainty of the I-spline data."}
+# using the formated site-pair table from above
+plotUncertainty(gdmTab, geo=T, leaveOut=0.35, bsIters=5, plot.layout=c(4,3))
+```
+
+\pagebreak
+
+\pagebreak  
+
+# **gdm** Variable Importance
+
+Something about variable importance? 
+
+The `gdm.varImp` function performs matix permutation on a given site-pair table to estimate the importance/significance of the variables used to fit a **gdm**. The function's output is a list of three tables. The first table is summarizes the model deviance, percent deviance explained, and estimated p-value from the number of variables that are considered available to fit a model. The remaining two tables summarize variable importance and significance respectively. Variable importance is measured as the amount full model deviance is reduced when that variable is removed. Significance is estimated using the bootstrapped p-value when the variable has been removed. 
+
+When the fullModelOnly argument for the `gdm.varImp` function is set to TRUE, the function will evaluate only the "fullModel", or the **gdm** object that results from the given site-pair table with all variables included, and only the first column of the output tables will have values. When the fullModelOnly argument is set to FALSE, then the function will use a backward elimination process to remove variables one at a time and re-examine the fitted model with the remaining variables. In the output tables, this is labeled with "fullModel-X", where X is the number of variables which have been removed. During the backward selection process, the variable which is considered least important (first greatest P-value, then lowest reduced deviance) is the variable which is selected for removal. 
+
+```{r variableImportance, warning=FALSE, message=FALSE}
+# using the formated site-pair table from above
+varSig <- gdm.varImp(gdmTab, geo=T, nPerm=5, fullModelOnly=F)
+varSig[[1]]
+varSig[[2]]
+varSig[[3]]
+```
+
+
+
+# References
+
+
+Geographical distance measures can be simple Euclidean separation or more complex measures of isolation, such as least cost paths or resistance distance. See [@ferrier_2007] for strategies for including categorical variables. 
