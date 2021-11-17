@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Permutate Site-Pair Table Rows, Internal Function — permutateSitePair • gdm</title>
+<title>Changelog • gdm</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,7 @@
 
 
 
-<meta property="og:title" content="Permutate Site-Pair Table Rows, Internal Function — permutateSitePair" />
-<meta property="og:description" content="A function which randomizes the rows of a given site-pair table. This function
-is called from the gdm.varImp function and not needed by the user.
-be called directly by the user." />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -61,7 +58,7 @@ be called directly by the user." />
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,58 +105,41 @@ be called directly by the user." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Permutate Site-Pair Table Rows, Internal Function</h1>
-    
-    <div class="hidden name"><code>permutateSitePair.Rd</code></div>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      
     </div>
 
-    <div class="ref-description">
-    <p>A function which randomizes the rows of a given site-pair table. This function
-is called from the <code><a href='gdm.varImp.html'>gdm.varImp</a></code> function and not needed by the user.
-be called directly by the user.</p>
-    </div>
-
-    <pre class="usage"><span class='fu'>permutateSitePair</span><span class='op'>(</span><span class='va'>spTab</span>, <span class='va'>siteVarTab</span>, <span class='va'>indexTab</span>, <span class='va'>vNames</span><span class='op'>)</span></pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>spTab</th>
-      <td><p>A site-pair table.</p></td>
-    </tr>
-    <tr>
-      <th>siteVarTab</th>
-      <td><p>A site x variable table.</p></td>
-    </tr>
-    <tr>
-      <th>indexTab</th>
-      <td><p>A table of index values for the site-pair table.</p></td>
-    </tr>
-    <tr>
-      <th>vNames</th>
-      <td><p>Vector of variable names in both the site-pair and
-site x variable tables.</p></td>
-    </tr>
-    </table>
-
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A new site-pair table with rows randomized.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
-
-    <p>This function is called from the <code><a href='gdm.varImp.html'>gdm.varImp</a></code> function
-and not needed by the user.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='gdm.varImp.html'>gdm.varImp</a></code></p></div>
-
+    <div id="gdm-150-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0-1">
+<a href="#gdm-150-1" class="anchor"></a>gdm 1.5.0-1<small> Unreleased </small>
+</h1>
+<div id="bug-fixes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>Fix bug associated with the formatting of the <code>gdm</code> model object that broke the <code>predict.gdm</code> function.</li>
+</ul>
+</div>
+</div>
+    <div id="gdm-150" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0">
+<a href="#gdm-150" class="anchor"></a>gdm 1.5.0<small> 2021-11-16 </small>
+</h1>
+<ul>
+<li><p>Substantial update to the package structure to use <code>devtools</code>, <code>roxygen2</code>, etc. development tools.</p></li>
+<li><p>Add two new functions <code>gdm.partition.deviance</code> and <code>gdm.crossvalidation</code>. The <code>gdm.partition.deviance</code> functions partitions deviance explained by different sets of predictors into unique/shared components. The <code>gdm.crossvalidation</code> function produces a number of model evaluation metrics using bootstrapping.</p></li>
+<li><p><code>summary</code> now provides the sum of the I-spline coefficients (indicator of predictor importance) and lists variables from highest sum to lowest.</p></li>
+<li><p><code>plot</code> now plots I-splines in order from highest sum of coefficients to least.</p></li>
+</ul>
+</div>
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 
