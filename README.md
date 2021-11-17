@@ -286,7 +286,7 @@ gdmTab.rast <- formatsitepair(bioData=sppTab,
 ```
 
 Because some sites might not overlap with the rasters, we should check
-for and remove NA values from teh site-pair table:
+for and remove NA values from the site-pair table:
 
 ``` r
 sum(is.na(gdmTab.rast))
@@ -405,7 +405,7 @@ summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Wed Nov 17 15:11:09 2021
+#> [1] Creation Date:  Wed Nov 17 15:55:26 2021
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
