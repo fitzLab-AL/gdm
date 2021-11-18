@@ -50,7 +50,14 @@
   <a href="news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/fitzLab-AL/gdm/">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -114,7 +121,7 @@
 <p>Note that for all input data the rows and their order must match in the biological and environmental data frames and must not include NAs. This is best accomplished by making sure your tables have a column with a unique identifier for each site and that the order of these IDs are the same across all tables.</p>
 <p>To build a site-pair table, we need individual tables for the biological and environmental data, so we first index the <code>southwest</code> table to create a table for the species data and a second for the environmental data:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">gdm</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mfitzpatrick.al.umces.edu/gdm">gdm</a></span><span class="op">)</span>
 <span class="co"># have a look at the southwest data set</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span>
 <span class="co">#&gt; 'data.frame':    29364 obs. of  14 variables:</span>
@@ -531,6 +538,10 @@
 <h2>Links</h2>
 <ul class="list-unstyled">
 <li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=gdm">https://​cloud.r-project.org/​package=gdm</a>
+</li>
+<li>Browse source code at <br><a href="https://github.com/fitzLab-AL/gdm/">https://​github.com/​fitzLab-AL/​gdm/​</a>
+</li>
+<li>Report a bug at <br><a href="https://github.com/fitzLab-AL/gdm/issues/">https://​github.com/​fitzLab-AL/​gdm/​issues/​</a>
 </li>
 </ul>
 </div>
