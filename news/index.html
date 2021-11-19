@@ -54,6 +54,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GL0J535PBQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-GL0J535PBQ');
+</script>
+
 
   </head>
 
@@ -71,7 +81,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.0-1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.0-2</span>
       </span>
     </div>
 
@@ -114,13 +124,25 @@
       <small>Source: <a href='https://github.com/fitzLab-AL/gdm/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="gdm-150-1" class="section level1">
-<h1 class="page-header" data-toc-text="1.5.0-1">
-<a href="#gdm-150-1" class="anchor"></a>gdm 1.5.0-1<small> 2021-11-18 </small>
+    <div id="gdm-150-2" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0-2">
+<a href="#gdm-150-2" class="anchor"></a>gdm 1.5.0-2<small> Unreleased </small>
 </h1>
 <div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bug-fixes" class="anchor"></a>bug fixes</h2>
+<ul>
+<li>Fix bug that prevented printing of I-spline coefficients when using the <code>summary</code> function.</li>
+</ul>
+</div>
+</div>
+    <div id="gdm-150-1" class="section level1">
+<h1 class="page-header" data-toc-text="1.5.0-1">
+<a href="#gdm-150-1" class="anchor"></a>gdm 1.5.0-1<small> 2021-11-18 </small>
+</h1>
+<div id="bug-fixes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bug-fixes-1" class="anchor"></a>bug fixes</h2>
 <ul>
 <li>Fix bug associated with the formatting of the <code>gdm</code> model object that broke the <code>predict.gdm</code> function.</li>
 </ul>
@@ -132,6 +154,7 @@
 </h1>
 <ul>
 <li><p>Substantial update to the package structure to use <code>devtools</code>, <code>roxygen2</code>, etc. development tools.</p></li>
+<li><p>Fixed a number of bugs associated with using non-default numebrs of splines.</p></li>
 <li><p>Add two new functions <code>gdm.partition.deviance</code> and <code>gdm.crossvalidation</code>. The <code>gdm.partition.deviance</code> functions partitions deviance explained by different sets of predictors into unique/shared components. The <code>gdm.crossvalidation</code> function produces a number of model evaluation metrics using bootstrapping.</p></li>
 <li><p><code>summary</code> now provides the sum of the I-spline coefficients (indicator of predictor importance) and lists variables from highest sum to lowest.</p></li>
 <li><p><code>plot</code> now plots I-splines in order from highest sum of coefficients to least.</p></li>

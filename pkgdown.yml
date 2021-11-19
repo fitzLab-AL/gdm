@@ -2,5 +2,8 @@ pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2021-11-18T18:18Z
+last_built: 2021-11-19T20:37Z
+urls:
+  reference: https://mfitzpatrick.al.umces.edu/gdm//reference
+  article: https://mfitzpatrick.al.umces.edu/gdm//articles
 
