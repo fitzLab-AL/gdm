@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://cran.r-project.org/web/packages/gdm)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
 [![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://cran.rstudio.com/package=gdm)
 <!-- badges: end -->
 
@@ -24,7 +24,7 @@ install.packages("gdm")
 ```
 
 -   Install latest development version from GitHub (requires
-    [devtools](https://github.com/hadley/devtools) package):
+    [devtools](https://github.com/r-lib/devtools) package):
 
 ``` r
 if (!require("devtools")) {
@@ -33,12 +33,12 @@ if (!require("devtools")) {
 devtools::install_github("fitzLab-AL/gdm")
 ```
 
-### Package Citation
+# Package Citation
 
 Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021)
 gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 
-### Getting Started
+# Getting Started
 
 GDM has been used in many published studies. In addition to working
 through the examples here and those throughout the package
@@ -143,10 +143,9 @@ sppTab <- southwest[, c("species", "site", "Long", "Lat")]
 envTab <- southwest[, c(2:ncol(southwest))]
 ```
 
-Because the `southwest` data are an x-y species list, we use
+Because the `southwest` data is x-y species list format, we use
 `bioFormat=2`. Otherwise, we just need to provide the required column
-names to create the site-pair table. Note this will print a few
-warnings, but these can be ignored:
+names to create the site-pair table:
 
 ``` r
 # x-y species list example
@@ -178,31 +177,32 @@ gdmTab <- formatsitepair(bioData=sppTab,
     #> 132.1 36.05000 6.605882 64.52941        0 168.8824
     #> 132.2 36.18750 6.131250 58.75000        0 141.1250
 
-Each row in the resulting site-pair table contains a biological distance
-measure in the first column (the default is Bray-Curtis distance though
-any measure scaled between 0-1 is acceptable). The second column
-contains the weight to be assigned to each data point in model fitting
-(defaults to 1 if equal weighting is used, but can be customized by the
-user or can be scaled to site richness, see below). The remaining
-columns are the coordiantes and environmental values at a site (s1) and
-those at a second site (s2) making up a site pair. Subsequent rows
-repeat this pattern until all possible site pairs are represented and
-such that pairwise distances between all sites can be calculated and
-used as predictors. While the site-pair table format can produce
-extremely large data frames and contain numerous repeat values, it also
-allows great flexibility. Most notably, individual site pairs easily can
-be excluded from model fitting.
+The first column of a site-pair table contains a biological distance
+measure (the default is Bray-Curtis distance though any measure scaled
+between 0-1 is acceptable). The second column contains the weight to be
+assigned to each data point in model fitting (defaults to 1 if equal
+weighting is used, but can be customized by the user or can be scaled to
+site richness, see below). The remaining columns are the coordinates and
+environmental values at a site (s1) and those at a second site (s2)
+making up a site pair. Rows represent individual site-pairs. While the
+site-pair table format can produce extremely large data frames and
+contain numerous repeat values (because each site appears in numerous
+site-pairs), it also allows great flexibility. Most notably, individual
+site pairs easily can be excluded from model fitting.
 
 A properly formatted site-pair table will have at least six columns
-(distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord) and
-possibly more depending upon how many predictor variables are included.
-See `?formatsitepair` and `?gdm` for more details.
+(distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord) and some
+number more depending on how many predictors are included. See
+`?formatsitepair` and `?gdm` for more details.
+
+### Formatting a site-pair table using a distance matrix.
 
 What if you already have a biological distance matrix because you are
 working with, say, genetic data? In that case, it is simple as changing
 the `bioFormat` argument **and also making sure the rows in your
 biological and environmental tables are in the same order**. Let’s have
-a quick look at `gdmDissim`, the pairwise biological distance matrix:
+a quick look at `gdmDissim`, a pairwise biological distance matrix
+prodvided with the package:
 
 ``` r
 # Biological distance matrix example
@@ -217,7 +217,7 @@ gdmDissim[1:5, 1:5]
 #> 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000
 ```
 
-We first need to bind a site ID column to `gdmDissim`. We already know
+We first need to add a site ID column to `gdmDissim`. We already know
 the sites are in the correct order, so we do not check here, but you
 should confirm for your data.
 
@@ -295,7 +295,7 @@ gdmTab.rast <- na.omit(gdmTab.rast)
 ```
 
 Note that the `formatsitepair` function assumes that the coordinates of
-the sites are the same coordinate system as the rasters and, at present,
+the sites are in the same coordinate system as the rasters. At present,
 no checking is performed to ensure this is the case. Note also that if
 your site coordinates are longitude-latitude that the calculation of
 geographic distances between sites will have errors, the size of which
@@ -304,7 +304,7 @@ We hope to deal with this in a later release, but for now you can avoid
 these problems by using a projected coordinate system (e.g.,
 equidistant).
 
-## Dealing with biases associated with presence-only data
+### Dealing with biases associated with presence-only data
 
 The ideal biological data for fitting a GDM are occurrence records
 (presence-absence or abundance) from a network of sites where all
@@ -378,13 +378,16 @@ The function `gdm` fits generalized dissimilarity models and is simple
 to use once the biological and predictor data have been formatted to a
 site-pair table. In addition to specifying whether or not the model
 should be fit with geographical distance as a predictor variable, the
-user can also specify (i) the number of I-spline basis functions (the
-default is three, with larger values producing more complex splines) and
-(ii) the locations of “knots” along the splines (defaults to 0
-(minimum), 50 (median), and 100 (maximum) quantiles when three I-spline
-basis functions are used). The effects (and significance) of altering
-the number of splines and knot locations has not been systematically
-explored.
+user has the option to specify (i) the number of I-spline basis
+functions (the default is three, with larger values producing more
+complex splines) and (ii) the locations of “knots” along the splines
+(defaults to 0 (minimum), 50 (median), and 100 (maximum) quantiles when
+three I-spline basis functions are used). Even though these option are
+available, using the default values for these parameters will work fine
+for most applications. In other words, unless you have a good reason,
+you should probably use the default settings for splines and knots. The
+effects (and significance) of altering the number of splines and knot
+locations has not been systematically explored.
 
 Here we fit GDM with geo=T and default settings for all other
 parameters.
@@ -393,19 +396,25 @@ parameters.
 gdm.1 <- gdm(data=gdmTab, geo=TRUE)
 ```
 
-The `summary` function provides an overview of the model, including
-deviance explained, the values of the coefficients for the I-spline for
-each predictor variable, and the sum of the I-spline coefficients for
-each predictor (an indicator of predictor importance, the summary prints
-predictors in order of the sum of the coefficients). Variables with all
-coefficients=0 have no relationship with the biological pattern.
+The `summary` function provides an overview of the model, the most
+important items to note are:
+
+-   Percent Deviance Explained: goodness-of-fit
+-   Intercept: expected dissimilarity between sites that do not differ
+    in the predictors
+-   Summary of the fitted I-splines for each predictor, including the
+    values of the coefficients and their sum. The sum indicates the
+    amount of compositional turnover associated with that variable,
+    holding all other variables constant. I-spline summaries are order
+    by coefficient sum. Variables with all coefficients=0 have no
+    relationship with the modeled biological pattern.
 
 ``` r
 summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Wed Nov 17 15:55:26 2021
+#> [1] Creation Date:  Fri Nov 19 15:09:12 2021
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -428,6 +437,9 @@ summary(gdm.1)
 #> [1] Min Knot: 114.394
 #> [1] 50% Knot: 172.416
 #> [1] Max Knot: 554.771
+#> [1] Coefficient[1]: 0.941
+#> [1] Coefficient[2]: 0.868
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for bio19: 1.809
 #> [1] 
 #> [1] Predictor 2: phTotal
@@ -435,6 +447,9 @@ summary(gdm.1)
 #> [1] Min Knot: 277.978
 #> [1] 50% Knot: 584.609
 #> [1] Max Knot: 1860.37
+#> [1] Coefficient[1]: 1.127
+#> [1] Coefficient[2]: 0.23
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for phTotal: 1.357
 #> [1] 
 #> [1] Predictor 3: bio5
@@ -442,6 +457,9 @@ summary(gdm.1)
 #> [1] Min Knot: 25.571
 #> [1] 50% Knot: 32.16
 #> [1] Max Knot: 36.188
+#> [1] Coefficient[1]: 0.127
+#> [1] Coefficient[2]: 0.453
+#> [1] Coefficient[3]: 0.114
 #> [1] Sum of coefficients for bio5: 0.694
 #> [1] 
 #> [1] Predictor 4: solumDepth
@@ -449,6 +467,9 @@ summary(gdm.1)
 #> [1] Min Knot: 705.02
 #> [1] 50% Knot: 1017.628
 #> [1] Max Knot: 1247.705
+#> [1] Coefficient[1]: 0.682
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for solumDepth: 0.682
 #> [1] 
 #> [1] Predictor 5: awcA
@@ -456,6 +477,9 @@ summary(gdm.1)
 #> [1] Min Knot: 12.975
 #> [1] 50% Knot: 22.186
 #> [1] Max Knot: 50.7
+#> [1] Coefficient[1]: 0
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0.523
 #> [1] Sum of coefficients for awcA: 0.523
 #> [1] 
 #> [1] Predictor 6: Geographic
@@ -463,6 +487,9 @@ summary(gdm.1)
 #> [1] Min Knot: 0.452
 #> [1] 50% Knot: 2.46
 #> [1] Max Knot: 6.532
+#> [1] Coefficient[1]: 0.014
+#> [1] Coefficient[2]: 0.372
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for Geographic: 0.386
 #> [1] 
 #> [1] Predictor 7: sandA
@@ -470,6 +497,9 @@ summary(gdm.1)
 #> [1] Min Knot: 56.697
 #> [1] 50% Knot: 72.951
 #> [1] Max Knot: 83.993
+#> [1] Coefficient[1]: 0.092
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0.139
 #> [1] Sum of coefficients for sandA: 0.231
 #> [1] 
 #> [1] Predictor 8: shcA
@@ -477,6 +507,9 @@ summary(gdm.1)
 #> [1] Min Knot: 78.762
 #> [1] 50% Knot: 179.351
 #> [1] Max Knot: 521.985
+#> [1] Coefficient[1]: 0
+#> [1] Coefficient[2]: 0.156
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for shcA: 0.156
 #> [1] 
 #> [1] Predictor 9: bio6
@@ -484,6 +517,9 @@ summary(gdm.1)
 #> [1] Min Knot: 4.373
 #> [1] 50% Knot: 5.509
 #> [1] Max Knot: 9.224
+#> [1] Coefficient[1]: 0.121
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for bio6: 0.121
 #> [1] 
 #> [1] Predictor 10: bio15
@@ -491,6 +527,9 @@ summary(gdm.1)
 #> [1] Min Knot: 29.167
 #> [1] 50% Knot: 55.008
 #> [1] Max Knot: 87.143
+#> [1] Coefficient[1]: 0.027
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for bio15: 0.027
 #> [1] 
 #> [1] Predictor 11: bio18
@@ -498,23 +537,26 @@ summary(gdm.1)
 #> [1] Min Knot: 0
 #> [1] 50% Knot: 0
 #> [1] Max Knot: 52
+#> [1] Coefficient[1]: 0
+#> [1] Coefficient[2]: 0
+#> [1] Coefficient[3]: 0
 #> [1] Sum of coefficients for bio18: 0
-#> [1]
 ```
 
 ## GDM plots
 
-The fitted splines represent one of the most informative outputs from
-`gdm`, which also can be used to transform and map environmental
-variables such that they best represent biological patterns. The fitted
+The fitted splines represent one of the most informative components of a
+fitted GDM and so plotting and scrutinizing the splines is a major part
+of interpreting GDM and the analyzed biological patterns. The fitted
 model and I-splines can be viewed using the `plot` function, which
-produces a multi-panel plot that includes: (i) the fitted relationship
-between predicted ecological distance and observed compositional
-dissimilarity; (ii) predicted versus observed biological distance, and
-(iii) each I-spline with at least one non-zero coefficient, plotted in
-order by sum of the I-spline coefficients (in the provided example bio18
-is not plotted because all three coefficients equaled zero and so had no
-relationship with the response).
+produces a multi-panel plot that includes two model summary plots
+showing (i) the fitted relationship between predicted ecological
+distance and observed compositional dissimilarity and (ii) predicted
+versus observed biological distance, followed by a series of panels
+showing each I-spline with at least one non-zero coefficient (plotted in
+order by sum of the I-spline coefficients). Note that in the example
+bio18 is not plotted because all three coefficients equaled zero and so
+had no relationship with the response.
 
 The maximum height of each spline indicates the magnitude of total
 biological change along that gradient and thereby corresponds to the

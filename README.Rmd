@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # gdm <img src="man/figures/gdmLogo.png" align="right" width="120" />
 
 <!-- badges: start -->
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://cran.r-project.org/web/packages/gdm)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
 [![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://cran.rstudio.com/package=gdm)
 <!-- badges: end -->
 
@@ -32,7 +32,7 @@ The **gdm** package is available on CRAN, development versions are available on 
 install.packages("gdm")
 ```
 
-* Install latest development version from GitHub (requires [devtools](https://github.com/hadley/devtools) package):
+* Install latest development version from GitHub (requires [devtools](https://github.com/r-lib/devtools) package):
 
 ```{r loadPackages github, warning=F, message=F, eval=F}
 if (!require("devtools")) {
@@ -41,11 +41,11 @@ if (!require("devtools")) {
 devtools::install_github("fitzLab-AL/gdm")
 ```
 
-### Package Citation
+# Package Citation
 
 Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 
-### Getting Started
+# Getting Started
 
 GDM has been used in many published studies. In addition to working through the examples here and those throughout the package documentation, we recommend reading these publications for background information:
 
@@ -57,7 +57,7 @@ Mokany K, Ware C, Woolley SNC, Ferrier S, Fitzpatrick MC (in revision) A working
 
 The R package **gdm** implements Generalized Dissimilarity Modeling [@ferrier_2007] to analyze and map spatial patterns of biodiversity. GDM models biological variation as a function of environment and geography using distance matrices – specifically by relating biological dissimilarity between sites to how much sites differ in their environmental conditions (environmental distance) and how isolated they are from one another (geographical distance). Here we demonstrate how to fit, apply, and interpret GDM in the context of analyzing and mapping species-level patterns. GDM also can be used to model other biological levels of organization, notably genetic [@fitzpatrick_2015], phylogenetic [@rosauer_2014], or function/traits [@thomassen_2010]), and the approaches for doing so are largely identical to the species-level case with the exception of using a different biological dissimilarity metric depending on the type of response variable.  
 
-##  Preparing the data for GDM: The site-pair table.
+## Preparing the data for GDM: The site-pair table.
 
 The initial step in fitting a generalized dissimilarity model is to combine the biological and environmental data into "site-pair" table format using the `formatsitepair` function. 
 
@@ -86,7 +86,7 @@ sppTab <- southwest[, c("species", "site", "Long", "Lat")]
 envTab <- southwest[, c(2:ncol(southwest))]
 ```
 
-Because the `southwest` data are an x-y species list, we use `bioFormat=2`. Otherwise, we just need to provide the required column names to create the site-pair table. Note this will print a few warnings, but these can be ignored:
+Because the `southwest` data is x-y species list format, we use `bioFormat=2`. Otherwise, we just need to provide the required column names to create the site-pair table:
 
 ```{r sitepairTab, warning=FALSE, message=FALSE}
 # x-y species list example
@@ -102,11 +102,13 @@ gdmTab <- formatsitepair(bioData=sppTab,
 gdmTab[1:3,]
 ```
 
-Each row in the resulting site-pair table contains a biological distance measure in the first column (the default is Bray-Curtis distance though any measure scaled between 0-1 is acceptable). The second column contains the weight to be assigned to each data point in model fitting (defaults to 1 if equal weighting is used, but can be customized by the user or can be scaled to site richness, see below). The remaining columns are the coordiantes and environmental values at a site (s1) and those at a second site (s2) making up a site pair. Subsequent rows repeat this pattern until all possible site pairs are represented and such that pairwise distances between all sites can be calculated and used as predictors. While the site-pair table format can produce extremely large data frames and contain numerous repeat values, it also allows great flexibility. Most notably, individual site pairs easily can be excluded from model fitting.
+The first column of a site-pair table contains a biological distance measure (the default is Bray-Curtis distance though any measure scaled between 0-1 is acceptable). The second column contains the weight to be assigned to each data point in model fitting (defaults to 1 if equal weighting is used, but can be customized by the user or can be scaled to site richness, see below). The remaining columns are the coordinates and environmental values at a site (s1) and those at a second site (s2) making up a site pair. Rows represent individual site-pairs. While the site-pair table format can produce extremely large data frames and contain numerous repeat values (because each site appears in numerous site-pairs), it also allows great flexibility. Most notably, individual site pairs easily can be excluded from model fitting.
 
-A properly formatted site-pair table will have at least six columns (distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord) and possibly more depending upon how many predictor variables are included. See `?formatsitepair` and `?gdm` for more details.
+A properly formatted site-pair table will have at least six columns (distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord) and some number more depending on how many predictors are included. See `?formatsitepair` and `?gdm` for more details.
 
-What if you already have a biological distance matrix because you are working with, say, genetic data? In that case, it is simple as changing the `bioFormat` argument **and also making sure the rows in your biological and environmental tables are in the same order**. Let's have a quick look at `gdmDissim`, the pairwise biological distance matrix:
+### Formatting a site-pair table using a distance matrix.
+
+What if you already have a biological distance matrix because you are working with, say, genetic data? In that case, it is simple as changing the `bioFormat` argument **and also making sure the rows in your biological and environmental tables are in the same order**. Let's have a quick look at `gdmDissim`, a pairwise biological distance matrix prodvided with the package:
 
 ```{r}
 # Biological distance matrix example
@@ -114,7 +116,7 @@ dim(gdmDissim)
 gdmDissim[1:5, 1:5]
 ```
 
-We first need to bind a site ID column to `gdmDissim`. We already know the sites are in the correct order, so we do not check here, but you should confirm for your data.
+We first need to add a site ID column to `gdmDissim`. We already know the sites are in the correct order, so we do not check here, but you should confirm for your data.
 
 ```{r}
 # get the site column from sppTab
@@ -160,9 +162,9 @@ sum(is.na(gdmTab.rast))
 gdmTab.rast <- na.omit(gdmTab.rast)
 ```
 
-Note that the `formatsitepair` function assumes that the coordinates of the sites are the same coordinate system as the rasters and, at present, no checking is performed to ensure this is the case. Note also that if your site coordinates are longitude-latitude that the calculation of geographic distances between sites will have errors, the size of which will depend on the geographic extent and location of your study region. We hope to deal with this in a later release, but for now you can avoid these problems by using a projected coordinate system (e.g., equidistant).
+Note that the `formatsitepair` function assumes that the coordinates of the sites are in the same coordinate system as the rasters. At present, no checking is performed to ensure this is the case. Note also that if your site coordinates are longitude-latitude that the calculation of geographic distances between sites will have errors, the size of which will depend on the geographic extent and location of your study region. We hope to deal with this in a later release, but for now you can avoid these problems by using a projected coordinate system (e.g., equidistant).
 
-## Dealing with biases associated with presence-only data
+### Dealing with biases associated with presence-only data
 
 The ideal biological data for fitting a GDM are occurrence records (presence-absence or abundance) from a network of sites where all species (from one or more taxonomic groups) have been intensively sampled such that compositional dissimilarity can be reliably estimated between sites.  However most species data are collected as part of ad hoc surveys and are presence-only. Under these circumstances, there is no systematic surveying and no sites per se, but rather grid cells with some number of occurrence records depending on the number of species observed, with many grid cells having none, a few, or even a single species record. When these data are used to calculate compositional dissimilarity, erroneously high values will result, which will bias the model. 
 
@@ -196,11 +198,11 @@ gdmTab.sf <- formatsitepair(bioData=sppTab,
                             sppFilter=10)
 ```
 
-##  GDM fitting
+## GDM fitting
 
 GDM is a nonlinear extension of permutational matrix regression that uses flexible splines and generalized linear modeling (GLM) to accommodate two types of nonlinearity common in ecological datasets: (1) variation in the rate of compositional turnover (non-stationarity) along environmental gradients, and (2) the curvilinear relationship between biological distance and environmental and geographical distance. 
 
-The function `gdm` fits generalized dissimilarity models and is simple to use once the biological and predictor data have been formatted to a site-pair table. In addition to specifying whether or not the model should be fit with geographical distance as a predictor variable, the user can also specify (i) the number of I-spline basis functions (the default is three, with larger values producing more complex splines) and (ii) the locations of "knots" along the splines (defaults to 0 (minimum), 50 (median), and 100 (maximum) quantiles when three I-spline basis functions are used). The effects (and significance) of altering the number of splines and knot locations has not been systematically explored.
+The function `gdm` fits generalized dissimilarity models and is simple to use once the biological and predictor data have been formatted to a site-pair table. In addition to specifying whether or not the model should be fit with geographical distance as a predictor variable, the user has the option to specify (i) the number of I-spline basis functions (the default is three, with larger values producing more complex splines) and (ii) the locations of "knots" along the splines (defaults to 0 (minimum), 50 (median), and 100 (maximum) quantiles when three I-spline basis functions are used). Even though these option are available, using the default values for these parameters will work fine for most applications. In other words, unless you have a good reason, you should probably use the default settings for splines and knots. The effects (and significance) of altering the number of splines and knot locations has not been systematically explored.
 
 Here we fit GDM with geo=T and default settings for all other parameters.
 
@@ -208,15 +210,19 @@ Here we fit GDM with geo=T and default settings for all other parameters.
 gdm.1 <- gdm(data=gdmTab, geo=TRUE)
 ```
 
-The `summary` function provides an overview of the model, including deviance explained, the values of the coefficients for the I-spline for each predictor variable, and the sum of the I-spline coefficients for each predictor (an indicator of predictor importance, the summary prints predictors in order of the sum of the coefficients). Variables with all coefficients=0 have no relationship with the biological pattern. 
+The `summary` function provides an overview of the model, the most important items to note are:
+
+* Percent Deviance Explained: goodness-of-fit 
+* Intercept: expected dissimilarity between sites that do not differ in the predictors
+* Summary of the fitted I-splines for each predictor, including the values of the coefficients and their sum. The sum indicates the amount of compositional turnover associated with that variable, holding all other variables constant. I-spline summaries are order by coefficient sum. Variables with all coefficients=0 have no relationship with the modeled biological pattern. 
 
 ```{r summaryGDM, warning=FALSE, message=FALSE}
 summary(gdm.1)
 ```
 
-##  GDM plots
+## GDM plots
 
-The fitted splines represent one of the most informative outputs from `gdm`, which also can be used to transform and map environmental variables such that they best represent biological patterns. The fitted model and I-splines can be viewed using the `plot` function, which produces a multi-panel plot that includes: (i) the fitted relationship between predicted ecological distance and observed compositional dissimilarity; (ii) predicted versus observed biological distance, and (iii) each I-spline with at least one non-zero coefficient, plotted in order by sum of the I-spline coefficients (in the provided example bio18 is not plotted because all three coefficients equaled zero and so had no relationship with the response).
+The fitted splines represent one of the most informative components of a fitted GDM and so plotting and scrutinizing the splines is a major part of interpreting GDM and the analyzed biological patterns. The fitted model and I-splines can be viewed using the `plot` function, which produces a multi-panel plot that includes two model summary plots showing (i) the fitted relationship between predicted ecological distance and observed compositional dissimilarity and (ii) predicted versus observed biological distance, followed by a series of panels showing each I-spline with at least one non-zero coefficient (plotted in order by sum of the I-spline coefficients). Note that in the example bio18 is not plotted because all three coefficients equaled zero and so had no relationship with the response.
 
 The maximum height of each spline indicates the magnitude of total biological change along that gradient and thereby corresponds to the relative importance of that predictor in contributing to biological turnover while holding all other variables constant (i.e., is a partial ecological distance). The spline’s shape indicates how the rate of biological change varies with position along that gradient. Thus, the splines provide insight into the total magnitude of biological change as a function of each gradient and where along each gradient those changes are most pronounced. In this example, compositional turnover is greatest along gradients of bio19 (winter precipitation) and phTotal (soil phosphorus) and most rapid near the low ends of these gradients.  
 
