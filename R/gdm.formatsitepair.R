@@ -39,7 +39,7 @@
 #' @usage
 #' formatsitepair(bioData, bioFormat, dist="bray", abundance=FALSE, siteColumn=NULL,
 #' XColumn, YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData,
-#' distPreds=NULL, weightType="equal", custWeights=NULL, sampleSites=1)
+#' distPreds=NULL, weightType="equal", custWeights=NULL, sampleSites=1, verbose=FALSE)
 #'
 #' @param bioData The input biological (the response variable) data table, in
 #' one of the four formats defined above (see Details).
@@ -130,6 +130,9 @@
 #' of sites to be used to construct the site-pair table. This argument can be
 #' used to reduce the number of sites to overcome possible memory limitations
 #' when fitting models with very large numbers of sites.
+#'
+#' @param verbose Default = FALSE. If TRUE, prints summary information regarding
+#' dimensions of the site-pair table that can be useful for diagnostics.
 #'
 #' @details
 #' bioData and bioFormat:
@@ -253,7 +256,8 @@
 formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL,
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL,
-                           weightType="equal", custWeights=NULL, sampleSites=1){
+                           weightType="equal", custWeights=NULL, sampleSites=1,
+                           verbose=FALSE){
   ###########################
   ##lines used to quickly test function
   #bioData <- sppData
@@ -716,10 +720,14 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       }
     }
   }
-  print(paste0("Site-pair table created with ", nrow(outTable), " rows ",
-  "(", nrow(unique(outTable[,3:4]))+1, " unique sites)", " and ",
-               ncol(outTable) , " columns (", (ncol(outTable)-6)/2,
-               " environmental variables)."))
+
+  if(verbose){
+    print(paste0("Site-pair table created with ", nrow(outTable), " rows ",
+                 "(", nrow(unique(outTable[,3:4]))+1, " unique sites)", " and ",
+                 ncol(outTable) , " columns (", (ncol(outTable)-6)/2,
+                 " environmental variables)."))
+  }
+
   ##return output table
   class(outTable) <- c("gdmData", "data.frame")
   return(outTable)
