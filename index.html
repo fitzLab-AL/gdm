@@ -25,6 +25,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -37,18 +39,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5.0-2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -58,7 +54,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/fitzLab-AL/gdm/">
+  <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -75,557 +71,61 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
-<div id="gdm-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#gdm-" class="anchor"></a>gdm <img src="reference/figures/gdmLogo.png" align="right" width="120">
-</h1></div>
-<!-- badges: start -->
-
-<p>The <code>gdm</code> package provides functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.</p>
-</div>
-<div id="installation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<p>The <strong>gdm</strong> package is available on CRAN, development versions are available on GitHub.</p>
-<ul>
-<li>Install from CRAN:</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"gdm"</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Install latest development version from GitHub (requires <a href="https://github.com/r-lib/devtools">devtools</a> package):</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fitzLab-AL/gdm"</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="package-citation" class="section level1">
-<h1 class="hasAnchor">
-<a href="#package-citation" class="anchor"></a>Package Citation</h1>
-<p>Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Generalized Dissimilarity Modeling. R package version 1.5.</p>
-</div>
-<div id="getting-started" class="section level1">
-<h1 class="hasAnchor">
-<a href="#getting-started" class="anchor"></a>Getting Started</h1>
-<p>GDM has been used in many published studies. In addition to working through the examples here and those throughout the package documentation, we recommend reading these publications for background information:</p>
-<p>Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. Diversity &amp; Distributions 13: 252-264.</p>
-<p>Mokany K, Ware C, Woolley SNC, Ferrier S, Fitzpatrick MC (in revision) A working guide to generalized dissimilarity modelling.</p>
-</div>
-<div id="introduction" class="section level1">
-<h1 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>The R package <strong>gdm</strong> implements Generalized Dissimilarity Modeling <br><span class="math display">@<em>f</em><em>e</em><em>r</em><em>r</em><em>i</em><em>e</em><em>r</em><sub>2007</sub></span><br> to analyze and map spatial patterns of biodiversity. GDM models biological variation as a function of environment and geography using distance matrices – specifically by relating biological dissimilarity between sites to how much sites differ in their environmental conditions (environmental distance) and how isolated they are from one another (geographical distance). Here we demonstrate how to fit, apply, and interpret GDM in the context of analyzing and mapping species-level patterns. GDM also can be used to model other biological levels of organization, notably genetic <br><span class="math display">@<em>f</em><em>i</em><em>t</em><em>z</em><em>p</em><em>a</em><em>t</em><em>r</em><em>i</em><em>c</em><em>k</em><sub>2015</sub></span><br>, phylogenetic <br><span class="math display">@<em>r</em><em>o</em><em>s</em><em>a</em><em>u</em><em>e</em><em>r</em><sub>2014</sub></span><br>, or function/traits <br><span class="math display">@<em>t</em><em>h</em><em>o</em><em>m</em><em>a</em><em>s</em><em>s</em><em>e</em><em>n</em><sub>2010</sub></span><br>), and the approaches for doing so are largely identical to the species-level case with the exception of using a different biological dissimilarity metric depending on the type of response variable.</p>
-<div id="preparing-the-data-for-gdm-the-site-pair-table" class="section level2">
-<h2 class="hasAnchor">
-<a href="#preparing-the-data-for-gdm-the-site-pair-table" class="anchor"></a>Preparing the data for GDM: The site-pair table.</h2>
-<p>The initial step in fitting a generalized dissimilarity model is to combine the biological and environmental data into “site-pair” table format using the <code>formatsitepair</code> function.</p>
-<p>GDM can use several data formats as input. Most common are site-by-species tables (sites in rows, species across columns) for the response and site-by-environment tables (sites in rows, predictors across columns) as the predictors, though distance matrices and rasters also are accommodated as demonstrated below.</p>
-<p>The <strong>gdm</strong> package comes with two example biological data sets and two example environmental data sets in a number of formats. Example data include: - <code>southwest</code>: A data frame that contains x-y coordinates, 10 columns of predictors (five soil and five bioclimatic variables), and occurrence data for 900+ species of plants from southwest Australia (representing a subset of the data used in <br><span class="math display">@<em>f</em><em>i</em><em>t</em><em>z</em><em>p</em><em>a</em><em>t</em><em>r</em><em>i</em><em>c</em><em>k</em><sub>2013</sub></span><br>). Note that the format of the <code>southwest</code> table is an x-y species list (i.e., <code>bioFormat = 2</code>, see below) where there is one row <em>per species record rather than per site</em>. These biological data are similar to what would be obtained from online databases such as <br><span class="math display"><em>G</em><em>B</em><em>I</em><em>F</em></span><br><a href="https://www.gbif.org/" class="uri">https://www.gbif.org/</a>. - <code>gdmDissim</code>: A pairwise biological dissimilarity matrix derived from the species data provided in <code>southwest</code>. <code>gdmDissim</code> is provided to demonstrate how to proceed when you when you want to fit GDM using an existing biological distance matrix (e.g., pairwise Fst) as the response variable (i.e., <code>bioFormat = 3</code>, see below). Note however that distance matrices can also be used as predictors (e.g., to model compositional variation in one group as a function of compositional variation in another group <br><span class="math display">@<em>j</em><em>o</em><em>n</em><em>e</em><em>s</em><sub>2013</sub></span><br>). - <code>swBioclims</code>: a raster stack of the five bioclimatic predictors provided in the <code>southwest</code> data.</p>
-<p>Note that for all input data the rows and their order must match in the biological and environmental data frames and must not include NAs. This is best accomplished by making sure your tables have a column with a unique identifier for each site and that the order of these IDs are the same across all tables.</p>
-<p>To build a site-pair table, we need individual tables for the biological and environmental data, so we first index the <code>southwest</code> table to create a table for the species data and a second for the environmental data:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mfitzpatrick.al.umces.edu/gdm/">gdm</a></span><span class="op">)</span>
-<span class="co"># have a look at the southwest data set</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span>
-<span class="co">#&gt; 'data.frame':    29364 obs. of  14 variables:</span>
-<span class="co">#&gt;  $ species   : Factor w/ 974 levels "spp1","spp10",..: 1 1 1 1 1 1 1 1 1 1 ...</span>
-<span class="co">#&gt;  $ site      : int  1066 1026 1025 1026 1027 1047 1048 1066 1066 1067 ...</span>
-<span class="co">#&gt;  $ awcA      : num  14.5 16.3 23.1 16.3 17 ...</span>
-<span class="co">#&gt;  $ phTotal   : num  546 471 460 471 489 ...</span>
-<span class="co">#&gt;  $ sandA     : num  71.3 68.9 71.5 68.9 74.7 ...</span>
-<span class="co">#&gt;  $ shcA      : num  178.9 105.8 88.4 105.8 147.2 ...</span>
-<span class="co">#&gt;  $ solumDepth: num  875 928 892 928 952 ...</span>
-<span class="co">#&gt;  $ bio5      : num  31.4 33.1 32.8 33.1 33.2 ...</span>
-<span class="co">#&gt;  $ bio6      : num  5.06 4.85 4.82 4.85 4.59 ...</span>
-<span class="co">#&gt;  $ bio15     : num  40.4 48.2 53.9 48.2 44 ...</span>
-<span class="co">#&gt;  $ bio18     : int  0 0 43 0 0 0 0 0 0 0 ...</span>
-<span class="co">#&gt;  $ bio19     : num  133 140 145 140 136 ...</span>
-<span class="co">#&gt;  $ Lat       : num  -33 -32 -32 -32 -32.1 ...</span>
-<span class="co">#&gt;  $ Long      : num  119 118 118 118 119 ...</span>
-
-<span class="co"># biological data</span>
-<span class="co"># get columns with xy, site ID, and species data</span>
-<span class="va">sppTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"species"</span>, <span class="st">"site"</span>, <span class="st">"Long"</span>, <span class="st">"Lat"</span><span class="op">)</span><span class="op">]</span>
-
-<span class="co"># # columns 3-7 are soils variables, remainder are climate</span>
-<span class="co"># get columns with site ID, env. data, and xy-coordinates</span>
-<span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></code></pre></div>
-<p>Because the <code>southwest</code> data is x-y species list format, we use <code>bioFormat=2</code>. Otherwise, we just need to provide the required column names to create the site-pair table:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># x-y species list example</span>
-<span class="va">gdmTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">sppTab</span>, 
-                         bioFormat<span class="op">=</span><span class="fl">2</span>, <span class="co">#x-y spp list</span>
-                         XColumn<span class="op">=</span><span class="st">"Long"</span>, 
-                         YColumn<span class="op">=</span><span class="st">"Lat"</span>,
-                         sppColumn<span class="op">=</span><span class="st">"species"</span>, 
-                         siteColumn<span class="op">=</span><span class="st">"site"</span>, 
-                         predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Site weighting type: Equal"</span>
-<span class="co">#&gt; [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt;        distance weights s1.xCoord s1.yCoord s2.xCoord s2.yCoord s1.awcA</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; 132   0.4485981       1   115.057 -29.40472  115.5677 -29.46599 23.0101</span></span>
-<span id="cb5-3"><a href="#cb5-3"></a><span class="co">#&gt; 132.1 0.7575758       1   115.057 -29.40472  116.0789 -29.52556 23.0101</span></span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="co">#&gt; 132.2 0.8939394       1   115.057 -29.40472  116.5907 -29.58342 23.0101</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#&gt;       s1.phTotal s1.sandA  s1.shcA s1.solumDepth s1.bio5 s1.bio6 s1.bio15</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#&gt; 132     480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co">#&gt; 132.1   480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a><span class="co">#&gt; 132.2   480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#&gt;       s1.bio18 s1.bio19 s2.awcA s2.phTotal s2.sandA  s2.shcA s2.solumDepth</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a><span class="co">#&gt; 132          0   267.44 22.3925   494.1225  76.6900 357.7225     1183.9025</span></span>
-<span id="cb5-11"><a href="#cb5-11"></a><span class="co">#&gt; 132.1        0   267.44 17.0975   415.1275  70.0175 112.4800      985.5300</span></span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co">#&gt; 132.2        0   267.44 17.0300   333.4400  71.5950 165.7250      956.5425</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a><span class="co">#&gt;        s2.bio5  s2.bio6 s2.bio15 s2.bio18 s2.bio19</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#&gt; 132   35.50571 7.448572 75.37143        0 228.6572</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a><span class="co">#&gt; 132.1 36.05000 6.605882 64.52941        0 168.8824</span></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="co">#&gt; 132.2 36.18750 6.131250 58.75000        0 141.1250</span></span></code></pre></div>
-<p>The first column of a site-pair table contains a biological distance measure (the default is Bray-Curtis distance though any measure scaled between 0-1 is acceptable). The second column contains the weight to be assigned to each data point in model fitting (defaults to 1 if equal weighting is used, but can be customized by the user or can be scaled to site richness, see below). The remaining columns are the coordinates and environmental values at a site (s1) and those at a second site (s2) making up a site pair. Rows represent individual site-pairs. While the site-pair table format can produce extremely large data frames and contain numerous repeat values (because each site appears in numerous site-pairs), it also allows great flexibility. Most notably, individual site pairs easily can be excluded from model fitting.</p>
-<p>A properly formatted site-pair table will have at least six columns (distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord) and some number more depending on how many predictors are included. See <code><a href="reference/formatsitepair.html">?formatsitepair</a></code> and <code><a href="reference/gdm.html">?gdm</a></code> for more details.</p>
-<div id="formatting-a-site-pair-table-using-a-distance-matrix" class="section level3">
-<h3 class="hasAnchor">
-<a href="#formatting-a-site-pair-table-using-a-distance-matrix" class="anchor"></a>Formatting a site-pair table using a distance matrix.</h3>
-<p>What if you already have a biological distance matrix because you are working with, say, genetic data? In that case, it is simple as changing the <code>bioFormat</code> argument <strong>and also making sure the rows in your biological and environmental tables are in the same order</strong>. Let’s have a quick look at <code>gdmDissim</code>, a pairwise biological distance matrix prodvided with the package:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Biological distance matrix example</span>
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span>
-<span class="co">#&gt; [1] 94 94</span>
-<span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="co">#&gt;          V1        V2        V3        V4        V5</span>
-<span class="co">#&gt; 1 0.0000000 0.8181818 1.0000000 0.5000000 0.7500000</span>
-<span class="co">#&gt; 2 0.8181818 0.0000000 0.9000000 0.7777778 0.6551724</span>
-<span class="co">#&gt; 3 1.0000000 0.9000000 0.0000000 1.0000000 0.5757576</span>
-<span class="co">#&gt; 4 0.5000000 0.7777778 1.0000000 0.0000000 0.9090909</span>
-<span class="co">#&gt; 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000</span></code></pre></div>
-<p>We first need to add a site ID column to <code>gdmDissim</code>. We already know the sites are in the correct order, so we do not check here, but you should confirm for your data.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># get the site column from sppTab</span>
-<span class="va">site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">sppTab</span><span class="op">$</span><span class="va">site</span><span class="op">)</span>
-<span class="co"># bind to gdmDissim</span>
-<span class="va">gdmDissim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">site</span>, <span class="va">gdmDissim</span><span class="op">)</span>
-<span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="co">#&gt;   site        V1        V2        V3        V4</span>
-<span class="co">#&gt; 1 1066 0.0000000 0.8181818 1.0000000 0.5000000</span>
-<span class="co">#&gt; 2 1026 0.8181818 0.0000000 0.9000000 0.7777778</span>
-<span class="co">#&gt; 3 1025 1.0000000 0.9000000 0.0000000 1.0000000</span>
-<span class="co">#&gt; 4 1027 0.5000000 0.7777778 1.0000000 0.0000000</span>
-<span class="co">#&gt; 5 1047 0.7500000 0.6551724 0.5757576 0.9090909</span></code></pre></div>
-<p>Now we are ready to use <code>formatsitepair</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gdmTab.dis</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">gdmDissim</span>, 
-                             bioFormat<span class="op">=</span><span class="fl">3</span>, <span class="co">#diss matrix </span>
-                             XColumn<span class="op">=</span><span class="st">"Long"</span>, 
-                             YColumn<span class="op">=</span><span class="st">"Lat"</span>, 
-                             predData<span class="op">=</span><span class="va">envTab</span>, 
-                             siteColumn<span class="op">=</span><span class="st">"site"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Site weighting type: Equal"</span>
-<span class="co">#&gt; [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">#&gt;        distance weights s1.xCoord s1.yCoord s2.xCoord s2.yCoord s1.awcA</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="co">#&gt; 132   0.4485981       1   115.057 -29.40472  115.5677 -29.46599 23.0101</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt; 132.1 0.7575758       1   115.057 -29.40472  116.0789 -29.52556 23.0101</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; 132.2 0.8939394       1   115.057 -29.40472  116.5907 -29.58342 23.0101</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt;       s1.phTotal s1.sandA  s1.shcA s1.solumDepth s1.bio5 s1.bio6 s1.bio15</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; 132     480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt; 132.1   480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 132.2   480.3266 83.99326 477.5656      1129.933  34.668   8.908    86.64</span></span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt;       s1.bio18 s1.bio19 s2.awcA s2.phTotal s2.sandA  s2.shcA s2.solumDepth</span></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; 132          0   267.44 22.3925   494.1225  76.6900 357.7225     1183.9025</span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; 132.1        0   267.44 17.0975   415.1275  70.0175 112.4800      985.5300</span></span>
-<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt; 132.2        0   267.44 17.0300   333.4400  71.5950 165.7250      956.5425</span></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt;        s2.bio5  s2.bio6 s2.bio15 s2.bio18 s2.bio19</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 132   35.50571 7.448572 75.37143        0 228.6572</span></span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 132.1 36.05000 6.605882 64.52941        0 168.8824</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 132.2 36.18750 6.131250 58.75000        0 141.1250</span></span></code></pre></div>
-<p>In addition to starting with tablular data, environmental data can be extracted directly from rasters, assuming the x-y coordinates of sites are provided in either a site-species table (<code>bioFormat=1</code>) or as a x-y species list (<code>bioFormat=2</code>).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># environmental raster data for sw oz</span>
-<span class="va">swBioclims</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html">stack</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"./extdata/swBioclims.grd"</span>, package<span class="op">=</span><span class="st">"gdm"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">gdmTab.rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">sppTab</span>, 
-                              bioFormat<span class="op">=</span><span class="fl">2</span>, <span class="co"># x-y spp list</span>
-                              XColumn<span class="op">=</span><span class="st">"Long"</span>, 
-                              YColumn<span class="op">=</span><span class="st">"Lat"</span>, 
-                              sppColumn<span class="op">=</span><span class="st">"species"</span>,
-                              siteColumn<span class="op">=</span><span class="st">"site"</span>,
-                              predData<span class="op">=</span><span class="va">swBioclims</span><span class="op">)</span> <span class="co">#raster stack</span>
-<span class="co">#&gt; [1] "Site weighting type: Equal"</span>
-<span class="co">#&gt; [1] "Site-pair table created with 4371 rows (94 unique sites) and 16 columns (5 environmental variables)."</span></code></pre></div>
-<p>Because some sites might not overlap with the rasters, we should check for and remove NA values from the site-pair table:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">gdmTab.rast</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] 465</span>
-<span class="va">gdmTab.rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">gdmTab.rast</span><span class="op">)</span></code></pre></div>
-<p>Note that the <code>formatsitepair</code> function assumes that the coordinates of the sites are in the same coordinate system as the rasters. At present, no checking is performed to ensure this is the case. Note also that if your site coordinates are longitude-latitude that the calculation of geographic distances between sites will have errors, the size of which will depend on the geographic extent and location of your study region. We hope to deal with this in a later release, but for now you can avoid these problems by using a projected coordinate system (e.g., equidistant).</p>
-</div>
-<div id="dealing-with-biases-associated-with-presence-only-data" class="section level3">
-<h3 class="hasAnchor">
-<a href="#dealing-with-biases-associated-with-presence-only-data" class="anchor"></a>Dealing with biases associated with presence-only data</h3>
-<p>The ideal biological data for fitting a GDM are occurrence records (presence-absence or abundance) from a network of sites where all species (from one or more taxonomic groups) have been intensively sampled such that compositional dissimilarity can be reliably estimated between sites. However most species data are collected as part of ad hoc surveys and are presence-only. Under these circumstances, there is no systematic surveying and no sites per se, but rather grid cells with some number of occurrence records depending on the number of species observed, with many grid cells having none, a few, or even a single species record. When these data are used to calculate compositional dissimilarity, erroneously high values will result, which will bias the model.</p>
-<p>The <code>formatsitepair</code> function provides a few options for dealing with this potential bias, including (i) weighting sites relative to the number of species observed (<code>weightType="richness"</code>), (ii) removing sites with few species (e.g., <code>speciesFilter=10</code>) or (iii) both. Decisions regarding which approach to use will depend on the nature of the data and study system. See Ferrier et al. (2007) for further discussion.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># weight by site richness using weightType="richness"</span>
-<span class="va">gdmTab.rw</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">sppTab</span>, 
-                            bioFormat<span class="op">=</span><span class="fl">2</span>, 
-                            XColumn<span class="op">=</span><span class="st">"Long"</span>, 
-                            YColumn<span class="op">=</span><span class="st">"Lat"</span>,
-                            sppColumn<span class="op">=</span><span class="st">"species"</span>, 
-                            siteColumn<span class="op">=</span><span class="st">"site"</span>, 
-                            predData<span class="op">=</span><span class="va">envTab</span>, 
-                            weightType<span class="op">=</span><span class="st">"richness"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Site weighting type: Richness"</span>
-<span class="co">#&gt; [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."</span>
-
-<span class="co"># weights based on richness (number of species records)</span>
-<span class="va">gdmTab.rw</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="co">#&gt;        distance   weights s1.xCoord s1.yCoord s2.xCoord</span>
-<span class="co">#&gt; 132   0.4485981 0.2449866   115.057 -29.40472  115.5677</span>
-<span class="co">#&gt; 132.1 0.7575758 0.1916207   115.057 -29.40472  116.0789</span>
-<span class="co">#&gt; 132.2 0.8939394 0.1635852   115.057 -29.40472  116.5907</span>
-<span class="co">#&gt; 132.3 0.9178082 0.1858930   115.057 -29.40472  117.1029</span>
-<span class="co">#&gt; 132.4 0.9787234 0.1337957   115.057 -29.40472  117.6156</span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># remove sites with &lt; 10 species records using</span>
-<span class="co"># sppFilter = 10</span>
-<span class="va">gdmTab.sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">sppTab</span>, 
-                            bioFormat<span class="op">=</span><span class="fl">2</span>, 
-                            XColumn<span class="op">=</span><span class="st">"Long"</span>, 
-                            YColumn<span class="op">=</span><span class="st">"Lat"</span>,
-                            sppColumn<span class="op">=</span><span class="st">"species"</span>, 
-                            siteColumn<span class="op">=</span><span class="st">"site"</span>, 
-                            predData<span class="op">=</span><span class="va">envTab</span>, 
-                            sppFilter<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Site weighting type: Equal"</span>
-<span class="co">#&gt; [1] "Site-pair table created with 4095 rows (91 unique sites) and 26 columns (10 environmental variables)."</span></code></pre></div>
-</div>
-</div>
-<div id="gdm-fitting" class="section level2">
-<h2 class="hasAnchor">
-<a href="#gdm-fitting" class="anchor"></a>GDM fitting</h2>
-<p>GDM is a nonlinear extension of permutational matrix regression that uses flexible splines and generalized linear modeling (GLM) to accommodate two types of nonlinearity common in ecological datasets: (1) variation in the rate of compositional turnover (non-stationarity) along environmental gradients, and (2) the curvilinear relationship between biological distance and environmental and geographical distance.</p>
-<p>The function <code>gdm</code> fits generalized dissimilarity models and is simple to use once the biological and predictor data have been formatted to a site-pair table. In addition to specifying whether or not the model should be fit with geographical distance as a predictor variable, the user has the option to specify (i) the number of I-spline basis functions (the default is three, with larger values producing more complex splines) and (ii) the locations of “knots” along the splines (defaults to 0 (minimum), 50 (median), and 100 (maximum) quantiles when three I-spline basis functions are used). Even though these option are available, using the default values for these parameters will work fine for most applications. In other words, unless you have a good reason, you should probably use the default settings for splines and knots. The effects (and significance) of altering the number of splines and knot locations has not been systematically explored.</p>
-<p>Here we fit GDM with geo=T and default settings for all other parameters.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gdm.1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.html">gdm</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">gdmTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>The <code>summary</code> function provides an overview of the model, the most important items to note are:</p>
-<ul>
-<li>Percent Deviance Explained: goodness-of-fit</li>
-<li>Intercept: expected dissimilarity between sites that do not differ in the predictors</li>
-<li>Summary of the fitted I-splines for each predictor, including the values of the coefficients and their sum. The sum indicates the amount of compositional turnover associated with that variable, holding all other variables constant. I-spline summaries are order by coefficient sum. Variables with all coefficients=0 have no relationship with the modeled biological pattern.</li>
-</ul>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">gdm.1</span><span class="op">)</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] GDM Modelling Summary</span>
-<span class="co">#&gt; [1] Creation Date:  Fri Nov 19 15:09:12 2021</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Name:  gdm.1</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Data:  gdmTab</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Samples:  4371</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Geographical distance used in model fitting?  TRUE</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] NULL Deviance:  651.914</span>
-<span class="co">#&gt; [1] GDM Deviance:  129.025</span>
-<span class="co">#&gt; [1] Percent Deviance Explained:  80.208</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Intercept:  0.277</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] PREDICTOR ORDER BY SUM OF I-SPLINE COEFFICIENTS:</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 1: bio19</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 114.394</span>
-<span class="co">#&gt; [1] 50% Knot: 172.416</span>
-<span class="co">#&gt; [1] Max Knot: 554.771</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.941</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0.868</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for bio19: 1.809</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 2: phTotal</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 277.978</span>
-<span class="co">#&gt; [1] 50% Knot: 584.609</span>
-<span class="co">#&gt; [1] Max Knot: 1860.37</span>
-<span class="co">#&gt; [1] Coefficient[1]: 1.127</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0.23</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for phTotal: 1.357</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 3: bio5</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 25.571</span>
-<span class="co">#&gt; [1] 50% Knot: 32.16</span>
-<span class="co">#&gt; [1] Max Knot: 36.188</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.127</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0.453</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0.114</span>
-<span class="co">#&gt; [1] Sum of coefficients for bio5: 0.694</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 4: solumDepth</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 705.02</span>
-<span class="co">#&gt; [1] 50% Knot: 1017.628</span>
-<span class="co">#&gt; [1] Max Knot: 1247.705</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.682</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for solumDepth: 0.682</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 5: awcA</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 12.975</span>
-<span class="co">#&gt; [1] 50% Knot: 22.186</span>
-<span class="co">#&gt; [1] Max Knot: 50.7</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0.523</span>
-<span class="co">#&gt; [1] Sum of coefficients for awcA: 0.523</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 6: Geographic</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 0.452</span>
-<span class="co">#&gt; [1] 50% Knot: 2.46</span>
-<span class="co">#&gt; [1] Max Knot: 6.532</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.014</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0.372</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for Geographic: 0.386</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 7: sandA</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 56.697</span>
-<span class="co">#&gt; [1] 50% Knot: 72.951</span>
-<span class="co">#&gt; [1] Max Knot: 83.993</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.092</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0.139</span>
-<span class="co">#&gt; [1] Sum of coefficients for sandA: 0.231</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 8: shcA</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 78.762</span>
-<span class="co">#&gt; [1] 50% Knot: 179.351</span>
-<span class="co">#&gt; [1] Max Knot: 521.985</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0.156</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for shcA: 0.156</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 9: bio6</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 4.373</span>
-<span class="co">#&gt; [1] 50% Knot: 5.509</span>
-<span class="co">#&gt; [1] Max Knot: 9.224</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.121</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for bio6: 0.121</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 10: bio15</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 29.167</span>
-<span class="co">#&gt; [1] 50% Knot: 55.008</span>
-<span class="co">#&gt; [1] Max Knot: 87.143</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0.027</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for bio15: 0.027</span>
-<span class="co">#&gt; [1] </span>
-<span class="co">#&gt; [1] Predictor 11: bio18</span>
-<span class="co">#&gt; [1] Splines: 3</span>
-<span class="co">#&gt; [1] Min Knot: 0</span>
-<span class="co">#&gt; [1] 50% Knot: 0</span>
-<span class="co">#&gt; [1] Max Knot: 52</span>
-<span class="co">#&gt; [1] Coefficient[1]: 0</span>
-<span class="co">#&gt; [1] Coefficient[2]: 0</span>
-<span class="co">#&gt; [1] Coefficient[3]: 0</span>
-<span class="co">#&gt; [1] Sum of coefficients for bio18: 0</span></code></pre></div>
-</div>
-<div id="gdm-plots" class="section level2">
-<h2 class="hasAnchor">
-<a href="#gdm-plots" class="anchor"></a>GDM plots</h2>
-<p>The fitted splines represent one of the most informative components of a fitted GDM and so plotting and scrutinizing the splines is a major part of interpreting GDM and the analyzed biological patterns. The fitted model and I-splines can be viewed using the <code>plot</code> function, which produces a multi-panel plot that includes two model summary plots showing (i) the fitted relationship between predicted ecological distance and observed compositional dissimilarity and (ii) predicted versus observed biological distance, followed by a series of panels showing each I-spline with at least one non-zero coefficient (plotted in order by sum of the I-spline coefficients). Note that in the example bio18 is not plotted because all three coefficients equaled zero and so had no relationship with the response.</p>
-<p>The maximum height of each spline indicates the magnitude of total biological change along that gradient and thereby corresponds to the relative importance of that predictor in contributing to biological turnover while holding all other variables constant (i.e., is a partial ecological distance). The spline’s shape indicates how the rate of biological change varies with position along that gradient. Thus, the splines provide insight into the total magnitude of biological change as a function of each gradient and where along each gradient those changes are most pronounced. In this example, compositional turnover is greatest along gradients of bio19 (winter precipitation) and phTotal (soil phosphorus) and most rapid near the low ends of these gradients.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">gdm.1</span><span class="op">$</span><span class="va">predictors</span><span class="op">)</span> <span class="co"># get ideal of number of panels</span>
-<span class="co">#&gt; [1] 11</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">gdm.1</span>, plot.layout<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-plotGDM-1.png" title="The fitted model (first two panels) and I-splines (remaining panels)." alt="The fitted model (first two panels) and I-splines (remaining panels)." width="100%"></p>
-<p>To allow easy customization of I-spline plots, the <code>isplineExtract</code> function will extract the plotted values for each I-spline.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gdm.1.splineDat</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/isplineExtract.html">isplineExtract</a></span><span class="op">(</span><span class="va">gdm.1</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">gdm.1.splineDat</span><span class="op">)</span>
-<span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ x: num [1:200, 1:11] 0.452 0.483 0.513 0.544 0.574 ...</span>
-<span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span>
-<span class="co">#&gt;   .. ..$ : NULL</span>
-<span class="co">#&gt;   .. ..$ : chr [1:11] "Geographic" "awcA" "phTotal" "sandA" ...</span>
-<span class="co">#&gt;  $ y: num [1:200, 1:11] 0 0.00045 0.00095 0.0015 0.0021 ...</span>
-<span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span>
-<span class="co">#&gt;   .. ..$ : NULL</span>
-<span class="co">#&gt;   .. ..$ : chr [1:11] "Geographic" "awcA" "phTotal" "sandA" ...</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">gdm.1.splineDat</span><span class="op">$</span><span class="va">x</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, 
-     <span class="va">gdm.1.splineDat</span><span class="op">$</span><span class="va">y</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, 
-     lwd<span class="op">=</span><span class="fl">3</span>,
-     type<span class="op">=</span><span class="st">"l"</span>, 
-     xlab<span class="op">=</span><span class="st">"Winter precipitation (mm)"</span>, 
-     ylab<span class="op">=</span><span class="st">"Partial ecological distance"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-extractSplines-1.png" title="Custom I-spline plot for geographic distance." alt="Custom I-spline plot for geographic distance." width="100%"></p>
-</div>
-<div id="gdm-predictions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#gdm-predictions" class="anchor"></a>GDM predictions</h2>
-<p>The I-splines provide an indication of how species composition (or any other fitted biological response variable) changes along each environmental gradient. Beyond these insights, a fitted model also can be used to (i) predict biological dissimilarity between site pairs in space or between times using the <code>predict</code> function and (ii) transform the predictor variables from their arbitrary environmental scales to a common biological importance scale using the <code>gdm.transform</code> function.</p>
-<p>The following examples show predictions between site pairs in space and locations through time, and transformation of both tabular and raster data. For the raster example, the transformed layers are used to map spatial patterns of biodiversity.</p>
-</div>
-<div id="using-a-fitted-gdm-to-predict-biological-dissimilarity-between-sites" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-a-fitted-gdm-to-predict-biological-dissimilarity-between-sites" class="anchor"></a>Using a fitted GDM to predict biological dissimilarity between sites</h2>
-<p>The <code>predict</code> function requires a site-pair table in the same format as that used to fit the model. For demonstration purposes, we use the same table as that was used to fit the model, though predictions to new sites (or times) can be made as well assuming the same set of environmental/spatial predictors are available at those locations (or times).</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">gdm.1.pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span>object<span class="op">=</span><span class="va">gdm.1</span>, data<span class="op">=</span><span class="va">gdmTab</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gdm.1.pred</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.4720423 0.7133571 0.8710175 0.8534788 0.9777208 0.3996694</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">gdmTab</span><span class="op">$</span><span class="va">distance</span>, 
-     <span class="va">gdm.1.pred</span>, 
-     xlab<span class="op">=</span><span class="st">"Observed dissimilarity"</span>, 
-     ylab<span class="op">=</span><span class="st">"Predicted dissimilarity"</span>, 
-     xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, 
-     ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>, 
-     pch<span class="op">=</span><span class="fl">20</span>, 
-     col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html">rgb</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-predictSpaceGDM-1.png" title="Predicted vs. observed compositional dissimilarity." alt="Predicted vs. observed compositional dissimilarity." width="100%"></p>
-</div>
-<div id="predicting-biological-change-through-time" class="section level2">
-<h2 class="hasAnchor">
-<a href="#predicting-biological-change-through-time" class="anchor"></a>Predicting biological change through time</h2>
-<p>The <code>predict</code> function can be used to make predictions through time, for example, under climate change scenarios to estimate the magnitude of expected change in biological composition in response to environmental change <br><span class="math display">@<em>f</em><em>i</em><em>t</em><em>z</em><em>p</em><em>a</em><em>t</em><em>r</em><em>i</em><em>c</em><em>k</em><sub>2011</sub></span><br>. In this case, rasters must be provided for two time periods of interest.</p>
-<p>First we fit a new model using only the climate variables and then create some fake future climate rasters to use as example data.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># fit a new gdm using a table with climate data only (to match rasters)</span>
-<span class="va">gdm.rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.html">gdm</a></span><span class="op">(</span><span class="va">gdmTab.rast</span>, geo<span class="op">=</span><span class="cn">T</span><span class="op">)</span>
-
-<span class="co"># make some fake climate change data</span>
-<span class="va">futRasts</span> <span class="op">&lt;-</span> <span class="va">swBioclims</span>
-<span class="co">##reduce winter precipitation by 25% &amp; increase temps</span>
-<span class="va">futRasts</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">futRasts</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">*</span><span class="fl">0.75</span>
-<span class="va">futRasts</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">futRasts</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">+</span><span class="fl">2</span>
-<span class="va">futRasts</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">futRasts</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">+</span><span class="fl">3</span></code></pre></div>
-<p>We again use the <code>predict</code> function, but with <code>time=TRUE</code> and provide the current and future climate raster stacks. Th resulting map shows the expected magnitude of change in vegetation composition, which can be interpreted as a biologically-scaled metric of climate stress.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">timePred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">gdm.rast</span>, <span class="va">swBioclims</span>, time<span class="op">=</span><span class="cn">T</span>, predRasts<span class="op">=</span><span class="va">futRasts</span><span class="op">)</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">timePred</span>, col<span class="op">=</span><span class="fu">rgb.tables</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-predictTimeGDM-1.png" title="Predicted magnitude of biological change through time" alt="Predicted magnitude of biological change through time" width="100%"></p>
-</div>
-<div id="transforming-spatial-predictor-layers-using-a-fitted-gdm" class="section level2">
-<h2 class="hasAnchor">
-<a href="#transforming-spatial-predictor-layers-using-a-fitted-gdm" class="anchor"></a>Transforming spatial predictor layers using a fitted GDM</h2>
-<p>Using GDM to transform environmental data rescales the individual predictors to a common scale of biological importance. Spatially explicit predictor data to be transformed can be a raster stack or brick with one layer per predictor. If the model was fit with geographical distance and raster data are provided to the <code>transform</code> function, there is no need to provide x- or y-raster layers as these will be generated automatically. However, the character names of the x- and y-coordinates (e.g., “Long” and “Lat”) used to fit the model need to be provided.</p>
-<p>First we fit a new model using only the climate variables.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># fit the GDM</span>
-<span class="va">gdmRastMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.html">gdm</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">gdmTab.rast</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p>We then use the <code>gdm.transform</code> function to rescale the rasters.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">transRasts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.transform.html">gdm.transform</a></span><span class="op">(</span>model<span class="op">=</span><span class="va">gdmRastMod</span>, data<span class="op">=</span><span class="va">swBioclims</span><span class="op">)</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html">plot</a></span><span class="op">(</span><span class="va">transRasts</span>, col<span class="op">=</span><span class="fu">rgb.tables</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-transformGDM-1.png" width="100%"></p>
-</div>
-<div id="visualizing-multi-dimensional-biological-patterns" class="section level2">
-<h2 class="hasAnchor">
-<a href="#visualizing-multi-dimensional-biological-patterns" class="anchor"></a>Visualizing multi-dimensional biological patterns</h2>
-<p>Site-pair based biological distances are difficult to visualize. However, if the <code>transform</code> function is applied to rasters, the resulting multi-dimensional biological space can be mapped to reveal biological patterns in geographic space. Alternatively, a biplot can be used to depict where sites fall relative to each other in biological space and therefore how sites differ in predicted biological composition. In either case, the multi-dimensional biological space can be most effectively visualized by taking a PCA to reduce dimensionality and assigning the first three components to an RGB color palette. In the resulting map, color similarity corresponds to the similarity of expected plant species composition (in other words, cells with similar colors are expected to contain similar plant communities).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Get the data from the gdm transformed rasters as a table</span>
-<span class="va">rastDat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/getValues.html">getValues</a></span><span class="op">(</span><span class="va">transRasts</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># The PCA can be fit on a sample of grid cells if the rasters are large</span>
-<span class="va">rastDat</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/sampleRandom.html">sampleRandom</a></span><span class="op">(</span><span class="va">transRasts</span>, <span class="fl">50000</span><span class="op">)</span> 
-
-<span class="co"># perform the principle components analysis</span>
-<span class="va">pcaSamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html">prcomp</a></span><span class="op">(</span><span class="va">rastDat</span><span class="op">)</span>
- 
-<span class="co"># Predict the first three principle components for every cell in the rasters</span>
-<span class="co"># note the use of the 'index' argument</span>
-<span class="va">pcaRast</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/predict.html">predict</a></span><span class="op">(</span><span class="va">transRasts</span>, <span class="va">pcaSamp</span>, index<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-
-<span class="co"># scale the PCA rasters to make full use of the colour spectrum</span>
-<span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span> <span class="op">/</span>
-  <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">max</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span><span class="op">*</span><span class="fl">255</span>
-<span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span> <span class="op">/</span>
-  <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">max</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span><span class="op">*</span><span class="fl">255</span>
-<span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span> <span class="op">/</span>
-  <span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">max</span><span class="op">-</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">data</span><span class="op">@</span><span class="va">min</span><span class="op">)</span><span class="op">*</span><span class="fl">255</span>
-
-<span class="co"># Plot the three PCA rasters simultaneously, each representing a different colour </span>
-<span class="co">#  (red, green, blue)</span>
-<span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plotRGB.html">plotRGB</a></span><span class="op">(</span><span class="va">pcaRast</span>, r<span class="op">=</span><span class="fl">1</span>, g<span class="op">=</span><span class="fl">2</span>, b<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.png" title="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%"></p>
-</div>
-</div>
-<div id="section-2---advanced-spatial-analyses-using-gdm" class="section level1">
-<h1 class="hasAnchor">
-<a href="#section-2---advanced-spatial-analyses-using-gdm" class="anchor"></a>SECTION 2 - Advanced spatial analyses using GDM</h1>
-</div>
-
+A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=gdm">https://​cloud.r-project.org/​package=gdm</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/fitzLab-AL/gdm/">https://​github.com/​fitzLab-AL/​gdm/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/fitzLab-AL/gdm/issues/">https://​github.com/​fitzLab-AL/​gdm/​issues/​</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=gdm" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/fitzLab-AL/gdm/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/fitzLab-AL/gdm/issues/" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
 <li><small>GPL (&gt;= 3)</small></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Matt Fitzpatrick <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-1911-8407" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Karel Mokany <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4199-3697" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Glenn Manion <br><small class="roles"> Author </small>  </li>
-<li>Diego Nieto-Lugilde <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4135-2881" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Simon Ferrier <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-7884-2388" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li><a href="authors.html">All authors...</a></li>
+<li><a href="authors.html#citation">Citing gdm</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li><a href="https://CRAN.R-project.org/package=gdm"><img src="https://www.r-pkg.org/badges/version/gdm?color=blue" alt="CRAN_Status_Badge"></a></li>
-<li><a href="https://cran.rstudio.com/package=gdm"><img src="https://cranlogs.r-pkg.org/badges/gdm?color=blue" alt="Downloads"></a></li>
+<li>Matt Fitzpatrick <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-1911-8407" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Karel Mokany <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4199-3697" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Glenn Manion <br><small class="roles"> Author </small>  </li>
+<li>Diego Nieto-Lugilde <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4135-2881" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Simon Ferrier <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-7884-2388" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
-</div>
+
+
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Matt Fitzpatrick, Karel Mokany, Glenn Manion, Diego Nieto-Lugilde, Simon Ferrier.</p>
+  <p></p>
+<p>Developed by Matt Fitzpatrick, Karel Mokany, Glenn Manion, Diego Nieto-Lugilde, Simon Ferrier.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -633,6 +133,8 @@
 
   
 
+
+  
 
   </body>
 </html>
