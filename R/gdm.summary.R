@@ -87,7 +87,7 @@ summary.gdm <- function (object, ...){
   object$knots <- schism
   object$sumCoeff <- sumCoeff[orderPreds]
   #########################
-
+  thiscoeff <- 1
   for(i in 1:length(object$predictors)){
     print( paste( "Predictor ",i,": ",object$predictors[[i]], sep="" ), quote=F )
     print( paste( "Splines: ",object$splines[[i]], sep="" ), quote=F )
@@ -98,13 +98,15 @@ summary.gdm <- function (object, ...){
       else print( paste( round(100/(numsplines-1),digits=2),"% Knot: ", round(object$knots[[thisquant]], 3), sep="" ), quote=F )
       thisquant <- thisquant + 1
     }
-    #for(j in 1:numsplines){
-    #  print( paste( "Coefficient[",j,"]: ", round(object$coefficients[[thiscoeff]], 3), sep="" ), quote=F )
-    #  thiscoeff <- thiscoeff + 1
-    #}
+    for(j in 1:numsplines){
+      print( paste( "Coefficient[",j,"]: ", round(object$coefficients[[thiscoeff]], 3), sep="" ), quote=F )
+      thiscoeff <- thiscoeff + 1
+    }
     #print( "", quote=F )
     print(paste0("Sum of coefficients for ", object$predictors[[i]], ": ",
                  round(object$sumCoeff[i], 3)), quote=F)
+    if(i<length(object$predictors)){
     print( "", quote=F )
+    }
   }
 }

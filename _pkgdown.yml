@@ -1,2 +1,5 @@
-url: ~
+url: https://mfitzpatrick.al.umces.edu/gdm/
 
+template:
+  params:
+    ganalytics: G-GL0J535PBQ
