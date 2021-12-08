@@ -131,8 +131,8 @@
 #' used to reduce the number of sites to overcome possible memory limitations
 #' when fitting models with very large numbers of sites.
 #'
-#' @param verbose Default = FALSE. If TRUE, prints summary information regarding
-#' dimensions of the site-pair table that can be useful for diagnostics.
+#' @param verbose Default = FALSE. If TRUE, summary of information regarding
+#' dimensions of the site-pair table will be printed that can be useful for diagnostics.
 #'
 #' @details
 #' bioData and bioFormat:
@@ -722,6 +722,13 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   }
 
   if(verbose){
+    if(weightType[1]=="equal"){
+      print("Site weighting type: Equal")
+    }else if(weightType[1]=="custom"){
+      print("Site weighting type: Custom")
+    }else{
+      print("Site weighting type: Richness")
+    }
     print(paste0("Site-pair table created with ", nrow(outTable), " rows ",
                  "(", nrow(unique(outTable[,3:4]))+1, " unique sites)", " and ",
                  ncol(outTable) , " columns (", (ncol(outTable)-6)/2,

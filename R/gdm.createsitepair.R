@@ -84,15 +84,17 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   }
 
   if(weightsType[1]=="equal"){
-    print("Site weighting type: Equal")
+    #print("Site weighting type: Equal")
     weights <- rep(1, times=length(distance))
   }else if(weightsType[1]=="custom"){
-    print("Site weighting type: Custom")
+    #print("Site weighting type: Custom")
     weights <- (custWeights[s1, "weights"] + custWeights[s2, "weights"]) / 2
   }else{
-    print("Site weighting type: Richness")
+    #print("Site weighting type: Richness")
     weights <- (sppSiteSums[s1, "sppSums"] + sppSiteSums[s2, "sppSums"]) / richTotal
   }
+
+
   gdmTable <- cbind(distance, weights)
 
   ##from environmental or species table, copy coordinates for site-pair table
