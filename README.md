@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gdm
+# gdm <img src="man/figures/gdmLogo.png" align="right" width="120" />
 
 <!-- badges: start -->
 
@@ -17,7 +17,7 @@ Generalized Dissimilarity Models.
 Fitzpatrick MC, Mokany K, Manion G, Ferrier S. (2021) gdm: Generalized
 Dissimilarity Modeling. R package version 1.5.0.
 
-Mokany K, Fitzpatrick MC, Ware C, Woolley SNC, Ferrier S (in revision) A
+Mokany K, Ware C, Woolley SNC, Ferrier S, Fitzpatrick MC (in revision) A
 working guide to generalized dissimilarity modelling.
 
 Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized
