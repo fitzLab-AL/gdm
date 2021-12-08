@@ -316,12 +316,14 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   if(!(abundance==TRUE | abundance==FALSE)){
     stop("abundance argument must be either TRUE or FALSE")
   }
+
   ##if sampleSites is not a number, then exit function
-  if(is.null(sampleSites)==TRUE){
-    stop("sampleSites argument must be a number between 0-1")
-  }
-  if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
-    stop("sampleSites argument must be a number between 0-1")
+  #if(is.null(sampleSites)==TRUE){
+  #  stop("sampleSites argument must be a number between 0-1")
+  #}
+  if (is.numeric(sampleSites) == FALSE | sampleSites <= 0 |
+      sampleSites > 1) {
+    stop("sampleSites argument must be a number 0 < x <= 1")
   }
 
   ##makes sure that sppFilter is a number, if not exit function
@@ -529,19 +531,16 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     spSiteCol <- filterBioDat[1]
     bioData <- unique(merge(spSiteCol, bioData, by=siteColumn))
 
-    ##removes random sampling of sites
-    if(is.null(sampleSites)==FALSE){
-      #if(nrow(bioData)<sampleSites){
-      #warning("After species filter, fewer records remaining than specified in sampleSites, continuing without subsampling")
-    }else{
-      fullSites <- bioData[,siteCol]
-      randRows <- sample(1:nrow(bioData), round(nrow(bioData)*sampleSites,0))
+    ##subsample sites using random sampling
+    if (sampleSites < 1) {
+      fullSites <- bioData[, siteCol]
+      randRows <- sort(sample(1:nrow(bioData),
+                              round(nrow(bioData) * sampleSites, 0)))
       ##actual selection of the random rows to keep
       bioData <- bioData[c(randRows),]
       #removeRand <- fullLength[-(randRows)]
       ##records the sites that have been removed, for distPreds later in function
       removeRand <- fullSites[which(! (fullSites %in% bioData[,siteCol]))]
-      #}
     }
 
     ##identifies and removes filtered out sites and sampled sites from predData
