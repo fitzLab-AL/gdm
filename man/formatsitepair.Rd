@@ -7,7 +7,7 @@ Site-Pair Table}
 \usage{
 formatsitepair(bioData, bioFormat, dist="bray", abundance=FALSE, siteColumn=NULL,
 XColumn, YColumn, sppColumn=NULL, abundColumn=NULL, sppFilter=0, predData,
-distPreds=NULL, weightType="equal", custWeights=NULL, sampleSites=1)
+distPreds=NULL, weightType="equal", custWeights=NULL, sampleSites=1, verbose=FALSE)
 }
 \arguments{
 \item{bioData}{The input biological (the response variable) data table, in
@@ -99,6 +99,9 @@ when weightType = "custom". Ignored otherwise.}
 of sites to be used to construct the site-pair table. This argument can be
 used to reduce the number of sites to overcome possible memory limitations
 when fitting models with very large numbers of sites.}
+
+\item{verbose}{Default = FALSE. If TRUE, summary of information regarding
+dimensions of the site-pair table will be printed that can be useful for diagnostics.}
 }
 \value{
 A formatted site-pair table containing the response (biological

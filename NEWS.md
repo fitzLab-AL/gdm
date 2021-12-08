@@ -1,11 +1,14 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
 # gdm 1.5.0-2
-## bug fixes
+* Added *verbose* argument to the `formatsitepair` function to control whether site-pair attributes are printed.
+
+### bug fixes
 * Fix bug that prevented printing of I-spline coefficients when using the `summary` function.
+* Fix bug that prevented the *sampleSites* argument in the `sitepairformat` function from actually subsampling the site-pair table.
 
 # gdm 1.5.0-1
-## bug fixes
+### bug fixes
 * Fix bug associated with the formatting of the `gdm` model object that broke the `predict.gdm` function.
 
 # gdm 1.5.0
