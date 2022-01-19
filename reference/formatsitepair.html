@@ -30,12 +30,12 @@ argument (see below).
 '><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-GL0J535PBQ"></script><script>
+<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=UA-44767849-4"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-GL0J535PBQ');
+  gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
     
 
@@ -110,7 +110,7 @@ argument (see below).</p></li>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">formatsitepair</span><span class="op">(</span><span class="va">bioData</span>, <span class="va">bioFormat</span>, dist<span class="op">=</span><span class="st">"bray"</span>, abundance<span class="op">=</span><span class="cn">FALSE</span>, siteColumn<span class="op">=</span><span class="cn">NULL</span>,
 <span class="va">XColumn</span>, <span class="va">YColumn</span>, sppColumn<span class="op">=</span><span class="cn">NULL</span>, abundColumn<span class="op">=</span><span class="cn">NULL</span>, sppFilter<span class="op">=</span><span class="fl">0</span>, <span class="va">predData</span>,
-distPreds<span class="op">=</span><span class="cn">NULL</span>, weightType<span class="op">=</span><span class="st">"equal"</span>, custWeights<span class="op">=</span><span class="cn">NULL</span>, sampleSites<span class="op">=</span><span class="fl">1</span><span class="op">)</span></code></pre></div>
+distPreds<span class="op">=</span><span class="cn">NULL</span>, weightType<span class="op">=</span><span class="st">"equal"</span>, custWeights<span class="op">=</span><span class="cn">NULL</span>, sampleSites<span class="op">=</span><span class="fl">1</span>, verbose<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -205,6 +205,9 @@ when weightType = "custom". Ignored otherwise.</p></dd>
 of sites to be used to construct the site-pair table. This argument can be
 used to reduce the number of sites to overcome possible memory limitations
 when fitting models with very large numbers of sites.</p></dd>
+<dt>verbose</dt>
+<dd><p>Default = FALSE. If TRUE, summary of information regarding
+dimensions of the site-pair table will be printed that can be useful for diagnostics.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -291,7 +294,6 @@ exact same coordinates.</p>
 <span class="r-in"><span class="co">## site-species, table-table</span></span>
 <span class="r-in"><span class="va">exFormat1a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">testData1a</span>, <span class="fl">1</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>,</span>
 <span class="r-in">YColumn<span class="op">=</span><span class="st">"Lat"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Site weighting type: Equal"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#' # next, let's try environmental raster data</span></span>
 <span class="r-in"><span class="co">## not run</span></span>
@@ -310,7 +312,6 @@ exact same coordinates.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Site weighting type: Equal"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## site xy spp list, table-raster</span></span>
 <span class="r-in"><span class="co">## not run</span></span>
@@ -335,7 +336,6 @@ exact same coordinates.</p>
 <span class="r-in"><span class="co"># now we can format the table:</span></span>
 <span class="r-in"><span class="va">exFormat3</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">gdmDissim</span>, <span class="fl">3</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span>
 <span class="r-in">predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Site weighting type: Equal"</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">#########table type 4</span></span>
 <span class="r-in"><span class="co">## adds a predictor matrix to an existing site-pair table, in this case,</span></span>
@@ -357,7 +357,7 @@ exact same coordinates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
