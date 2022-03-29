@@ -28,7 +28,7 @@
 #' @param parallel Whether or not to run the matrix permutations and model
 #' fitting in parallel. Parallel processing is highly recommended when either
 #' (i) the nPerms argument is large (>100) or (ii) a large number of site-pairs
-#' (and or variables) are being used in model fitting (note computation demand
+#' (and / or variables) are being used in model fitting (note computation demand
 #' can be reduced using subsampling - see next arguments). The default is FALSE.
 #'
 #' @param cores When the parallel argument is set to TRUE, the number of cores
@@ -51,7 +51,7 @@
 #' sites have been removed, not on the size of the full site-pair table.
 #'
 #' @param outFile An optional character string to write the object returned by
-#' the function to disk as an .RData object (".RData"" is not required as part
+#' the function to disk as an .RData object (".RData" is not required as part
 #' of the file name). The .RData object will contain a single list with the
 #' name of "outObject". The default is NULL, meaning that no file will be written.
 #'
@@ -66,7 +66,7 @@
 #' environmental table). Variable importance is quantified as the percent change
 #' in deviance explained between a model fit with and without that variable
 #' (technically speaking, with the variable permuted and un-permuted). If
-#' fullModelOnly=FALSE, this process continues by then permutating the site-pair
+#' fullModelOnly=FALSE, this process continues by next permutating the site-pair
 #' table nPerm times, but removing one variable at a time and reassessing
 #' variable importance and significance. At each step, the least important
 #' variable is dropped (backward elimination) and the process continues until
@@ -162,69 +162,69 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   }
   ##checks to makes sure data is a matrix or data frame
   if(!(is(spTable, "gdmData") | is(spTable, "matrix") | is(spTable, "data.frame"))){
-    stop("spTable argument needs to be gdmData, a matrix, or a data frame")
+    stop("spTable argument needs to be of class 'gdmData', 'matrix', or 'data frame'")
   }
 
   ##sanity check on the data table
   if(ncol(spTable) < 6){
-    stop("spTable object requires at least 6 columns: Observed, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord")
+    stop("spTable object requires at least 6 columns: distance, weights, s1.xCoord, s1.yCoord, s2.xCoord, s2.yCoord")
   }
   if(nrow(spTable) < 1){
-    stop("Not enough rows in data")
+    stop("The spTable object contains zero rows of data.")
   }
 
   ##checks that geo has either TRUE or FALSE
   if(!(geo==TRUE | geo==FALSE)){
-    stop("geo argument must be either TRUE or FALSE")
+    stop("The geo argument must be either TRUE or FALSE.")
   }
   ##makes sure splines is a numeric vector
   if(is.null(splines)==FALSE & !is(splines, "numeric")){
-    stop("argument splines needs to be a numeric data type")
+    stop("The splines argument needs to be a numeric data type.")
   }
   ##checks knots inputs
   if(is.null(knots)==FALSE & !is(knots, "numeric")){
-    stop("argument knots needs to be a numeric data type")
+    stop("The knots argument needs to be a numeric data type.")
   }
   ##checks that fullModelOnly has either TRUE or FALSE
   if(!(fullModelOnly==TRUE | fullModelOnly==FALSE)){
-    stop("fullModelOnly argument must be either TRUE or FALSE")
+    stop("The fullModelOnly argument must be either TRUE or FALSE.")
   }
   ##makes sure that nPerm is a positive integer
   if((is.null(nPerm)==FALSE & is.numeric(nPerm)==FALSE) | nPerm<1){
-    stop("argument nPerm needs to be a positive integer")
+    stop("The nPerm argument needs to be a positive integer.")
   }
   ##checks that parallel has either TRUE or FALSE
   if(!(parallel==TRUE | parallel==FALSE)){
-    stop("parallel argument must be either TRUE or FALSE")
+    stop("The parallel argument must be either TRUE or FALSE.")
   }
   ##makes sure that cores has a value when parallel is true
   if(parallel==TRUE & is.null(cores)==TRUE){
-    stop("If parallel==TRUE, the number of cores must be specified")
+    stop("If parallel==TRUE, the number of cores must be specified.")
   }
   ##makes sure that cores is a positive integer
   if((is.null(cores)==FALSE & is.numeric(cores)==FALSE) | cores<1){
-    stop("argument cores needs to be a positive integer")
+    stop("The cores argument needs to be a positive integer.")
   }
   ##makes sure that both sampleSites and sampleSitePairs are a number between 0 and 1,
   ##and that neither is equal to 0
   if(is.numeric(sampleSites)==FALSE | sampleSites<0 | sampleSites>1){
-    stop("argument sampleSites needs to be a positive number between 0 and 1")
+    stop("The sampleSites argument needs to be a positive number between 0 and 1.")
   }
   if(is.numeric(sampleSitePairs)==FALSE | sampleSitePairs<0 | sampleSitePairs>1){
-    stop("argument sampleSitePairs needs to be a positive number between 0 and 1")
+    stop("The sampleSitePairs argument needs to be a positive number between 0 and 1.")
   }
   if(sampleSites==0){
-    stop("a sampleSites value of 0 will remove all sites from the analysis")
+    stop("A sampleSites value of 0 will remove all sites from the analysis.")
   }
   if(sampleSitePairs==0){
-    stop("a sampleSitePairs value of 0 will remove all sites from the analysis")
+    stop("A sampleSitePairs value of 0 will remove all sites from the analysis.")
   }
   ##checks to see if the user has requested for an output file to be written, and if so
   ##makes sure that it is formatted correctly
   if(is.null(outFile)==FALSE){
     ##first makes sure outFile is a string
     if(is.character(outFile)==FALSE){
-      stop("argument outFile needs to be a character string of the directory and file name you wish the tables to be written to")
+      stop("The outFile argument needs to be a character string of the directory and file name you wish the tables to be written to")
     }
     ##makes sure that text has ".RData" in it, if not, adds it
     outFileChar <- nchar(outFile)
@@ -262,10 +262,10 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   ##check that the response data is [0..1]
   rtmp <- spTable[,1]
   if(length(rtmp[rtmp<0]) > 0){
-    stop("Response spTable has negative values. Must be between 0 - 1.")
+    stop("The spTable contains negative distance values. Must be between 0 - 1.")
   }
   if (length(rtmp[rtmp>1]) > 0){
-    stop("Response spTable has values greater than 1. Must be between 0 - 1.")
+    stop("The spTable contains distance values greater than 1. Must be between 0 - 1.")
   }
 
   ##number of variables in the site-pair table, adds 1 if geo is to be TRUE
@@ -342,12 +342,18 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   siteData <- do.call("rbind", exBySite)
 
   ##sets up objects to be returned by the function
-  modelTestValues <- matrix(NA,4,nVars,dimnames = list(c("Model deviance", "Percent deviance explained", "Model p-value", "Fitted permutations"),c("fullModel", paste("fullModel-", seq(1,nVars-1), sep=""))))
-  ##deviance reduction variable table, not yet sure why imporant
+  modelTestValues <- matrix(NA,4,nVars,dimnames = list(c("Model deviance",
+                                                         "Percent deviance explained",
+                                                         "Model p-value",
+                                                         "Fitted permutations"),
+                                                       c("fullModel-All variables",
+                                                         "fullModel-1 var removed",
+                                                         paste("fullModel-", seq(2,nVars-1), " vars removed", sep=""))))
+  ##deviance reduction variable table
   devReductVars <- matrix(NA, nVars, nVars-1)
   rownames(devReductVars) <- varNames
   colnames(devReductVars) <- c("fullModel", paste("fullModel-", seq(1,nVars-2), sep=""))
-  ##p value variable table, not yet sure why imporant
+  ##p value variable table
   pValues <- numPermsFit <- devReductVars
 
   ##assigns given site-pair table to new variable, to prevent changing the original input
@@ -359,11 +365,12 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     #print(varNames[v])
 
     ##runs gdm, first time on full site-pair table
-    ##however as variables are removed the "full" site-pair table will have less varialbes in it
+    ##however as variables are removed the "full" site-pair table will have less variables in it
     fullGDM <- gdm(currSitePair, geo=geo, splines=splines, knots=knots)
 
     if(is.null(fullGDM)==TRUE){
-      warning(paste("The model did not fit when testing variable: ", varNames[v], ". Terminating analysis and returning output completed to the point of termination.", sep=""))
+      warning(paste("The model did not fit when testing variable: ", varNames[v],
+                    ". Terminating analysis and returning output completed up to this point.", sep=""))
       break
     }
 
