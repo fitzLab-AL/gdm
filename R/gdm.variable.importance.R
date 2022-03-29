@@ -252,7 +252,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       warning("You have selected to randomly remove sites and/or site-pairs.")
     }
   }
-  ##removes a user specified number of site-paires from the site-pair table
+  ##removes a user specified number of site-pairs from the site-pair table
   if(sampleSitePairs<1){
     ##determine which rows to remove
     numRm <- sample(1:nrow(spTable), round(nrow(spTable)*(1-sampleSitePairs)))
@@ -346,13 +346,15 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
                                                          "Percent deviance explained",
                                                          "Model p-value",
                                                          "Fitted permutations"),
-                                                       c("fullModel-All variables",
-                                                         "fullModel-1 var removed",
-                                                         paste("fullModel-", seq(2,nVars-1), " vars removed", sep=""))))
+                                                       c("All variables",
+                                                         "1-removed",
+                                                         paste(seq(2,nVars-1), "-removed", sep=""))))
   ##deviance reduction variable table
   devReductVars <- matrix(NA, nVars, nVars-1)
   rownames(devReductVars) <- varNames
-  colnames(devReductVars) <- c("fullModel", paste("fullModel-", seq(1,nVars-2), sep=""))
+  colnames(devReductVars) <- c("All variables",
+                               "1-removed",
+                               paste(seq(2,nVars-2), "-removed", sep=""))
   ##p value variable table
   pValues <- numPermsFit <- devReductVars
 
@@ -564,7 +566,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     }
   }
   ##lists tables into one object
-  outObject <- list(modelTestValues, devReductVars, pValues, numPermsFit)
+  outObject <- list(round(modelTestValues, 3), round(devReductVars,3), round(pValues,3), numPermsFit)
   ##if given, writes out files to space on disk
   if(is.null(outFile)==FALSE){
     save(outObject, file=outFile)
