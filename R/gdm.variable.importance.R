@@ -268,7 +268,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
     stop("The spTable contains distance values greater than 1. Must be between 0 - 1.")
   }
 
-  ##number of variables in the site-pair table, adds 1 if geo is to be TRUE
+  ##number of variables in the site-pair table, adds 1 if geo=TRUE
   nVars <- (ncol(spTable)-6)/2
   ##collects variable names
   varNames <- colnames(spTable[c(7:(6+nVars))])
@@ -462,7 +462,6 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       }else{
         permDevReduct <- noGeoGDM$gdmdeviance - permModelDev
         ##change in devience with variable removed
-        #devReductVars[1,v] <- noGeoGDM$gdmdeviance - fullGDM$gdmdeviance  ##original - difference in devience
         devReductVars[1,v] <- 100 * abs((noGeoGDM$explained - fullGDM$explained)/fullGDM$explained)  ##new - percent change in devience
         pValues[1,v] <- sum(permDevReduct>=(noGeoGDM$gdmdeviance - fullGDM$gdmdeviance))/(nPerm-modPerms)
       }
