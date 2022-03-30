@@ -70,6 +70,7 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
     return(list(s1var, s2var))
   }
   }, rvTab=randVarTab, spt=spTab, inT=indexTab)
+
   # unravels the varList into a data.frame of the variable portion of a site-pair table
   bySite <- lapply(1:2, function(i,vlist){sapply(vlist, function(vl,k){vl[[k]]},k=i)}, vlist=varLists)
 
@@ -80,6 +81,7 @@ permutateSitePair <- function(spTab, siteVarTab, indexTab, vNames){
     site1Vars <- bySite[[1]]
     site2Vars <- bySite[[2]]
   }
+
   ##sets up new site-pair table
   newSP <- as.data.frame(cbind(spTab$distance, spTab$weights, s1xCoord, s1yCoord, s2xCoord, s2yCoord, site1Vars, site2Vars))
   colnames(newSP) <- colnames(spTab)
