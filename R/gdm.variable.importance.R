@@ -80,21 +80,21 @@
 #' remaining three tables summarize (1) variable importance, (2) variable
 #' significance, and (3) the number of permutations used to calculate the
 #' statistics for that model, which is provided because some GDMs may fail
-#' to fit for some permutations / variable combinations and you might want to
+#' to converge for some permutations / variable combinations and you might want to
 #' know how many permutations were used when calculating statistics. Or maybe you
 #' don't, you decide.
 #'
-#' Variable importance is measured as the percent change in deviance explained
-#' by the full model and the deviance explained by a model fit with that variable
+#' Variable importance is measured as the percent decrease in deviance explained
+#' between the full model and the deviance explained by a model fit with that variable
 #' permuted. Significance is estimated using the bootstrapped p-value when the
 #' variable has been permuted. For most cases, the number of permutations will
 #' equal the nPerm argument. However, the value may be less should any of the
-#' permutations fail to fit.
+#' permutations fail to converge.
 #'
 #' If fullModelOnly=T, the tables will have values only in the first column and
 #' NAs elsewhere.
 #'
-#' NOTE: In some cases, GDM may fail to fit if there is a weak relationship
+#' NOTE: In some cases, GDM may fail to converge if there is a weak relationship
 #' between the response and predictors (e.g., when an important variable is
 #' removed). Such cases are indicated by -9999 values in the variable importance,
 #' variable significance, and number of permutations tables.
