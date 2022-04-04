@@ -467,19 +467,18 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       cl <- makeCluster(cores)
       registerDoParallel(cl)
 
-      iterations <- length(varNames.x)
-      pb <- txtProgressBar(max = iterations, style = 3)
-      progress <- function(prog){
-        setTxtProgressBar(pb, prog)}
-      opts <- list(progress = progress)
+      #iterations <- length(varNames.x)
+      #pb <- txtProgressBar(max = iterations, style = 3)
+      #progress <- function(prog){
+      #  setTxtProgressBar(pb, prog)}
+      #opts <- list(progress = progress)
 
       # foreach function to create site-pair tables with each variable permuted,
       # fit gdms and extract deviance.
       permVarDev <- foreach(k=1:length(varNames.x),
                             .verbose=F,
                             .packages=c("gdm"),
-                            .export = c("currSitePair"),
-                            .options.multicore = opts) %dopar%{
+                            .export = c("currSitePair")) %dopar%{
         if(varNames.x[k]!="Geographic"){
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
@@ -512,7 +511,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       }
 
       ##closes cores
-      close(pb)
+      #close(pb)
       stopCluster(cl)
     }
 
