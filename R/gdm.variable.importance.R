@@ -401,7 +401,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   # downstream analyses
   message(paste0("Creating ", nPerm, " permuted site-pair tables..."))
 
-  if(parallel==F | nPerm < 50){
+  if(parallel==F | nPerm <= 50){
     permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
                                                        indexTab,
