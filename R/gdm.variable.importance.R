@@ -129,7 +129,7 @@
 #' @importFrom parallel stopCluster
 #' @importFrom foreach %dopar%
 #' @importFrom foreach foreach
-#' @importFrom doSNOW registerDoSNOW
+#' @importFrom doParallel registerDoParallel
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
 #'
@@ -465,7 +465,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       }
       # set up parallel processing
       cl <- makeCluster(cores)
-      registerDoSNOW(cl)
+      registerDoParallel(cl)
 
       iterations <- length(varNames.x)
       pb <- txtProgressBar(max = iterations, style = 3)

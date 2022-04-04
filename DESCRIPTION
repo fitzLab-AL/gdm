@@ -36,7 +36,6 @@ Imports:
     vegan,
     doParallel,
     foreach,
-    pbapply,
-    doSNOW
+    pbapply
 LinkingTo: 
     Rcpp
