@@ -1,7 +1,7 @@
 Package: gdm
 Title: Generalized Dissimilarity Modeling
-Version: 1.5.0-2
-Date: 2021-11-19
+Version: 1.5.0-3
+Date: 2022-04-04
 Authors@R: 
     c(person("Matt", "Fitzpatrick", email="mfitzpatrick@umces.edu", 
     role = c("aut", "cre"),
@@ -35,6 +35,8 @@ Imports:
     reshape2,
     vegan,
     doParallel,
-    foreach
+    foreach,
+    pbapply,
+    doSNOW
 LinkingTo: 
     Rcpp
