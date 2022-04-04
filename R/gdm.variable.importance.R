@@ -15,7 +15,9 @@
 #' @param geo Similar to the \code{\link[gdm]{gdm}} geo argument. The only
 #' difference is that the geo argument does not have a default in this function.
 #'
-#' @param splines Same as the \code{\link[gdm]{gdm}} splines argument.
+#' @param splines Same as the \code{\link[gdm]{gdm}} splines argument. Note that
+#' the current implementation requires that all predictors have the same number of
+#' splines.
 #'
 #' @param knots Same as the \code{\link[gdm]{gdm}} knots argument.
 #'
@@ -95,8 +97,7 @@
 #' equal the nPerm argument. However, the value may be less should any of the models
 #' fit to them permuted tables fail to converge.
 #'
-#' If predSelect=FALSE, the tables will have values only in the first column and
-#' NAs elsewhere.
+#' If predSelect=FALSE, the tables will have values only in the first column.
 #'
 #' @author Matt Fitzpatrick and Karel Mokany
 #'
@@ -119,7 +120,7 @@
 #'
 #' ## not run
 #' #modTest <- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10)
-#' #barplot(sort(modTest[[2]][,1], decreasing=T))
+#' #barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))
 #'
 #' @keywords gdm
 #'
@@ -128,11 +129,13 @@
 #' @importFrom parallel stopCluster
 #' @importFrom foreach %dopar%
 #' @importFrom foreach foreach
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doSNOW registerDoSNOW
+#' @importFrom utils txtProgressBar
+#' @importFrom utils setTxtProgressBar
 #'
 #' @export
-gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FALSE,
-                       nPerm=50, parallel=FALSE, cores=2, sampleSites=1,
+gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
+                       nPerm=50, pValue=0.05, parallel=FALSE, cores=2, sampleSites=1,
                        sampleSitePairs=1, outFile=NULL){
 
   ##assign k to prevent issues with cran checking
@@ -168,9 +171,9 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   if(is.null(knots)==FALSE & !is(knots, "numeric")){
     stop("The knots argument needs to be a numeric data type.")
   }
-  ##checks that fullModelOnly has either TRUE or FALSE
-  if(!(fullModelOnly==TRUE | fullModelOnly==FALSE)){
-    stop("The fullModelOnly argument must be either TRUE or FALSE.")
+  ##checks that predSelect has either TRUE or FALSE
+  if(!(predSelect==TRUE | predSelect==FALSE)){
+    stop("The predSelect argument must be either TRUE or FALSE.")
   }
   ##makes sure that nPerm is a positive integer
   if((is.null(nPerm)==FALSE & is.numeric(nPerm)==FALSE) | nPerm<1){
@@ -394,9 +397,9 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
   currSitePair <- spTable
   nullGDMFullFit <- 0  ##a variable to track rather or not the fully fitted gdm model returned a NULL object
 
-  # create the set up permutated site-pair tables to be used for all
+  # create the set up permuted site-pair tables to be used for all
   # downstream analyses
-  message(paste0("Creating ", nPerm, " permutated site-pair tables..."))
+  message(paste0("Creating ", nPerm, " permuted site-pair tables..."))
 
   permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
@@ -430,7 +433,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
       break
     }
 
-    message("Fitting GDMs to the permutated site-pair tables...")
+    message("Fitting GDMs to the permuted site-pair tables...")
     permGDM <- lapply(permSpt, function(x){
       gdm(x, geo=geo, splines=splines, knots=knots)
     })
@@ -461,12 +464,22 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
         cores <- length(varNames.x)
       }
       # set up parallel processing
-      cl <- makeCluster(cores, outfile="")
-      registerDoParallel(cl)
+      cl <- makeCluster(cores)
+      registerDoSNOW(cl)
+
+      iterations <- length(varNames.x)
+      pb <- txtProgressBar(max = iterations, style = 3)
+      progress <- function(prog){
+        setTxtProgressBar(pb, prog)}
+      opts <- list(progress = progress)
 
       # foreach function to create site-pair tables with each variable permuted,
       # fit gdms and extract deviance.
-      permVarDev <- foreach(k=1:length(varNames.x), .verbose=F, .packages=c("gdm"), .export = c("currSitePair")) %dopar%{
+      permVarDev <- foreach(k=1:length(varNames.x),
+                            .verbose=F,
+                            .packages=c("gdm"),
+                            .export = c("currSitePair"),
+                            .options.snow = opts) %dopar%{
         if(varNames.x[k]!="Geographic"){
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
@@ -495,9 +508,11 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
 
         ##extracts deviance of permuted gdms
         permModelDev <- sapply(gdmPermVar, function(mod){mod$gdmdeviance})
+        return(permModelDev)
       }
 
       ##closes cores
+      close(pb)
       stopCluster(cl)
     }
 
@@ -576,6 +591,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
 
     if(max(na.omit(pValues[,v]))<pValue){
       message("All remaining predictors are significant, ceasing assessment.")
+      message(paste0("Percent deviance explained by final model = ", round(fullGDM$explained,3)))
       message("Final set of predictors returned: ")
       for(vvv in 1:length(fullGDM$predictors)){
         message(fullGDM$predictors[vvv])
@@ -600,13 +616,19 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, fullModelOnly=FAL
 
     varNames.x <- varNames.x[-which(varNames.x==names(elimVar))]
 
-    if(v==1 & fullModelOnly==T){
+    if(v==1 & predSelect==F){
+      message("Backwards elimination not selected by user (predSelect=F). Ceasing assessment.")
+      message(paste0("Percent deviance explained by final model = ", round(fullGDM$explained,3)))
+      message("Final set of predictors returned: ")
+      for(vvv in 1:length(fullGDM$predictors)){
+        message(fullGDM$predictors[vvv])
+      }
       break
     }
   }
 
 
-  if(v==1 & fullModelOnly==T){
+  if(v==1 & predSelect==F){
     # Model assessment
     modelTestVals <- data.frame(matrix(round(modelTestValues[,1], 3), ncol=1))
     rownames(modelTestVals) <- rownames(modelTestValues)
