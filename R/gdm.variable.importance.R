@@ -401,10 +401,25 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   # downstream analyses
   message(paste0("Creating ", nPerm, " permuted site-pair tables..."))
 
-  permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
+  if(parallel==F | nPerm < 50){
+    permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
                                                        indexTab,
                                                        varNames)))
+    }
+
+  if(parallel==T & nPerm > 50){
+    # set up parallel processing
+    cl <- makeCluster(cores)
+    registerDoParallel(cl)
+    permSpt <- foreach(k=1:nPerm,
+                             .verbose=F,
+                             .packages=c("gdm"),
+                             .export=c("permutateSitePair")) %dopar%
+      permutateSitePair(currSitePair, siteData, indexTab, varNames)
+    stopCluster(cl)
+  }
+
   varNames.x <- varNames
   message("Starting model assessment...")
   for(v in 1:length(varNames)){
@@ -467,13 +482,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       cl <- makeCluster(cores)
       registerDoParallel(cl)
 
-      #iterations <- length(varNames.x)
-      #pb <- txtProgressBar(max = iterations, style = 3)
-      #progress <- function(prog){
-      #  setTxtProgressBar(pb, prog)}
-      #opts <- list(progress = progress)
-
-      # foreach function to create site-pair tables with each variable permuted,
+     # foreach function to create site-pair tables with each variable permuted,
       # fit gdms and extract deviance.
       permVarDev <- foreach(k=1:length(varNames.x),
                             .verbose=F,
