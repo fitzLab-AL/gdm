@@ -479,7 +479,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
                             .verbose=F,
                             .packages=c("gdm"),
                             .export = c("currSitePair"),
-                            .options.snow = opts) %dopar%{
+                            .options.multicore = opts) %dopar%{
         if(varNames.x[k]!="Geographic"){
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
