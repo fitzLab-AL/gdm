@@ -17,7 +17,7 @@ Authors@R:
 		    person("Chris", "Ware", role="ctb"),
 		    person("Skip", "Woolley", role="ctb"),
 		    person("Tom", "Harwood", role="ctb"))
-Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
+Description: A toolkit with functions to fit, plot, summarize, and apply Generalized Dissimilarity Models. Mokany K, Ware C, Woolley SNC, Ferrier S, Fitzpatrick MC (2022) <doi:10.1111/geb.13459> Ferrier S, Manion G, Elith J, Richardson K (2007) <doi:10.1111/j.1472-4642.2007.00341.x>.
 License: GPL (>= 3)
 Depends: R (>= 3.5.0)
 Encoding: UTF-8

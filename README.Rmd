@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
-[![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://cran.rstudio.com/package=gdm)
+[![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
 <!-- badges: end -->
 
 The `gdm` package provides functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.
