@@ -1,5 +1,11 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-3
+* New, much faster version of the `varImp` function.
+
+### bug fixes
+* Fix bug that broke `varImp` if using non-default number of I-splines.
+
 # gdm 1.5.0-2
 * Added *verbose* argument to the `formatsitepair` function to control whether site-pair attributes are printed.
 
@@ -12,7 +18,6 @@
 * Fix bug associated with the formatting of the `gdm` model object that broke the `predict.gdm` function.
 
 # gdm 1.5.0
-
 * Substantial update to the package structure to use `devtools`, `roxygen2`, etc. development tools.
 
 * Fixed a number of bugs associated with using non-default numebrs of splines. 
