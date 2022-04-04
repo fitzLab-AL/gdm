@@ -76,8 +76,8 @@ of sites in the construction of the site-pair table. Note that the formatsitepai
 function will not accept only distances matrices as predictors
 (i.e., at least one predictor variable is required). If you wish to fit GDM
 using only distance matrices, provide one fake predictor (e.g., with all sites
-have the same value), plus site and coordinate columns if needed. The s1 and
-s2 columns for this variable can then be removed by hand before fitting the GDM.}
+having the same value), plus site and coordinate columns if needed. The s1 and
+s2 columns for this fake variable can then be removed by hand before fitting the GDM.}
 
 \item{weightType}{Default = "equal". Defines the weighting for sites. Can be
 either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each
