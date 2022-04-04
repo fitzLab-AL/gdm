@@ -2,11 +2,11 @@
 % Please edit documentation in R/gdm.variable.importance.R
 \name{gdm.varImp}
 \alias{gdm.varImp}
-\title{Quantify Model Significance and Variable Importance in a Fitted
-Generalized Dissimilarity Model Using Matrix Permutation.}
+\title{Assess Predictor Importance and Quantify Model Significance in a Fitted
+Generalized Dissimilarity Model.}
 \usage{
 gdm.varImp(spTable, geo, splines = NULL, knots = NULL,
-fullModelOnly = FALSE, nPerm = 50, parallel = FALSE, cores = 2,
+predSelect = FALSE, nPerm = 50, pValue=0.05, parallel = FALSE, cores = 2,
 sampleSites = 1, sampleSitePairs = 1, outFile = NULL)
 }
 \arguments{
@@ -15,25 +15,30 @@ sampleSites = 1, sampleSitePairs = 1, outFile = NULL)
 \item{geo}{Similar to the \code{\link[gdm]{gdm}} geo argument. The only
 difference is that the geo argument does not have a default in this function.}
 
-\item{splines}{Same as the \code{\link[gdm]{gdm}} splines argument.}
+\item{splines}{Same as the \code{\link[gdm]{gdm}} splines argument. Note that
+the current implementation requires that all predictors have the same number of
+splines.}
 
 \item{knots}{Same as the \code{\link[gdm]{gdm}} knots argument.}
 
-\item{fullModelOnly}{Set to TRUE to test only the full variable set. Set to
-FALSE to estimate model significance and variable importance and significance
-using matrix permutation and backward elimination. Default is FALSE.}
+\item{predSelect}{Set to TRUE to perform predictor selection using matrix
+permutation and backward elimination. Default is FALSE. When predSelect = FALSE
+results will be returned only for a model fit with all predictors.}
 
 \item{nPerm}{Number of permutations to use to estimate p-values. Default is 50.}
+
+\item{pValue}{The p-value to use for predictor selection / elimination. Default is 0.05.}
 
 \item{parallel}{Whether or not to run the matrix permutations and model
 fitting in parallel. Parallel processing is highly recommended when either
 (i) the nPerms argument is large (>100) or (ii) a large number of site-pairs
-(and or variables) are being used in model fitting (note computation demand
+(and / or variables) are being used in model fitting (note computation demand
 can be reduced using subsampling - see next arguments). The default is FALSE.}
 
 \item{cores}{When the parallel argument is set to TRUE, the number of cores
 to be registered for parallel processing. Must be <= the number of cores in
-the machine running the function.}
+the machine running the function. There is no benefit to setting the number of
+cores greater than the number of predictors in the model.}
 
 \item{sampleSites}{The fraction (0-1, though a value of 0 would be silly,
 wouldn't it?) of \emph{sites to retain} from the full site-pair table. If
@@ -51,7 +56,7 @@ removed is based on the fraction of the resulting site-pair table after
 sites have been removed, not on the size of the full site-pair table.}
 
 \item{outFile}{An optional character string to write the object returned by
-the function to disk as an .RData object (".RData"" is not required as part
+the function to disk as an .RData object (".RData" is not required as part
 of the file name). The .RData object will contain a single list with the
 name of "outObject". The default is NULL, meaning that no file will be written.}
 }
@@ -59,53 +64,48 @@ name of "outObject". The default is NULL, meaning that no file will be written.}
 A list of four tables. The first table summarizes full model deviance,
 percent deviance explained by the full model, the p-value of the full model,
 and the number of permutations used to calculate the statistics for each
-fitted model (i.e., the full model and each model with variables removed in
-succession during the backward elimination procedure if fullModelOnly=F). The
-remaining three tables summarize (1) variable importance, (2) variable
+fitted model (i.e., the full model and each model with predictors removed in
+succession during the backward elimination procedure if predSelect=T). The
+remaining three tables summarize (1) predictor importance, (2) predictor
 significance, and (3) the number of permutations used to calculate the
 statistics for that model, which is provided because some GDMs may fail
-to fit for some permutations / variable combinations and you might want to
+to converge for some permutations / predictor combinations and you might want to
 know how many permutations were used when calculating statistics. Or maybe you
 don't, you decide.
 
-Variable importance is measured as the percent change in deviance explained
-by the full model and the deviance explained by a model fit with that variable
+Predictor importance is measured as the percent decrease in deviance explained
+between the full model and the deviance explained by a model fit with that predictor
 permuted. Significance is estimated using the bootstrapped p-value when the
-variable has been permuted. For most cases, the number of permutations will
-equal the nPerm argument. However, the value may be less should any of the
-permutations fail to fit.
+predictor has been permuted. For most cases, the number of permutations will
+equal the nPerm argument. However, the value may be less should any of the models
+fit to them permuted tables fail to converge.
 
-If fullModelOnly=T, the tables will have values only in the first column and
-NAs elsewhere.
-
-NOTE: In some cases, GDM may fail to fit if there is a weak relationship
-between the response and predictors (e.g., when an important variable is
-removed). Such cases are indicated by -9999 values in the variable importance,
-variable significance, and number of permutations tables.
+If predSelect=FALSE, the tables will have values only in the first column.
 }
 \description{
 This function uses matrix permutation to perform model and
-variable significance testing and to estimate variable importance in a
+predictor significance testing and to estimate predictor importance in a
 generalized dissimilarity model. The function can be run in parallel on
 multicore machines to reduce computation time.
 }
 \details{
-To test model significance, first a "full model" is fit using
-un-permuted environmental data. Next, the environmental data are permuted
+To test model significance, first a model is fit using all predictors and
+un-permuted environmental data. Any predictor for which the sum of the I-spline
+coefficients sum to zero is preemptively removed. Next, the environmental data are permuted
 nPerm times (by randomizing the order of the rows) and a GDM is fit to each
 permuted table. Model significance is determined by comparing the deviance
 explained by GDM fit to the un-permuted table to the distribution of deviance
-explained values from GDM fit to the nPerm permuted tables. To assess variable
+explained values from GDM fit to the nPerm permuted tables. To assess predictor
 significance, this process is repeated for each predictor individually (i.e.,
-only the data for the variable being tested is permuted rather than the entire
-environmental table). Variable importance is quantified as the percent change
-in deviance explained between a model fit with and without that variable
-(technically speaking, with the variable permuted and un-permuted). If
-fullModelOnly=FALSE, this process continues by then permutating the site-pair
-table nPerm times, but removing one variable at a time and reassessing
-variable importance and significance. At each step, the least important
-variable is dropped (backward elimination) and the process continues until
-all non-significant predictors are removed.
+only the data for the predictor being tested is permuted rather than the entire
+environmental table). Predictor importance is quantified as the percent change
+in deviance explained between a model fit with and without that predictor permuted. If
+predSelect=TRUE, this process continues by next permutating the site-pair
+table nPerm times, but removing one predictor at a time and reassessing
+predictor importance and significance. At each step, the least important
+predictor is dropped (backward elimination) and the process continues until
+all non-significant predictors are removed, with significance level being set
+by the user and the pValue argument.
 }
 \examples{
 ##fit table environmental data
@@ -117,7 +117,7 @@ sppColumn="species", siteColumn="site", predData=envTab)
 
 ## not run
 #modTest <- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10)
-#barplot(sort(modTest[[2]][,1], decreasing=T))
+#barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))
 
 }
 \references{
@@ -131,6 +131,6 @@ Fitzpatrick, MC, Sanders NJ, Ferrier S, Longino JT, Weiser MD, and RR Dunn.
 Multi-Species Models for Ants in North America. \emph{Ecography} 34: 836-47.
 }
 \author{
-Karel Mokany and Matt Fitzpatrick
+Matt Fitzpatrick and Karel Mokany
 }
 \keyword{gdm}
