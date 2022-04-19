@@ -116,7 +116,7 @@ sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",
 sppColumn="species", siteColumn="site", predData=envTab)
 
 ## not run
-#modTest <- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10)
+#modTest <- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10, predSelect=T)
 #barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))
 
 }

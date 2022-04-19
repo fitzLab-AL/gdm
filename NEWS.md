@@ -1,5 +1,8 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-4
+* Fix minor bug in the `varImp` function.
+
 # gdm 1.5.0-3
 * New, much faster version of the `varImp` function.
 
