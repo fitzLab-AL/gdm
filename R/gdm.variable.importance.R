@@ -401,14 +401,14 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   # downstream analyses
   message(paste0("Creating ", nPerm, " permuted site-pair tables..."))
 
-  if(parallel==F | nPerm <= 50){
+  if(parallel==F | nPerm <= 25){
     permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
                                                        indexTab,
                                                        varNames)))
     }
 
-  if(parallel==T & nPerm > 50){
+  if(parallel==T & nPerm > 25){
     # set up parallel processing
     cl <- makeCluster(cores)
     registerDoParallel(cl)
@@ -491,8 +491,9 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
         if(varNames.x[k]!="Geographic"){
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
-            idx <- grep(varNames.x[k], colnames(x))
-            spt[,idx] <- x[,idx]
+            idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
+            idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
+            spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
             return(spt)
           })}
 
@@ -533,8 +534,9 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
           message(paste0("Assessing importance of ", varNames.x[k], "..."))
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
-            idx <- grep(varNames.x[k], colnames(x))
-            spt[,idx] <- x[,idx]
+            idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
+            idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
+            spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
             return(spt)
           })}
 
@@ -566,7 +568,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     nullDev <- fullGDM$nulldeviance
 
     for(var in varNames.x){
-      grepper <- grep(var, names(permVarDev))
+      grepper <- grep(paste0("^",var,"$"), names(permVarDev))
       varDevTab <- permVarDev[[grepper]]
 
       # number of perms for which GDM converged
