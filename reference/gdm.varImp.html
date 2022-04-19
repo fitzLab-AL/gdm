@@ -28,7 +28,7 @@ multicore machines to reduce computation time."><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-4</span>
       </span>
     </div>
 
@@ -195,7 +195,7 @@ Multi-Species Models for Ants in North America. <em>Ecography</em> 34: 836-47.</
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co">## not run</span></span>
-<span class="r-in"><span class="co">#modTest &lt;- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10)</span></span>
+<span class="r-in"><span class="co">#modTest &lt;- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10, predSelect=T)</span></span>
 <span class="r-in"><span class="co">#barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))</span></span>
 <span class="r-in"></span>
 </code></pre></div>
