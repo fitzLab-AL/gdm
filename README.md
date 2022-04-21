@@ -34,7 +34,7 @@ devtools::install_github("fitzLab-AL/gdm")
 
 # Package Citation
 
-Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021)
+Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2022)
 gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 
 # Getting Started
@@ -60,6 +60,7 @@ The **gdm** package comes with two example biological data sets and two example 
   - `southwest`: A data frame that contains x-y coordinates, 10 columns of predictors (five soil and five bioclimatic variables), and occurrence data for 900+ species of plants from southwest Australia (representing a subset of the data used in [@fitzpatrick_2013]). Note that the format of the `southwest` table is an x-y species list (i.e., `bioFormat = 2`, see below) where there is one row *per species record rather than per site*. These biological data are similar to what would be obtained from online databases such as [GBIF](https://www.gbif.org/).
   
   - `gdmDissim`: A pairwise biological dissimilarity matrix derived from the species data provided in `southwest`. `gdmDissim` is provided to demonstrate how to proceed when you when you want to fit GDM using an existing biological distance matrix (e.g., pairwise Fst) as the response variable (i.e., `bioFormat = 3`, see below). Note however that distance matrices can also be used as predictors (e.g., to model compositional variation in one group as a function of compositional variation in another group [(Jones et al 2013)](https://doi.org/10.1111/1365-2745.12053).
+  
   - `swBioclims`: a raster stack of the five bioclimatic predictors provided in the `southwest` data.
 
 Note that for all input data the rows and their order must match in the
