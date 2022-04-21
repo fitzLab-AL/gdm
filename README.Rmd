@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- DO NOT EDIT BY HAND! README.Rmd is generated from README.md. Please edit that file. -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -49,13 +49,13 @@ Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Gene
 
 GDM has been used in many published studies. In addition to working through the examples here and those throughout the package documentation, we recommend reading these publications for background information:
 
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. Diversity & Distributions 13: 252-264.
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. Diversity & Distributions 13: 252-264.[https://doi.org/10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x)
 
-Mokany K, Ware C, Woolley SNC, Ferrier S, Fitzpatrick MC (in revision) A working guide to generalized dissimilarity modelling.
+Mokany K, Ware C, Woolley, SNC, Ferrier S, Fitzpatrick MC (2022) A working guide to harnessing generalized dissimilarity modelling for biodiversity analysis and conservation assessment. Global Ecology and Biogeography, 31, 802– 821. [https://doi.org/10.1111/geb.13459](https://doi.org/10.1111/geb.13459) 
 
 # Introduction
 
-The R package **gdm** implements Generalized Dissimilarity Modeling [@ferrier_2007] to analyze and map spatial patterns of biodiversity. GDM models biological variation as a function of environment and geography using distance matrices – specifically by relating biological dissimilarity between sites to how much sites differ in their environmental conditions (environmental distance) and how isolated they are from one another (geographical distance). Here we demonstrate how to fit, apply, and interpret GDM in the context of analyzing and mapping species-level patterns. GDM also can be used to model other biological levels of organization, notably genetic [@fitzpatrick_2015], phylogenetic [@rosauer_2014], or function/traits [@thomassen_2010]), and the approaches for doing so are largely identical to the species-level case with the exception of using a different biological dissimilarity metric depending on the type of response variable.  
+The R package **gdm** implements Generalized Dissimilarity Modeling [Ferrier et al. 2007](https://doi.org/10.1111/j.1472-4642.2007.00341.x) to analyze and map spatial patterns of biodiversity. GDM models biological variation as a function of environment and geography using distance matrices – specifically by relating biological dissimilarity between sites to how much sites differ in their environmental conditions (environmental distance) and how isolated they are from one another (geographical distance). Here we demonstrate how to fit, apply, and interpret GDM in the context of analyzing and mapping species-level patterns. GDM also can be used to model other biological levels of organization, notably genetic [Fitzpatrick & Keller 2015](https://doi.org/10.1111/ele.12376), phylogenetic [Rosauer et al. 2014](https://doi.org/10.1111/j.1600-0587.2013.00466.x), or function/traits [Thomassen et al. 2010](https://doi.org/10.1111/j.1752-4571.2009.00093.x), and the approaches for doing so are largely identical to the species-level case with the exception of using a different biological dissimilarity metric depending on the type of response variable.  
 
 ## Preparing the data for GDM: The site-pair table.
 
@@ -64,8 +64,8 @@ The initial step in fitting a generalized dissimilarity model is to combine the 
 GDM can use several data formats as input. Most common are site-by-species tables (sites in rows, species across columns) for the response and site-by-environment tables (sites in rows, predictors across columns) as the predictors, though distance matrices and rasters also are accommodated as demonstrated below. 
 
 The **gdm** package comes with two example biological data sets and two example environmental data sets in a number of formats. Example data include:
-  - `southwest`: A data frame that contains x-y coordinates, 10 columns of predictors (five soil and five bioclimatic variables), and occurrence data for 900+ species of plants from southwest Australia (representing a subset of the data used in [@fitzpatrick_2013]). Note that the format of the `southwest` table is an x-y species list (i.e., `bioFormat = 2`, see below) where there is one row *per species record rather than per site*. These biological data are similar to what would be obtained from online databases such as [GBIF]<https://www.gbif.org/>.
-  - `gdmDissim`: A pairwise biological dissimilarity matrix derived from the species data provided in `southwest`. `gdmDissim` is provided to demonstrate how to proceed when you when you want to fit GDM using an existing biological distance matrix (e.g., pairwise Fst) as the response variable (i.e., `bioFormat = 3`, see below). Note however that distance matrices can also be used as predictors (e.g., to model compositional variation in one group as a function of compositional variation in another group [@jones_2013]).
+  - `southwest`: A data frame that contains x-y coordinates, 10 columns of predictors (five soil and five bioclimatic variables), and occurrence data for 900+ species of plants from southwest Australia (representing a subset of the data used in [@fitzpatrick_2013]). Note that the format of the `southwest` table is an x-y species list (i.e., `bioFormat = 2`, see below) where there is one row *per species record rather than per site*. These biological data are similar to what would be obtained from online databases such as [GBIF](https://www.gbif.org/).
+  - `gdmDissim`: A pairwise biological dissimilarity matrix derived from the species data provided in `southwest`. `gdmDissim` is provided to demonstrate how to proceed when you when you want to fit GDM using an existing biological distance matrix (e.g., pairwise Fst) as the response variable (i.e., `bioFormat = 3`, see below). Note however that distance matrices can also be used as predictors (e.g., to model compositional variation in one group as a function of compositional variation in another group [Jones et al 2013](https://doi.org/10.1111/1365-2745.12053).
   - `swBioclims`: a raster stack of the five bioclimatic predictors provided in the `southwest` data.
   
 Note that for all input data the rows and their order must match in the biological and environmental data frames and must not include NAs. This is best accomplished by making sure your tables have a column with a unique identifier for each site and that the order of these IDs are the same across all tables.  
