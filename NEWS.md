@@ -1,5 +1,8 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-5
+* Fix bug in the `varImp` function if sum of I-spline coeffs = 0 for geographic distance variable.
+
 # gdm 1.5.0-4
 * Fix minor bug in the `varImp` function.
 

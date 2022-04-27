@@ -285,10 +285,23 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
   zeroSum <- fullGDM$predictors[which(sumCoeff==0)]
   if(length(zeroSum)>0){
-    message(paste0("Sum of I-spline coefficients for predictors(s) ", zeroSum," = 0"))
-    Sys.sleep(1)
-    message(paste0("Removing predictor(s) ", zeroSum, " and proceeding with permutation testing..."))
-    Sys.sleep(1)
+    for(p in 1:length(zeroSum)){
+      message(paste0("Sum of I-spline coefficients for predictor ", zeroSum[p]," = 0"))
+      Sys.sleep(0.5)}
+    #message("\n")
+    for(p in 1:length(zeroSum)){
+      if(zeroSum[p]=="Geographic"){
+        message("Setting Geo=FALSE and proceeding with permutation testing...")
+      } else {
+        message(paste0("Removing ", zeroSum[p], " and proceeding with permutation testing..."))
+      }
+      Sys.sleep(0.5)
+    }
+
+    if(length(grep("Geographic", zeroSum))==1){
+      geo <- FALSE
+      zeroSum <- zeroSum[-grep("Geographic", zeroSum)]
+    }
 
     for(z in zeroSum){
       ##select variable columns to be removed from original site-pair table
@@ -358,7 +371,6 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
   ##sets up siteXvar table, uses for loop to make sure have steps correct
   for(i in 1:length(exBySite)){
-    #i <- 42
     ##grabs row and identify if should take s1 or s2 by rather or not number appears in outsite
     siteRow <- exBySite[[i]]
     if(i %in% outSite){
@@ -405,8 +417,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
                                                        indexTab,
-                                                       varNames)))
-    }
+                                                       varNames)))}
 
   if(parallel==T & nPerm > 25){
     # set up parallel processing
@@ -417,8 +428,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
                              .packages=c("gdm"),
                              .export=c("permutateSitePair")) %dopar%
       permutateSitePair(currSitePair, siteData, indexTab, varNames)
-    stopCluster(cl)
-  }
+    stopCluster(cl)}
 
   varNames.x <- varNames
   message("Starting model assessment...")
