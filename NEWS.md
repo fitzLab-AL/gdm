@@ -1,9 +1,15 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-6
+### bug fixes
+* Fix bug in the `varImp` function related to testing models with few (<4) variables.
+
 # gdm 1.5.0-5
+### bug fixes
 * Fix bug in the `varImp` function if sum of I-spline coeffs = 0 for geographic distance variable.
 
 # gdm 1.5.0-4
+### bug fixes
 * Fix minor bug in the `varImp` function.
 
 # gdm 1.5.0-3

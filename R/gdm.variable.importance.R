@@ -389,19 +389,19 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   siteData <- do.call("rbind", exBySite)
 
   ##sets up objects to be returned by the function
-  modelTestValues <- data.frame(matrix(NA,4,nVars,dimnames = list(c("Model deviance",
+  modelTestValues <- matrix(NA,4,nVars*5,dimnames = list(c("Model deviance",
                                                                     "Percent deviance explained",
                                                                     "Model p-value",
                                                                     "Fitted permutations"),
                                                                   c("All predictors",
                                                                     "1-removed",
-                                                                    paste(seq(2,nVars-1), "-removed", sep="")))))
+                                                                    paste(seq(2,nVars*5-1), "-removed", sep=""))))
   ##deviance reduction predictor table
-  varImpTable <- matrix(NA, nVars, nVars-1)
+  varImpTable <- matrix(NA, nVars, nVars*5-1)
   rownames(varImpTable) <- varNames
   colnames(varImpTable) <- c("All predictors",
                              "1-removed",
-                             paste(seq(2,nVars-2), "-removed", sep=""))
+                             paste(seq(2,nVars*5-2), "-removed", sep=""))
   ##p value predictor table
   pValues <- nModsConverge <- varImpTable
 
