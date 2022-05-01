@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-6</span>
       </span>
     </div>
 
@@ -76,21 +76,16 @@
 <div class="page-header"><h1 id="gdm-">gdm <img src="reference/figures/gdmLogo.png" align="right" width="120"><a class="anchor" aria-label="anchor" href="#gdm-"></a>
 </h1></div>
 <!-- badges: start -->
-
 <p>The <code>gdm</code> package provides functions to fit, plot, summarize, and apply Generalized Dissimilarity Models.</p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h1>
 <p>The <strong>gdm</strong> package is available on CRAN, development versions are available on GitHub.</p>
-<ul>
-<li>Install from CRAN:</li>
-</ul>
+<ul><li>Install from CRAN:</li></ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdm"</span><span class="op">)</span></code></pre></div>
-<ul>
-<li>Install latest development version from GitHub (requires <a href="https://github.com/r-lib/devtools" class="external-link">devtools</a> package):</li>
-</ul>
+<ul><li>Install latest development version from GitHub (requires <a href="https://github.com/r-lib/devtools" class="external-link">devtools</a> package):</li></ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
@@ -100,7 +95,7 @@
 <div class="section level1">
 <h1 id="package-citation">Package Citation<a class="anchor" aria-label="anchor" href="#package-citation"></a>
 </h1>
-<p>Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Generalized Dissimilarity Modeling. R package version 1.5.</p>
+<p>Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2022) gdm: Generalized Dissimilarity Modeling. R package version 1.5.</p>
 </div>
 <div class="section level1">
 <h1 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
@@ -456,9 +451,7 @@
 <span class="co">#&gt; [1] 11</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gdm.1</span>, plot.layout<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-plotGDM-1.png" alt="The fitted model (first two panels) and I-splines (remaining panels)." width="100%"><p class="caption">
-The fitted model (first two panels) and I-splines (remaining panels).
-</p>
+<img src="reference/figures/README-plotGDM-1.png" alt="The fitted model (first two panels) and I-splines (remaining panels)." width="100%"><p class="caption">The fitted model (first two panels) and I-splines (remaining panels).</p>
 </div>
 <p>To allow easy customization of I-spline plots, the <code>isplineExtract</code> function will extract the plotted values for each I-spline.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
@@ -480,9 +473,7 @@ The fitted model (first two panels) and I-splines (remaining panels).
      xlab<span class="op">=</span><span class="st">"Winter precipitation (mm)"</span>, 
      ylab<span class="op">=</span><span class="st">"Partial ecological distance"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-extractSplines-1.png" alt="Custom I-spline plot for geographic distance." width="100%"><p class="caption">
-Custom I-spline plot for geographic distance.
-</p>
+<img src="reference/figures/README-extractSplines-1.png" alt="Custom I-spline plot for geographic distance." width="100%"><p class="caption">Custom I-spline plot for geographic distance.</p>
 </div>
 </div>
 <div class="section level2">
@@ -511,9 +502,7 @@ Custom I-spline plot for geographic distance.
      col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0.5</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-predictSpaceGDM-1.png" alt="Predicted vs. observed compositional dissimilarity." width="100%"><p class="caption">
-Predicted vs. observed compositional dissimilarity.
-</p>
+<img src="reference/figures/README-predictSpaceGDM-1.png" alt="Predicted vs. observed compositional dissimilarity." width="100%"><p class="caption">Predicted vs. observed compositional dissimilarity.</p>
 </div>
 </div>
 <div class="section level2">
@@ -536,9 +525,7 @@ Predicted vs. observed compositional dissimilarity.
 <code class="sourceCode R"><span class="va">timePred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gdm.rast</span>, <span class="va">swBioclims</span>, time<span class="op">=</span><span class="cn">T</span>, predRasts<span class="op">=</span><span class="va">futRasts</span><span class="op">)</span>
 <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">timePred</span>, col<span class="op">=</span><span class="fu">rgb.tables</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-predictTimeGDM-1.png" alt="Predicted magnitude of biological change through time" width="100%"><p class="caption">
-Predicted magnitude of biological change through time
-</p>
+<img src="reference/figures/README-predictTimeGDM-1.png" alt="Predicted magnitude of biological change through time" width="100%"><p class="caption">Predicted magnitude of biological change through time</p>
 </div>
 </div>
 <div class="section level2">
@@ -585,16 +572,12 @@ Predicted magnitude of biological change through time
 <span class="co">#  (red, green, blue)</span>
 <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">pcaRast</span>, r<span class="op">=</span><span class="fl">1</span>, g<span class="op">=</span><span class="fl">2</span>, b<span class="op">=</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-10-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%"><p class="caption">
-Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities.
-</p>
+<img src="reference/figures/README-unnamed-chunk-10-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%"><p class="caption">Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities.</p>
 </div>
 </div>
 </div>
-<div class="section level1">
-<h1 id="section-2---advanced-spatial-analyses-using-gdm">SECTION 2 - Advanced spatial analyses using GDM<a class="anchor" aria-label="anchor" href="#section-2---advanced-spatial-analyses-using-gdm"></a>
-</h1>
-</div>
+<div class="section level1"><h1 id="section-2---advanced-spatial-analyses-using-gdm">SECTION 2 - Advanced spatial analyses using GDM<a class="anchor" aria-label="anchor" href="#section-2---advanced-spatial-analyses-using-gdm"></a>
+</h1></div>
 
   </div>
 
@@ -655,7 +638,7 @@ Predicted spatial variation in plant species composition. Colors represent gradi
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer>
