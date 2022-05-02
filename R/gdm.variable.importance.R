@@ -264,6 +264,10 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     varNames <- c("Geographic", varNames)
   }
 
+  if(nVars<2){
+   stop("Function requires at least two predictor variables.")
+  }
+
   # run initial GDM to see if any vars have zero I-spline coeffs
   message(paste0("Fitting initial model with all ", nVars,  " predictors..."))
   Sys.sleep(1)
@@ -319,6 +323,10 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   if(geo==TRUE){
     nVars <- nVars + 1
     varNames <- c("Geographic", varNames)
+  }
+
+  if(nVars<2){
+    stop("Function requires at least two predictor variables.")
   }
 
   if(cores>nVars){
@@ -435,7 +443,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   for(v in 1:length(varNames)){
     # ends the loop if only 1 variable remains
     if(length(varNames.x)<2){
-      break
+     break
     }
 
     if(v>1){
