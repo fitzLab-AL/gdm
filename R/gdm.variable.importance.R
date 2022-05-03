@@ -287,6 +287,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     sumCoeff[i] <- sum(holdCoeff)
   }
 
+  # remove any predictors with sumCoeff=0
   zeroSum <- fullGDM$predictors[which(sumCoeff==0)]
   if(length(zeroSum)>0){
     for(p in 1:length(zeroSum)){
@@ -315,7 +316,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     }
   }
 
-  # number of variables in the site-pair table, adds 1 if geo=TRUE
+  # recalculate the number of variables in the site-pair table, adds 1 if geo=TRUE
   nVars <- (ncol(spTable)-6)/2
   # create vector of variable names
   varNames <- colnames(spTable[c(7:(6+nVars))])
@@ -325,14 +326,17 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     varNames <- c("Geographic", varNames)
   }
 
+  # stop routine if fewer than two variables remain
   if(nVars<2){
     stop("Function requires at least two predictor variables.")
   }
 
+  # reduce number of cores to nVars
   if(cores>nVars){
     cores <- nVars
   }
 
+  # crate spline object
   splines <- rep(unique(splines), nVars)
 
   ##First create a spTable to determine the index of each site in the site-pair table
@@ -415,18 +419,19 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
   ##assigns given site-pair table to new variable, to prevent changing the original input
   currSitePair <- spTable
-  nullGDMFullFit <- 0  ##a variable to track rather or not the fully fitted gdm model returned a NULL object
+  nullGDMFullFit <- 0  ##a variable to track if the fully fitted gdm model returned a NULL object
 
   # create the set up permuted site-pair tables to be used for all
   # downstream analyses
   message(paste0("Creating ", nPerm, " permuted site-pair tables..."))
 
+  # use replicate if number of perms is small or parallel == FALSE
   if(parallel==F | nPerm <= 25){
     permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
                                                        siteData,
                                                        indexTab,
                                                        varNames)))}
-
+  # create permuted tables in parallel otherwise
   if(parallel==T & nPerm > 25){
     # set up parallel processing
     cl <- makeCluster(cores)
@@ -438,12 +443,13 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       permutateSitePair(currSitePair, siteData, indexTab, varNames)
     stopCluster(cl)}
 
+  # create new vector to track varNames
   varNames.x <- varNames
   message("Starting model assessment...")
   for(v in 1:length(varNames)){
     # ends the loop if only 1 variable remains
     if(length(varNames.x)<2){
-     break
+      stop("Only one variable remains...variable assement stopped.")
     }
 
     if(v>1){
@@ -466,6 +472,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       break
     }
 
+    # fit gdm to each permuted site-pair table
     message("Fitting GDMs to the permuted site-pair tables...")
     permGDM <- lapply(permSpt, function(x){
       gdm(x, geo=geo, splines=splines, knots=knots)
@@ -491,7 +498,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     ##fitted permutations
     modelTestValues[4,v] <- round(nPerm-modPerms,0)
 
-    # now permutate each variable individual and fit models
+    # now permutate each variable individually and fit models
     if(parallel==TRUE){
       if(length(varNames.x)<cores){
         cores <- length(varNames.x)
@@ -613,6 +620,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
         noVarGDM <- gdm(currSitePair, geo=F, splines=splines[-1], knots=knots)
       }
 
+      # calculate p-Value
       permDevReduct <- noVarGDM$gdmdeviance - varDevTab
       pValues[which(rownames(pValues) == var),v] <- sum(permDevReduct>=(varDevTab - fullGDM$gdmdeviance))/(nPerm-nConv)
     }
