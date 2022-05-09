@@ -265,7 +265,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   }
 
   if(nVars<2){
-   stop("Function requires at least two predictor variables.")
+    stop("Function requires at least two predictor variables.")
   }
 
   # run initial GDM to see if any vars have zero I-spline coeffs
@@ -402,12 +402,12 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
   ##sets up objects to be returned by the function
   modelTestValues <- matrix(NA,4,nVars*5,dimnames = list(c("Model deviance",
-                                                                    "Percent deviance explained",
-                                                                    "Model p-value",
-                                                                    "Fitted permutations"),
-                                                                  c("All predictors",
-                                                                    "1-removed",
-                                                                    paste(seq(2,nVars*5-1), "-removed", sep=""))))
+                                                           "Percent deviance explained",
+                                                           "Model p-value",
+                                                           "Fitted permutations"),
+                                                         c("All predictors",
+                                                           "1-removed",
+                                                           paste(seq(2,nVars*5-1), "-removed", sep=""))))
   ##deviance reduction predictor table
   varImpTable <- matrix(NA, nVars, nVars*5-1)
   rownames(varImpTable) <- varNames
@@ -428,18 +428,18 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   # use replicate if number of perms is small or parallel == FALSE
   if(parallel==F | nPerm <= 25){
     permSpt <- pbreplicate(nPerm, list(permutateSitePair(currSitePair,
-                                                       siteData,
-                                                       indexTab,
-                                                       varNames)))}
+                                                         siteData,
+                                                         indexTab,
+                                                         varNames)))}
   # create permuted tables in parallel otherwise
   if(parallel==T & nPerm > 25){
     # set up parallel processing
     cl <- makeCluster(cores)
     registerDoParallel(cl)
     permSpt <- foreach(k=1:nPerm,
-                             .verbose=F,
-                             .packages=c("gdm"),
-                             .export=c("permutateSitePair")) %dopar%
+                       .verbose=F,
+                       .packages=c("gdm"),
+                       .export=c("permutateSitePair")) %dopar%
       permutateSitePair(currSitePair, siteData, indexTab, varNames)
     stopCluster(cl)}
 
@@ -449,7 +449,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   for(v in 1:length(varNames)){
     # ends the loop if only 1 variable remains
     if(length(varNames.x)<2){
-      stop("Only one variable remains...variable assement stopped.")
+      stop("Only one predictor remains...variable assessment stopped.")
     }
 
     if(v>1){
@@ -507,43 +507,43 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       cl <- makeCluster(cores)
       registerDoParallel(cl)
 
-     # foreach function to create site-pair tables with each variable permuted,
+      # foreach function to create site-pair tables with each variable permuted,
       # fit gdms and extract deviance.
       permVarDev <- foreach(k=1:length(varNames.x),
                             .verbose=F,
                             .packages=c("gdm"),
                             .export = c("currSitePair")) %dopar%{
-        if(varNames.x[k]!="Geographic"){
-          # permute a single variable
-          lll <- lapply(permSpt, function(x, spt=currSitePair){
-            idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
-            idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
-            spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
-            return(spt)
-          })}
+                              if(varNames.x[k]!="Geographic"){
+                                # permute a single variable
+                                lll <- lapply(permSpt, function(x, spt=currSitePair){
+                                  idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
+                                  idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
+                                  spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
+                                  return(spt)
+                                })}
 
-        if(varNames.x[k]=="Geographic"){
-          # permute a single variable
-          lll <- lapply(permSpt, function(x, spt=currSitePair){
-            s1 <- sample(1:nrow(spt), nrow(spt))
-            s2 <- sample(1:nrow(spt), nrow(spt))
-            s3 <- sample(1:nrow(spt), nrow(spt))
-            s4 <- sample(1:nrow(spt), nrow(spt))
-            spt[,3] <- spt[s1,3]
-            spt[,4] <- spt[s2,4]
-            spt[,5] <- spt[s3,5]
-            spt[,6] <- spt[s4,6]
-            return(spt)
-          })}
+                              if(varNames.x[k]=="Geographic"){
+                                # permute a single variable
+                                lll <- lapply(permSpt, function(x, spt=currSitePair){
+                                  s1 <- sample(1:nrow(spt), nrow(spt))
+                                  s2 <- sample(1:nrow(spt), nrow(spt))
+                                  s3 <- sample(1:nrow(spt), nrow(spt))
+                                  s4 <- sample(1:nrow(spt), nrow(spt))
+                                  spt[,3] <- spt[s1,3]
+                                  spt[,4] <- spt[s2,4]
+                                  spt[,5] <- spt[s3,5]
+                                  spt[,6] <- spt[s4,6]
+                                  return(spt)
+                                })}
 
-        gdmPermVar <- lapply(lll, function(x){
-          try(gdm(x, geo=geo, splines=splines, knots=knots))
-        })
+                              gdmPermVar <- lapply(lll, function(x){
+                                try(gdm(x, geo=geo, splines=splines, knots=knots))
+                              })
 
-        ##extracts deviance of permuted gdms
-        permModelDev <- sapply(gdmPermVar, function(mod){mod$gdmdeviance})
-        return(permModelDev)
-      }
+                              ##extracts deviance of permuted gdms
+                              permModelDev <- sapply(gdmPermVar, function(mod){mod$gdmdeviance})
+                              return(permModelDev)
+                            }
 
       ##closes cores
       #close(pb)
@@ -635,20 +635,25 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       break
     }
 
-    elimVar <- which.min(varImpTable[,v])
+    # eliminate least important variable
+    #elimVar <- which.min(varImpTable[,v])
+    # eliminate variable with highest p-value
+    elimVar <- which.max(pValues[,v])
 
     if(names(elimVar)!="Geographic"){
       ##select variable columns to be removed from original site-pair table
       remVarCols1 <- grep(paste("^s1.", names(elimVar), "$", sep=""), colnames(currSitePair))
       remVarCols2 <- grep(paste("^s2.", names(elimVar), "$", sep=""), colnames(currSitePair))
+
+      # remove columns from site-pair table
       currSitePair <- currSitePair[,-c(remVarCols1, remVarCols2)]
+      # remove columns from permuted site-pair tables
+      permSpt <- lapply(permSpt, function(x){
+        x[,-c(remVarCols1, remVarCols2)]
+      })
     } else {
       geo <- F
     }
-
-    permSpt <- lapply(permSpt, function(x){
-      x[,-c(remVarCols1, remVarCols2)]
-    })
 
     varNames.x <- varNames.x[-which(varNames.x==names(elimVar))]
 
