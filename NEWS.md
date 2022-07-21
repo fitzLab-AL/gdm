@@ -1,5 +1,9 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-7
+### bug fixes
+* Fix bug in the `varImp` function when predSelect = F.
+
 # gdm 1.5.0-6
 ### bug fixes
 * Fix bug in the `varImp` function related to testing models with few (<4) variables.
