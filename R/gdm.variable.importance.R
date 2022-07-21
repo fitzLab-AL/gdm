@@ -635,27 +635,29 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       break
     }
 
-    # eliminate least important variable
-    #elimVar <- which.min(varImpTable[,v])
-    # eliminate variable with highest p-value
-    elimVar <- which.max(pValues[,v])
+    if(predSelect==T){
+      # eliminate least important variable
+      #elimVar <- which.min(varImpTable[,v])
+      # eliminate variable with highest p-value
+      elimVar <- which.max(pValues[,v])
 
-    if(names(elimVar)!="Geographic"){
-      ##select variable columns to be removed from original site-pair table
-      remVarCols1 <- grep(paste("^s1.", names(elimVar), "$", sep=""), colnames(currSitePair))
-      remVarCols2 <- grep(paste("^s2.", names(elimVar), "$", sep=""), colnames(currSitePair))
+      if(names(elimVar)!="Geographic"){
+        ##select variable columns to be removed from original site-pair table
+        remVarCols1 <- grep(paste("^s1.", names(elimVar), "$", sep=""), colnames(currSitePair))
+        remVarCols2 <- grep(paste("^s2.", names(elimVar), "$", sep=""), colnames(currSitePair))
 
-      # remove columns from site-pair table
-      currSitePair <- currSitePair[,-c(remVarCols1, remVarCols2)]
-      # remove columns from permuted site-pair tables
-      permSpt <- lapply(permSpt, function(x){
-        x[,-c(remVarCols1, remVarCols2)]
-      })
-    } else {
-      geo <- F
+        # remove columns from site-pair table
+        currSitePair <- currSitePair[,-c(remVarCols1, remVarCols2)]
+        # remove columns from permuted site-pair tables
+        permSpt <- lapply(permSpt, function(x){
+          x[,-c(remVarCols1, remVarCols2)]
+        })
+      } else {
+        geo <- F
+      }
+
+      varNames.x <- varNames.x[-which(varNames.x==names(elimVar))]
     }
-
-    varNames.x <- varNames.x[-which(varNames.x==names(elimVar))]
 
     if(v==1 & predSelect==F){
       message("Backwards elimination not selected by user (predSelect=F). Ceasing assessment.")
