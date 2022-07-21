@@ -63,8 +63,8 @@ formatsitepair function and not needed by the user."><!-- mathjax --><script src
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">createsitepair</span><span class="op">(</span><span class="va">dist</span>, <span class="va">spdata</span>, <span class="va">envInfo</span>, <span class="va">dXCol</span>, <span class="va">dYCol</span>, <span class="va">siteCol</span>, <span class="va">weightsType</span>,
-<span class="va">custWeights</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createsitepair</span><span class="op">(</span><span class="va">dist</span>, <span class="va">spdata</span>, <span class="va">envInfo</span>, <span class="va">dXCol</span>, <span class="va">dYCol</span>, <span class="va">siteCol</span>, <span class="va">weightsType</span>,</span>
+<span><span class="va">custWeights</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -72,32 +72,49 @@ formatsitepair function and not needed by the user."><!-- mathjax --><script src
     <dl><dt>dist</dt>
 <dd><p>The lower half of a site-by-site distance (dissimilarity) matrix,
 provided by the <code><a href="formatsitepair.html">formatsitepair</a></code> function.</p></dd>
+
+
 <dt>spdata</dt>
 <dd><p>Input species data, the same as the bioData input to the
 <code><a href="formatsitepair.html">formatsitepair</a></code> function.</p></dd>
+
+
 <dt>envInfo</dt>
 <dd><p>Input environmental data. Only accepts data tables as input.
 If the environmental data for <code><a href="formatsitepair.html">formatsitepair</a></code> are rasters, the
 data would have been extracted into table format within
 <code><a href="formatsitepair.html">formatsitepair</a></code>.</p></dd>
+
+
 <dt>dXCol</dt>
 <dd><p>Input x coordinate, the same as the XColumn input to the
 <code><a href="formatsitepair.html">formatsitepair</a></code> function.</p></dd>
+
+
 <dt>dYCol</dt>
 <dd><p>Input y coordinate, the same as the YColumn input to the
 <code><a href="formatsitepair.html">formatsitepair</a></code> function.</p></dd>
+
+
 <dt>siteCol</dt>
 <dd><p>Site column, taken from either the species or environmental
 tables.</p></dd>
+
+
 <dt>weightsType</dt>
 <dd><p>The method of determining the site-pair weights used in
 model fitting.</p></dd>
+
+
 <dt>custWeights</dt>
 <dd><p>Custom weights, as a vector, if given by the user.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A site-pair table with appropriate distance (dissimilarity) and
+    
+
+<p>A site-pair table with appropriate distance (dissimilarity) and
 weight columns used for fitting GDM.</p>
     </div>
     <div id="note">
@@ -122,7 +139,7 @@ and not needed by the user.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

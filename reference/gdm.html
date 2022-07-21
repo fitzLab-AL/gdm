@@ -99,7 +99,7 @@ s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gdm</span><span class="op">(</span><span class="va">data</span>, geo<span class="op">=</span><span class="cn">FALSE</span>, splines<span class="op">=</span><span class="cn">NULL</span>, knots<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gdm</span><span class="op">(</span><span class="va">data</span>, geo<span class="op">=</span><span class="cn">FALSE</span>, splines<span class="op">=</span><span class="cn">NULL</span>, knots<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -118,16 +118,22 @@ to ensure proper calculation of geographic distances. If geo is FALSE
 columns must still be included, but are ignored in fitting the model.
 Columns containing the predictor data for Site 1, and the predictor data
 for Site 2, follow.</p></dd>
+
+
 <dt>geo</dt>
 <dd><p>Set to TRUE if geographic distance between sites is to be included
 as a model term. Set to FALSE if geographic distance is to be omitted from
 the model. Default is FALSE.</p></dd>
+
+
 <dt>splines</dt>
 <dd><p>An optional vector of the number of I-spline basis functions
 to be used for each predictor in fitting the model. If supplied, it must
 have the same length as the number of predictors (including geographic
 distance if geo is TRUE). If this vector is not provided (splines=NULL),
 then a default of 3 basis functions is used for all predictors.</p></dd>
+
+
 <dt>knots</dt>
 <dd><p>An optional vector of knots in  <em>units of the predictor
 variables</em> to be used in the fitting process. If knots are supplied and
@@ -137,13 +143,19 @@ knots and the number of splines are supplied, then the length of the knots
 argument must be the same as the sum  of the values in the splines vector.
 Note that the default values for knots when the default three I-spline basis
 functions are 0 (minimum), 50 (median), and 100 (maximum) quantiles.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>gdm returns a gdm model object. The function
+    
+
+<p>gdm returns a gdm model object. The function
 <code><a href="summary.gdm.html">summary.gdm</a></code> can be used to obtain or print a synopsis of the
 results. A gdm model object is a list containing at least the following
-components:</p><dl><dt>dataname</dt>
+components:</p>
+
+
+<dl><dt>dataname</dt>
 <dd><p>The name of the table used as the data argument
 to the model.</p></dd>
  <dt>geo</dt>
@@ -206,9 +218,9 @@ Distributions</em> 13, 252-264.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"> <span class="co">##fit table environmental data</span></span>
-<span class="r-in"> <span class="co"># format site-pair table using the southwest data table</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">##fit table environmental data</span></span></span>
+<span class="r-in"><span> <span class="co"># format site-pair table using the southwest data table</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   species site    awcA  phTotal   sandA     shcA solumDepth     bio5     bio6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    spp1 1066 14.4725 546.1800 71.3250 178.8650   875.1725 31.43824 5.058823</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    spp1 1026 16.2575 470.9950 68.8975 105.8400   928.4925 33.14412 4.852941</span>
@@ -223,22 +235,22 @@ Distributions</em> 13, 252-264.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 48.20588     0 140.2941 -32.04285 118.3495</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 44.00000     0 135.6875 -32.09326 118.8736</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 42.00000     0 134.0263 -32.54354 118.8157</span>
-<span class="r-in"> <span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"> <span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span>
-<span class="r-in">                               siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
+<span class="r-in"><span> <span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span> <span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span></span>
+<span class="r-in"><span>                               siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co">##fit table GDM</span></span>
-<span class="r-in"> <span class="va">gdmTabMod</span> <span class="op">&lt;-</span> <span class="fu">gdm</span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmTabMod</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co">##fit table GDM</span></span></span>
+<span class="r-in"><span> <span class="va">gdmTabMod</span> <span class="op">&lt;-</span> <span class="fu">gdm</span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmTabMod</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] GDM Modelling Summary</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Mon Jun  6 17:38:04 2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Thu Jul 21 17:08:24 2022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Name:  gdmTabMod</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
@@ -365,16 +377,16 @@ Distributions</em> 13, 252-264.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[2]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[3]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Sum of coefficients for bio18: 0</span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co">##fit raster environmental data</span></span>
-<span class="r-in"> <span class="co">##sets up site-pair table</span></span>
-<span class="r-in"> <span class="va">rastFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"./extdata/swBioclims.grd"</span>, package<span class="op">=</span><span class="st">"gdm"</span><span class="op">)</span></span>
-<span class="r-in"> <span class="va">envRast</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">rastFile</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co">##environmental raster data</span></span>
-<span class="r-in"> <span class="va">sitePairRast</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>,</span>
-<span class="r-in">                                YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span>
-<span class="r-in">                                siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envRast</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co">##fit raster environmental data</span></span></span>
+<span class="r-in"><span> <span class="co">##sets up site-pair table</span></span></span>
+<span class="r-in"><span> <span class="va">rastFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"./extdata/swBioclims.grd"</span>, package<span class="op">=</span><span class="st">"gdm"</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="va">envRast</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">rastFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co">##environmental raster data</span></span></span>
+<span class="r-in"><span> <span class="va">sitePairRast</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>,</span></span>
+<span class="r-in"><span>                                YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span></span>
+<span class="r-in"><span>                                siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envRast</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
@@ -382,17 +394,17 @@ Distributions</em> 13, 252-264.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>               cells in which they are located and then aggreagted as necessary (e.g.,</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>               if more than one site falls in the same raster cell - common for rasters</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>               with large cells).</span>
-<span class="r-in"> <span class="co">##sometimes raster data returns NA in the site-pair table, these rows will</span></span>
-<span class="r-in"> <span class="co">##have to be removed before fitting gdm</span></span>
-<span class="r-in"> <span class="va">sitePairRast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">sitePairRast</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"> <span class="co">##fit raster GDM</span></span>
-<span class="r-in"> <span class="va">gdmRastMod</span> <span class="op">&lt;-</span> <span class="fu">gdm</span><span class="op">(</span><span class="va">sitePairRast</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmRastMod</span><span class="op">)</span></span>
+<span class="r-in"><span> <span class="co">##sometimes raster data returns NA in the site-pair table, these rows will</span></span></span>
+<span class="r-in"><span> <span class="co">##have to be removed before fitting gdm</span></span></span>
+<span class="r-in"><span> <span class="va">sitePairRast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">sitePairRast</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> <span class="co">##fit raster GDM</span></span></span>
+<span class="r-in"><span> <span class="va">gdmRastMod</span> <span class="op">&lt;-</span> <span class="fu">gdm</span><span class="op">(</span><span class="va">sitePairRast</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmRastMod</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] GDM Modelling Summary</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Mon Jun  6 17:38:06 2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Thu Jul 21 17:08:25 2022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Name:  gdmRastMod</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
@@ -469,7 +481,7 @@ Distributions</em> 13, 252-264.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[2]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[3]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Sum of coefficients for bio18: 0</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -484,7 +496,7 @@ Distributions</em> 13, 252-264.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -59,20 +59,25 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for gdm</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for gdm</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A gdm model object resulting from a call to <code><a href="gdm.html">gdm</a></code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Ignored.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>summary prints its output to the R Console window and returns no value.</p>
+    
+
+<p>summary prints its output to the R Console window and returns no value.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -81,24 +86,24 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">##set up site-pair table using the southwest data set</span></span>
-<span class="r-in"><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">14</span>,<span class="fl">13</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span>
-<span class="r-in">                              siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">##set up site-pair table using the southwest data set</span></span></span>
+<span class="r-in"><span><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">14</span>,<span class="fl">13</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span></span>
+<span class="r-in"><span>                              siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##create GDM</span></span>
-<span class="r-in"><span class="va">gdmMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="gdm.html">gdm</a></span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##summary of GDM</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmMod</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##create GDM</span></span></span>
+<span class="r-in"><span><span class="va">gdmMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="gdm.html">gdm</a></span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##summary of GDM</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gdmMod</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] GDM Modelling Summary</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Mon Jun  6 17:38:25 2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Creation Date:  Thu Jul 21 17:08:44 2022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Name:  gdmMod</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] </span>
@@ -225,7 +230,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[2]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Coefficient[3]: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] Sum of coefficients for bio18: 0</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -240,7 +245,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

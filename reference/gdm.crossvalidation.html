@@ -73,8 +73,8 @@ cross-validation test metrics.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gdm.crossvalidation</span><span class="op">(</span><span class="va">spTable</span>, train.proportion<span class="op">=</span><span class="fl">0.9</span>, n.crossvalid.tests<span class="op">=</span><span class="fl">1</span>,
-geo<span class="op">=</span><span class="cn">FALSE</span>, splines<span class="op">=</span><span class="cn">NULL</span>, knots<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gdm.crossvalidation</span><span class="op">(</span><span class="va">spTable</span>, train.proportion<span class="op">=</span><span class="fl">0.9</span>, n.crossvalid.tests<span class="op">=</span><span class="fl">1</span>,</span>
+<span>geo<span class="op">=</span><span class="cn">FALSE</span>, splines<span class="op">=</span><span class="cn">NULL</span>, knots<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,26 +82,39 @@ geo<span class="op">=</span><span class="cn">FALSE</span>, splines<span class="o
     <dl><dt>spTable</dt>
 <dd><p>(dataframe) A dataframe holding the GDM input table for model
 fitting.</p></dd>
+
+
 <dt>train.proportion</dt>
 <dd><p>(float) The proportion of sites in 'spTable' to use
 in training the GDM, with the remaining proportion used to test the model.
 (default = 0.9)</p></dd>
+
+
 <dt>n.crossvalid.tests</dt>
 <dd><p>(integer) The number of cross-validation sets to
 use in testing the GDM. (default = 1)</p></dd>
+
+
 <dt>geo</dt>
 <dd><p>(boolean) Geographic distance to be used in model fitting
 (default = FALSE).</p></dd>
+
+
 <dt>splines</dt>
 <dd><p>(vector) An optional vector of the number of I-spline basis
 functions to be used for each predictor in fitting the model.</p></dd>
+
+
 <dt>knots</dt>
 <dd><p>(vector) An optional vector of knots in units of the predictor
 variables to be used in the fitting process.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
+    
+
+<p>List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
 sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
 'Deviance.Explained' (the deviance explained for the training data);
 'Test.Deviance.Explained' (the deviance explained for the test data);
@@ -125,7 +138,7 @@ sitepair training table predicts the dissimilarities in the sitepair testing tab
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

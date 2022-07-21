@@ -68,48 +68,68 @@ multicore machines to reduce computation time.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gdm.varImp</span><span class="op">(</span><span class="va">spTable</span>, <span class="va">geo</span>, splines <span class="op">=</span> <span class="cn">NULL</span>, knots <span class="op">=</span> <span class="cn">NULL</span>,
-predSelect <span class="op">=</span> <span class="cn">FALSE</span>, nPerm <span class="op">=</span> <span class="fl">50</span>, pValue<span class="op">=</span><span class="fl">0.05</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span>, cores <span class="op">=</span> <span class="fl">2</span>,
-sampleSites <span class="op">=</span> <span class="fl">1</span>, sampleSitePairs <span class="op">=</span> <span class="fl">1</span>, outFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gdm.varImp</span><span class="op">(</span><span class="va">spTable</span>, <span class="va">geo</span>, splines <span class="op">=</span> <span class="cn">NULL</span>, knots <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>predSelect <span class="op">=</span> <span class="cn">FALSE</span>, nPerm <span class="op">=</span> <span class="fl">50</span>, pValue<span class="op">=</span><span class="fl">0.05</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span>, cores <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>sampleSites <span class="op">=</span> <span class="fl">1</span>, sampleSitePairs <span class="op">=</span> <span class="fl">1</span>, outFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>spTable</dt>
 <dd><p>A site-pair table, same as used to fit a <code><a href="gdm.html">gdm</a></code>.</p></dd>
+
+
 <dt>geo</dt>
 <dd><p>Similar to the <code><a href="gdm.html">gdm</a></code> geo argument. The only
 difference is that the geo argument does not have a default in this function.</p></dd>
+
+
 <dt>splines</dt>
 <dd><p>Same as the <code><a href="gdm.html">gdm</a></code> splines argument. Note that
 the current implementation requires that all predictors have the same number of
 splines.</p></dd>
+
+
 <dt>knots</dt>
 <dd><p>Same as the <code><a href="gdm.html">gdm</a></code> knots argument.</p></dd>
+
+
 <dt>predSelect</dt>
 <dd><p>Set to TRUE to perform predictor selection using matrix
 permutation and backward elimination. Default is FALSE. When predSelect = FALSE
 results will be returned only for a model fit with all predictors.</p></dd>
+
+
 <dt>nPerm</dt>
 <dd><p>Number of permutations to use to estimate p-values. Default is 50.</p></dd>
+
+
 <dt>pValue</dt>
 <dd><p>The p-value to use for predictor selection / elimination. Default is 0.05.</p></dd>
+
+
 <dt>parallel</dt>
 <dd><p>Whether or not to run the matrix permutations and model
 fitting in parallel. Parallel processing is highly recommended when either
 (i) the nPerms argument is large (&gt;100) or (ii) a large number of site-pairs
 (and / or variables) are being used in model fitting (note computation demand
 can be reduced using subsampling - see next arguments). The default is FALSE.</p></dd>
+
+
 <dt>cores</dt>
 <dd><p>When the parallel argument is set to TRUE, the number of cores
 to be registered for parallel processing. Must be &lt;= the number of cores in
 the machine running the function. There is no benefit to setting the number of
 cores greater than the number of predictors in the model.</p></dd>
+
+
 <dt>sampleSites</dt>
 <dd><p>The fraction (0-1, though a value of 0 would be silly,
 wouldn't it?) of <em>sites to retain</em> from the full site-pair table. If
 less than 1, this argument will completely remove a fraction of sites such
 that they are not used in the permutation routines.</p></dd>
+
+
 <dt>sampleSitePairs</dt>
 <dd><p>The fraction (0-1) of <em>site-pairs (i.e., rows)
 to retain</em> from the full site-pair table - in other words, all sites will
@@ -120,15 +140,20 @@ be removed using the sampleSites argument, followed by removal of site-pairs
 using the sampleSitePairs argument. Note that the number of site-pairs
 removed is based on the fraction of the resulting site-pair table after
 sites have been removed, not on the size of the full site-pair table.</p></dd>
+
+
 <dt>outFile</dt>
 <dd><p>An optional character string to write the object returned by
 the function to disk as an .RData object (".RData" is not required as part
 of the file name). The .RData object will contain a single list with the
 name of "outObject". The default is NULL, meaning that no file will be written.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of four tables. The first table summarizes full model deviance,
+    
+
+<p>A list of four tables. The first table summarizes full model deviance,
 percent deviance explained by the full model, the p-value of the full model,
 and the number of permutations used to calculate the statistics for each
 fitted model (i.e., the full model and each model with predictors removed in
@@ -138,14 +163,18 @@ significance, and (3) the number of permutations used to calculate the
 statistics for that model, which is provided because some GDMs may fail
 to converge for some permutations / predictor combinations and you might want to
 know how many permutations were used when calculating statistics. Or maybe you
-don't, you decide.
-Predictor importance is measured as the percent decrease in deviance explained
+don't, you decide.</p>
+
+
+<p>Predictor importance is measured as the percent decrease in deviance explained
 between the full model and the deviance explained by a model fit with that predictor
 permuted. Significance is estimated using the bootstrapped p-value when the
 predictor has been permuted. For most cases, the number of permutations will
 equal the nPerm argument. However, the value may be less should any of the models
-fit to them permuted tables fail to converge.
-If predSelect=FALSE, the tables will have values only in the first column.</p>
+fit to them permuted tables fail to converge.</p>
+
+
+<p>If predSelect=FALSE, the tables will have values only in the first column.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -184,20 +213,20 @@ Multi-Species Models for Ants in North America. <em>Ecography</em> 34: 836-47.</
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">##fit table environmental data</span></span>
-<span class="r-in"><span class="co">##set up site-pair table using the southwest data set</span></span>
-<span class="r-in"><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span>
-<span class="r-in">sppColumn<span class="op">=</span><span class="st">"species"</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">##fit table environmental data</span></span></span>
+<span class="r-in"><span><span class="co">##set up site-pair table using the southwest data set</span></span></span>
+<span class="r-in"><span><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span></span>
+<span class="r-in"><span>sppColumn<span class="op">=</span><span class="st">"species"</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## not run</span></span>
-<span class="r-in"><span class="co">#modTest &lt;- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10, predSelect=T)</span></span>
-<span class="r-in"><span class="co">#barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## not run</span></span></span>
+<span class="r-in"><span><span class="co">#modTest &lt;- gdm.varImp(sitePairTab, geo=T, nPerm=50, parallel=T, cores=10, predSelect=T)</span></span></span>
+<span class="r-in"><span><span class="co">#barplot(sort(modTest$`Predictor Importance`[,1], decreasing=T))</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -212,7 +241,7 @@ Multi-Species Models for Ants in North America. <em>Ecography</em> 34: 836-47.</
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

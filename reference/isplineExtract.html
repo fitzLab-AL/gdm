@@ -66,17 +66,20 @@ the fitted model.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">isplineExtract</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">isplineExtract</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>model</dt>
 <dd><p>A gdm object from <code><a href="gdm.html">gdm</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with two items. The first item contains the x-values (actual
+    
+
+<p>A list with two items. The first item contains the x-values (actual
 values of the predictors) of the I-splines and the second item contains the
 y-values (partial ecological distances) of the fitted I-splines.</p>
     </div>
@@ -94,27 +97,27 @@ Royal Society: Series B 280, art. 1768</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">##set up site-pair table using the southwest data set</span></span>
-<span class="r-in"><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">14</span>,<span class="fl">13</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span>
-<span class="r-in">                              siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">##set up site-pair table using the southwest data set</span></span></span>
+<span class="r-in"><span><span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">14</span>,<span class="fl">13</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span></span>
+<span class="r-in"><span>                              siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##create GDM</span></span>
-<span class="r-in"><span class="va">gdmMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="gdm.html">gdm</a></span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##extracts splines</span></span>
-<span class="r-in"><span class="va">exSplines</span> <span class="op">&lt;-</span> <span class="fu">isplineExtract</span><span class="op">(</span><span class="va">gdmMod</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">##plot spline(s)</span></span>
-<span class="r-in"><span class="co">#spline for winter precip (bio19)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">exSplines</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, <span class="va">exSplines</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, type<span class="op">=</span><span class="st">"l"</span>,</span>
-<span class="r-in">     lwd<span class="op">=</span><span class="fl">3</span>, xlab<span class="op">=</span><span class="st">"Winter precipitation (mm)"</span>, ylab<span class="op">=</span><span class="st">"Partial Ecological Distance"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##create GDM</span></span></span>
+<span class="r-in"><span><span class="va">gdmMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="gdm.html">gdm</a></span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##extracts splines</span></span></span>
+<span class="r-in"><span><span class="va">exSplines</span> <span class="op">&lt;-</span> <span class="fu">isplineExtract</span><span class="op">(</span><span class="va">gdmMod</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">##plot spline(s)</span></span></span>
+<span class="r-in"><span><span class="co">#spline for winter precip (bio19)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">exSplines</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, <span class="va">exSplines</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="st">"bio19"</span><span class="op">]</span>, type<span class="op">=</span><span class="st">"l"</span>,</span></span>
+<span class="r-in"><span>     lwd<span class="op">=</span><span class="fl">3</span>, xlab<span class="op">=</span><span class="st">"Winter precipitation (mm)"</span>, ylab<span class="op">=</span><span class="st">"Partial Ecological Distance"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="isplineExtract-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -129,7 +132,7 @@ Royal Society: Series B 280, art. 1768</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

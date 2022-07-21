@@ -108,9 +108,9 @@ argument (see below).</p></li>
 </ol></div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">formatsitepair</span><span class="op">(</span><span class="va">bioData</span>, <span class="va">bioFormat</span>, dist<span class="op">=</span><span class="st">"bray"</span>, abundance<span class="op">=</span><span class="cn">FALSE</span>, siteColumn<span class="op">=</span><span class="cn">NULL</span>,
-<span class="va">XColumn</span>, <span class="va">YColumn</span>, sppColumn<span class="op">=</span><span class="cn">NULL</span>, abundColumn<span class="op">=</span><span class="cn">NULL</span>, sppFilter<span class="op">=</span><span class="fl">0</span>, <span class="va">predData</span>,
-distPreds<span class="op">=</span><span class="cn">NULL</span>, weightType<span class="op">=</span><span class="st">"equal"</span>, custWeights<span class="op">=</span><span class="cn">NULL</span>, sampleSites<span class="op">=</span><span class="fl">1</span>, verbose<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">formatsitepair</span><span class="op">(</span><span class="va">bioData</span>, <span class="va">bioFormat</span>, dist<span class="op">=</span><span class="st">"bray"</span>, abundance<span class="op">=</span><span class="cn">FALSE</span>, siteColumn<span class="op">=</span><span class="cn">NULL</span>,</span>
+<span><span class="va">XColumn</span>, <span class="va">YColumn</span>, sppColumn<span class="op">=</span><span class="cn">NULL</span>, abundColumn<span class="op">=</span><span class="cn">NULL</span>, sppFilter<span class="op">=</span><span class="fl">0</span>, <span class="va">predData</span>,</span>
+<span>distPreds<span class="op">=</span><span class="cn">NULL</span>, weightType<span class="op">=</span><span class="st">"equal"</span>, custWeights<span class="op">=</span><span class="cn">NULL</span>, sampleSites<span class="op">=</span><span class="fl">1</span>, verbose<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -118,23 +118,33 @@ distPreds<span class="op">=</span><span class="cn">NULL</span>, weightType<span 
     <dl><dt>bioData</dt>
 <dd><p>The input biological (the response variable) data table, in
 one of the four formats defined above (see Details).</p></dd>
+
+
 <dt>bioFormat</dt>
 <dd><p>An integer code specifying the format of bioData. Acceptable
 values are 1, 2, 3, or 4 (see Details).</p></dd>
+
+
 <dt>dist</dt>
 <dd><p>Default = "bray". A character code indicating the metric to
 quantify pairwise site distances / dissimilarities. Calls the
 <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code> function from the <span class="pkg">vegan</span> package to
 calculate dissimilarity and therefore accepts any method available from
 <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></dd>
+
+
 <dt>abundance</dt>
 <dd><p>Default = FALSE. Indicates whether the biological data are
 abundance data (TRUE) or presence-absence (0, 1) data (FALSE).</p></dd>
+
+
 <dt>siteColumn</dt>
 <dd><p>The name of the column in either the biological or
 environmental data table containing a unique site identifier. If a site column
 is provided in both the biological and environmental data, the site column name
 must be the same in both tables.</p></dd>
+
+
 <dt>XColumn</dt>
 <dd><p>The name of the column containing x-coordinates of sites.
 X-coordinates can be provided in either the biological or environmental data
@@ -144,6 +154,8 @@ be identical. Site coordinates ideally should be in a projected coordinate
 system (i.e., not longitude-latitude) to ensure proper calculation of
 geographic distances. Note that if you are using rasters, they must be in the
 same coordinate system as the site coordinates.</p></dd>
+
+
 <dt>YColumn</dt>
 <dd><p>The name of the column containing y-coordinates of sample sites.
 Y-coordinates can be provided in either the biological or environmental data
@@ -153,23 +165,33 @@ be identical. Site coordinates ideally should be in a projected coordinate
 system (i.e., not longitude-latitude) to ensure proper calculation of
 geographic distances. Note that if you are using rasters, they must be in the
 same coordinate system as the site coordinates.</p></dd>
+
+
 <dt>sppColumn</dt>
 <dd><p>Only used if bioFormat = 2 (x, y, species list). The name of
 the column containing unique name / identifier for each species.</p></dd>
+
+
 <dt>abundColumn</dt>
 <dd><p>If abundance = TRUE, this parameter identifies the column
 containing the measure of abundance at each site. Only used if bioFormat = 2
 (i.e., x, y, species list), though in the case of abundance data, the table
 would have four columns: x, y, species, abundance.</p></dd>
+
+
 <dt>sppFilter</dt>
 <dd><p>Default = 0. To account for limited sampling effort at some
 sites, sppFilter removes all sites at which the number of recorded species
 (i.e., observed species richness) is less than the specified value. For
 example, if sppFilter = 5, all sites with fewer than 5 recorded species
 will be removed.</p></dd>
+
+
 <dt>predData</dt>
 <dd><p>The environmental predictor data. Accepts either a
 site-by-predictor table or a raster stack.</p></dd>
+
+
 <dt>distPreds</dt>
 <dd><p>An optional list of distance matrices to be used as predictors
 in combination with predData. For example, a site-by-site dissimilarity matrix
@@ -184,6 +206,8 @@ function will not accept only distances matrices as predictors
 using only distance matrices, provide one fake predictor (e.g., with all sites
 having the same value), plus site and coordinate columns if needed. The s1 and
 s2 columns for this fake variable can then be removed by hand before fitting the GDM.</p></dd>
+
+
 <dt>weightType</dt>
 <dd><p>Default = "equal". Defines the weighting for sites. Can be
 either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each
@@ -192,6 +216,8 @@ site weighted according to number of species recorded), or (3) "custom"
 site weights equal to the number of rows in the full site-pair table (i.e.,
 before species filtering (sppFilter argument) or sub-sampling is taken into
 account (sampleSites argument)).</p></dd>
+
+
 <dt>custWeights</dt>
 <dd><p>A two column matrix or data frame of user-defined site
 weights. The first column should be the site name and should be named the same
@@ -200,18 +226,25 @@ weight values and should be named "weights". The weight values represent the
 importance of each site in model fitting, and the values in the output
 site-pair table is an average of the two sites in each site-pair. Required
 when weightType = "custom". Ignored otherwise.</p></dd>
+
+
 <dt>sampleSites</dt>
 <dd><p>Default = 1. A number between 0-1 indicating the fraction
 of sites to be used to construct the site-pair table. This argument can be
 used to reduce the number of sites to overcome possible memory limitations
 when fitting models with very large numbers of sites.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Default = FALSE. If TRUE, summary of information regarding
 dimensions of the site-pair table will be printed that can be useful for diagnostics.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A formatted site-pair table containing the response (biological
+    
+
+<p>A formatted site-pair table containing the response (biological
 distance or dissimilarity), predictors, and weights as required for fitting
 Generalized Dissimilarity Models.</p>
     </div>
@@ -263,9 +296,9 @@ exact same coordinates.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## tabular data</span></span>
-<span class="r-in"><span class="co"># start with the southwest data table</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## tabular data</span></span></span>
+<span class="r-in"><span><span class="co"># start with the southwest data table</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   species site    awcA  phTotal   sandA     shcA solumDepth     bio5     bio6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    spp1 1066 14.4725 546.1800 71.3250 178.8650   875.1725 31.43824 5.058823</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    spp1 1026 16.2575 470.9950 68.8975 105.8400   928.4925 33.14412 4.852941</span>
@@ -280,69 +313,69 @@ exact same coordinates.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 48.20588     0 140.2941 -32.04285 118.3495</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 44.00000     0 135.6875 -32.09326 118.8736</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 42.00000     0 134.0263 -32.54354 118.8157</span>
-<span class="r-in"> <span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"> <span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#########table type 1</span></span>
-<span class="r-in"><span class="co">## site-species table without coordinates</span></span>
-<span class="r-in"><span class="va">testData1a</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="va">site</span><span class="op">~</span><span class="va">species</span><span class="op">)</span></span>
+<span class="r-in"><span> <span class="va">sppData</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">13</span>,<span class="fl">14</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span> <span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">southwest</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">southwest</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#########table type 1</span></span></span>
+<span class="r-in"><span><span class="co">## site-species table without coordinates</span></span></span>
+<span class="r-in"><span><span class="va">testData1a</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">dcast</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="va">site</span><span class="op">~</span><span class="va">species</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Using Long as value column: use value.var to override.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"><span class="co">##site-species table with coordinates</span></span>
-<span class="r-in"><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">[</span>, <span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">testData1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">testData1a</span>, <span class="va">coords</span>, by<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## site-species, table-table</span></span>
-<span class="r-in"><span class="va">exFormat1a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">testData1a</span>, <span class="fl">1</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>,</span>
-<span class="r-in">YColumn<span class="op">=</span><span class="st">"Lat"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#' # next, let's try environmental raster data</span></span>
-<span class="r-in"><span class="co">## not run</span></span>
-<span class="r-in"><span class="co"># rastFile &lt;- system.file("./extdata/swBioclims.grd", package="gdm")</span></span>
-<span class="r-in"><span class="co"># envRast &lt;- stack(rastFile)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## site-species, table-raster</span></span>
-<span class="r-in"><span class="co">## not run</span></span>
-<span class="r-in"><span class="co"># exFormat1b &lt;- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long",</span></span>
-<span class="r-in"><span class="co"># YColumn="Lat", predData=envRast)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#########table type 2</span></span>
-<span class="r-in"><span class="co">## site xy spp list, table-table</span></span>
-<span class="r-in"><span class="va">exFormat2a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span>
-<span class="r-in">sppColumn<span class="op">=</span><span class="st">"species"</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="co">##site-species table with coordinates</span></span></span>
+<span class="r-in"><span><span class="va">coords</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">[</span>, <span class="fl">2</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testData1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">testData1a</span>, <span class="va">coords</span>, by<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## site-species, table-table</span></span></span>
+<span class="r-in"><span><span class="va">exFormat1a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">testData1a</span>, <span class="fl">1</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>,</span></span>
+<span class="r-in"><span>YColumn<span class="op">=</span><span class="st">"Lat"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#' # next, let's try environmental raster data</span></span></span>
+<span class="r-in"><span><span class="co">## not run</span></span></span>
+<span class="r-in"><span><span class="co"># rastFile &lt;- system.file("./extdata/swBioclims.grd", package="gdm")</span></span></span>
+<span class="r-in"><span><span class="co"># envRast &lt;- stack(rastFile)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## site-species, table-raster</span></span></span>
+<span class="r-in"><span><span class="co">## not run</span></span></span>
+<span class="r-in"><span><span class="co"># exFormat1b &lt;- formatsitepair(testData1b, 1, siteColumn="site", XColumn="Long",</span></span></span>
+<span class="r-in"><span><span class="co"># YColumn="Lat", predData=envRast)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#########table type 2</span></span></span>
+<span class="r-in"><span><span class="co">## site xy spp list, table-table</span></span></span>
+<span class="r-in"><span><span class="va">exFormat2a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span></span>
+<span class="r-in"><span>sppColumn<span class="op">=</span><span class="st">"species"</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## site xy spp list, table-raster</span></span>
-<span class="r-in"><span class="co">## not run</span></span>
-<span class="r-in"><span class="co"># exFormat2b &lt;- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",</span></span>
-<span class="r-in"><span class="co"># sppColumn="species", siteColumn="site", predData=envRast)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#########table type 3</span></span>
-<span class="r-in"><span class="co">## It is possible to format a site-pair table by starting</span></span>
-<span class="r-in"><span class="co"># with a pre-calculated matrix of biological distances</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co">#square pairwise distance matrix</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## site xy spp list, table-raster</span></span></span>
+<span class="r-in"><span><span class="co">## not run</span></span></span>
+<span class="r-in"><span><span class="co"># exFormat2b &lt;- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat",</span></span></span>
+<span class="r-in"><span><span class="co"># sppColumn="species", siteColumn="site", predData=envRast)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#########table type 3</span></span></span>
+<span class="r-in"><span><span class="co">## It is possible to format a site-pair table by starting</span></span></span>
+<span class="r-in"><span><span class="co"># with a pre-calculated matrix of biological distances</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co">#square pairwise distance matrix</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 94 94</span>
-<span class="r-in"><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
+<span class="r-in"><span><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          V1        V2        V3        V4        V5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.0000000 0.8181818 1.0000000 0.5000000 0.7500000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.8181818 0.0000000 0.9000000 0.7777778 0.6551724</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 1.0000000 0.9000000 0.0000000 1.0000000 0.5757576</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.5000000 0.7777778 1.0000000 0.0000000 0.9090909</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000</span>
-<span class="r-in"><span class="co"># need to add a site ID column</span></span>
-<span class="r-in"><span class="va">site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">$</span><span class="va">site</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gdmDissim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">site</span>, <span class="va">gdmDissim</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># now we can format the table:</span></span>
-<span class="r-in"><span class="va">exFormat3</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">gdmDissim</span>, <span class="fl">3</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span>
-<span class="r-in">predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#########table type 4</span></span>
-<span class="r-in"><span class="co">## adds a predictor matrix to an existing site-pair table, in this case,</span></span>
-<span class="r-in"><span class="co">## predData needs to be provided, but is not actually used</span></span>
-<span class="r-in"><span class="va">exFormat4</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">exFormat2a</span>, <span class="fl">4</span>, predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>,</span>
-<span class="r-in">                            distPreds<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># need to add a site ID column</span></span></span>
+<span class="r-in"><span><span class="va">site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">$</span><span class="va">site</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gdmDissim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">site</span>, <span class="va">gdmDissim</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># now we can format the table:</span></span></span>
+<span class="r-in"><span><span class="va">exFormat3</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">gdmDissim</span>, <span class="fl">3</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span></span>
+<span class="r-in"><span>predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#########table type 4</span></span></span>
+<span class="r-in"><span><span class="co">## adds a predictor matrix to an existing site-pair table, in this case,</span></span></span>
+<span class="r-in"><span><span class="co">## predData needs to be provided, but is not actually used</span></span></span>
+<span class="r-in"><span><span class="va">exFormat4</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">exFormat2a</span>, <span class="fl">4</span>, predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>,</span></span>
+<span class="r-in"><span>                            distPreds<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -357,7 +390,7 @@ exact same coordinates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
