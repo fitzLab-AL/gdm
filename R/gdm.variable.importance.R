@@ -270,7 +270,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
   # run initial GDM to see if any vars have zero I-spline coeffs
   message(paste0("Fitting initial model with all ", nVars,  " predictors..."))
-  Sys.sleep(1)
+  Sys.sleep(0.5)
   fullGDM <- gdm(spTable, geo=geo, splines=splines, knots=knots)
 
   # check for zero coeffs
