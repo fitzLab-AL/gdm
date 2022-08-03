@@ -1,5 +1,9 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.5.0-8
+### bug fixes
+* Fix bug in the `formatsitepair` function when using custom weights. 
+
 # gdm 1.5.0-7
 ### bug fixes
 * Fix bug in the `varImp` function when predSelect = F.
