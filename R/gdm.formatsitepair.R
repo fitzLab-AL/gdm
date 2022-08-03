@@ -549,27 +549,27 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
     ##identifies and removes filtered out sites and sampled sites from predData
     ##renames siteColumn in order to access objects correctly
-    colnames(bioData)[colnames(bioData)==siteColumn] <- "gettingCoolSiteColumn"
-    colnames(predData)[colnames(predData)==siteColumn] <- "gettingCoolSiteColumn"
+    colnames(bioData)[colnames(bioData)==siteColumn] <- "theSiteColumn"
+    colnames(predData)[colnames(predData)==siteColumn] <- "theSiteColumn"
     predData <- unique(predData)
-    #predData3 <- predData[which(predData$gettingCoolSiteColumn %in%
-    #                             as.character(as.numeric(bioData$gettingCoolSiteColumn))),]
-    predData <- predData[which(predData$gettingCoolSiteColumn %in%
-                                 as.character(bioData$gettingCoolSiteColumn)),]
+    #predData3 <- predData[which(predData$theSiteColumn %in%
+    #                             as.character(as.numeric(bioData$theSiteColumn))),]
+    predData <- predData[which(predData$theSiteColumn %in%
+                                 as.character(bioData$theSiteColumn)),]
 
     ##remove custom weights from any sites removed by species filtering and sampling
     if(weightType=="custom" & !is.null(custWeights)){
-      colnames(custWeights)[colnames(custWeights)==siteColumn] <- "gettingCoolSiteColumn"
-      custWeights <- custWeights[which(predData$gettingCoolSiteColumn %in% custWeights[,"gettingCoolSiteColumn"]),]
-      hwap <- custWeights[,"gettingCoolSiteColumn"][,1]
+      colnames(custWeights)[colnames(custWeights)==siteColumn] <- "theSiteColumn"
+      custWeights <- custWeights[which(predData$theSiteColumn %in% custWeights[,"theSiteColumn"]),]
+      hwap <- custWeights[,"theSiteColumn"]#[,1]
       hwap <- order(hwap)
       custWeights <- custWeights[hwap,]
-      colnames(custWeights)[colnames(custWeights)=="gettingCoolSiteColumn"] <- siteColumn
+      colnames(custWeights)[colnames(custWeights)=="theSiteColumn"] <- siteColumn
     }
 
     ##rename site columns for results
-    colnames(bioData)[colnames(bioData)=="gettingCoolSiteColumn"] <- siteColumn
-    colnames(predData)[colnames(predData)=="gettingCoolSiteColumn"] <- siteColumn
+    colnames(bioData)[colnames(bioData)=="theSiteColumn"] <- siteColumn
+    colnames(predData)[colnames(predData)=="theSiteColumn"] <- siteColumn
 
     ##as a final check, makes sure bioData and predData sites are in same order
     predSite <- which(names(predData) == siteColumn)
