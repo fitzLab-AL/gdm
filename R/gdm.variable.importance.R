@@ -585,7 +585,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
         })
 
         ##extracts deviance of permuted gdms
-        permVarDev[[k]] <- sapply(gdmPermVar, function(mod){mod$gdmdeviance})
+        permVarDev[[k]] <- unlist(sapply(gdmPermVar, function(mod){mod$gdmdeviance}))
       }
     }
 
@@ -597,13 +597,13 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
       varDevTab <- permVarDev[[grepper]]
 
       # number of perms for which GDM converged
-      nConv <- length(which(is.null(varDevTab)))
-      nModsConverge[which(rownames(varImpTable) == var),v] <- nPerm-nConv
+      nConv <- length(varDevTab)
+      nModsConverge[which(rownames(varImpTable) == var),v] <- nConv
 
       # remove NULLs (GDMs that did not converge)
-      if(nConv>0){
-        varDevTab <- unlist(varDevTab[-(which(sapply(is.null(varDevTab))))])
-      }
+      #if(nConv>0){
+        #varDevTab <- unlist(varDevTab[-(which(sapply(is.null(varDevTab))))])
+      #}
 
       # calculate variable importance
       varDevExplained <- 100*(nullDev-varDevTab)/nullDev
@@ -622,7 +622,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
       # calculate p-Value
       permDevReduct <- noVarGDM$gdmdeviance - varDevTab
-      pValues[which(rownames(pValues) == var),v] <- sum(permDevReduct>=(varDevTab - fullGDM$gdmdeviance))/(nPerm-nConv)
+      pValues[which(rownames(pValues) == var),v] <- sum(permDevReduct>=(varDevTab - fullGDM$gdmdeviance))/(nConv)
     }
 
     if(max(na.omit(pValues[,v]))<pValue){
