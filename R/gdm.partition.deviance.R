@@ -66,7 +66,7 @@ gdm.partition.deviance <- function(sitePairTable, varSets=list(), partSpace=TRUE
   #varSets <- varSet
   #partSpace <- F
 
-  if(class(varSets)!="list"){
+  if(is(varSets, "list")==FALSE){
     stop("Variables names must be given in a list.")
   }
 
