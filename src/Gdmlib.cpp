@@ -819,16 +819,14 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 	for ( int i=0; i<nPreds; i++ )
 	{
 		//sprintf( buff, "Quant %d: ", i+1 );
-		//snprintf( buff, sizeof(buff), "Quant %d: ", i+1 );
-		snprintf( buff, 10000, "Quant %d: ", i+1 );
+		snprintf( buff, sizeof(buff), "Quant %d: ", i+1 );
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
 
 			// Modified by DNL:
 			//sprintf( buff, "%s %lf ", buff, *pTmp);
 			//sprintf( buff, "%s %f ", buff, *pTmp);
-			//snprintf( buff, sizeof(buff), "%s %f ", buff, *pTmp);
-			snprintf( buff, 10000, "%s %f ", buff, *pTmp);
+			snprintf( buff, sizeof(buff), "%s %lf ", buff, *pTmp);
 			++pTmp;
 		}
 		//Message(buff);
@@ -1585,15 +1583,13 @@ void ShowQuantiles(double *pQuants, int nPreds, int *pSplines)
 	for ( int i=0; i<nPreds; i++ )
 	{
 		//sprintf( buff, "Quant %d: ", i+1 );
-		//snprintf( buff, sizeof(buff), "Quant %d: ", i+1 );
-		snprintf( buff, 10000, "Quant %d: ", i+1 );
+		snprintf( buff, sizeof(buff), "Quant %d: ", i+1 );
 		for ( int j=0; j<pSplines[i]; j++ )
 		{
 			// Modified by DNL:
 			//sprintf( buff, "%s %lf ", buff, *pTmp);
 			//sprintf( buff, "%s %f ", buff, *pTmp);
-			//snprintf( buff, sizeof(buff), "%s %f ", buff, *pTmp);
-			snprintf( buff, 10000, "%s %f ", buff, *pTmp);
+			snprintf( buff, sizeof(buff), "%s %lf ", buff, *pTmp);
 			++pTmp;
 		}
 		//Message(buff);
