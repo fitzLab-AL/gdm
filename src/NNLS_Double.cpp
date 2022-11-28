@@ -411,13 +411,15 @@ double *nnlsFITDouble( double *pEnvDataMatrix, long long nRows, long long nCols,
 
 	else if ( mode == 2 )
 	{
-		snprintf( buff, sizeof(buff), "THE DIMENSIONS OF THE PROBLEM ARE BAD." );
+		//snprintf( buff, sizeof(buff), "THE DIMENSIONS OF THE PROBLEM ARE BAD." );
+		snprintf( buff, 10000, "THE DIMENSIONS OF THE PROBLEM ARE BAD." );
 		//Message( buff, "INFO" );
 	}
 
 	else if ( mode == 3 )
 	{
-		snprintf( buff, sizeof(buff), "ITERATION COUNT EXCEEDED.  MORE THAN 3*N ITERATIONS." );
+		//snprintf( buff, sizeof(buff), "ITERATION COUNT EXCEEDED.  MORE THAN 3*N ITERATIONS." );
+		snprintf( buff, 10000, "ITERATION COUNT EXCEEDED.  MORE THAN 3*N ITERATIONS." );
 		//Message( buff, "INFO" );
 	}
 
