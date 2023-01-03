@@ -104,10 +104,10 @@
 #' column containing the site names should have the same name as that provided
 #' for the siteColumn argument. Site IDs are required here to ensure correct ordering
 #' of sites in the construction of the site-pair table. Note that the formatsitepair
-#' function will not accept only distances matrices as predictors
-#' (i.e., at least one predictor variable is required). If you wish to fit GDM
-#' using only distance matrices, provide one fake predictor (e.g., with all sites
-#' having the same value), plus site and coordinate columns if needed. The s1 and
+#' function will not accept distance matrices in the as the only predictors
+#' (i.e., at least one additional, non-distPreds predictor variable is required). If you wish to fit GDM
+#' using only distance matrices provided using distPreds, provide one fake predictor (e.g., with all sites
+#' having the same value), plus site and coordinate columns. The s1 and
 #' s2 columns for this fake variable can then be removed by hand before fitting the GDM.
 #'
 #' @param weightType Default = "equal". Defines the weighting for sites. Can be
