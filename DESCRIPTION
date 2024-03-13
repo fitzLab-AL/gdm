@@ -25,7 +25,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
 LazyData: true
-URL: https://mfitzpatrick.al.umces.edu/gdm/, https://github.com/fitzLab-AL/gdm/
+URL: https://mfitzpatrick.al.umces.edu/gdm/,
+       https://github.com/fitzLab-AL/gdm/
 BugReports: https://github.com/fitzLab-AL/gdm/issues/
 Imports: 
     parallel,
@@ -37,5 +38,5 @@ Imports:
     doParallel,
     foreach,
     pbapply
-LinkingTo: 
-    Rcpp
+LinkingTo: Rcpp
+Suggests: tinytest
