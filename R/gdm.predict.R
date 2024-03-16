@@ -65,7 +65,7 @@
 #'
 #' ##time example
 #' rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-#' envRast <- raster::stack(rastFile)
+#' envRast <- terra::rast(rastFile)
 #'
 #' ##make some fake climate change data
 #' futRasts <- envRast
@@ -73,7 +73,7 @@
 #' futRasts[[3]] <- futRasts[[3]]*0.75
 #'
 #' timePred <- predict(gdmMod, envRast, time=TRUE, predRasts=futRasts)
-#' raster::plot(timePred)
+#' terra::plot(timePred)
 #'
 #' @keywords gdm
 #'
