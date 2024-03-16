@@ -10,7 +10,7 @@
 #'  bricks for environmental conditions at two time periods, each with a
 #'  layer for each environmental predictor in the fitted model.
 #'
-#' @usage \method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, ...)
+#' @usage \method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, filename="", ...)
 #'
 #' @param object A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
@@ -40,7 +40,7 @@
 #' different time in the past or future, with the same extent, resolution, and
 #' layer order as the data object. Required only if time=T.
 #'
-#' @param ... additional arguments that can be accepted by terra::predict.
+#' @param ... additional arguments that can be accepted by terra \code{\link[terra]{predict}} function.
 #'
 #' @return predict returns either a response vector with the same length as the
 #'  number of rows in the input data frame or a raster depicting change through time across the study region.

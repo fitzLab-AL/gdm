@@ -4,7 +4,7 @@
 #' fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2) a
 #' data frame or raster object containing predictor data for a set of sites.
 #'
-#' @usage gdm.transform(model, data)
+#' @usage gdm.transform(model, data, filename = "")
 #'
 #' @param model A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
@@ -69,7 +69,7 @@
 #' @keywords gdm
 #'
 #' @export
-gdm.transform2 <- function(model, data, filename = ""){
+gdm.transform <- function(model, data, filename = ""){
   options(warn.FPU = FALSE)
 
   # error checking of inputs

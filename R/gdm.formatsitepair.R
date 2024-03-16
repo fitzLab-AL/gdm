@@ -250,7 +250,7 @@
 #' @importFrom reshape2 dcast
 #'
 #' @export
-formatsitepair2 <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
+formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL,
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL,
                            weightType="equal", custWeights=NULL, sampleSites=1,
