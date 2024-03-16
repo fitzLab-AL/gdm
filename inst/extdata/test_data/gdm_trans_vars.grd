@@ -1,0 +1,21 @@
+[general]
+[data]
+datatype=FLT4S
+nodatavalue=nan
+byteorder=little
+nbands=6
+bandorder=BIL
+minvalue=-2.30388286828691896e+36:-1.75287933251342842e+31:-4.66055712802729826e+29:-8.95130681881320449e+37:-2.76258715012557965e+37:-1.20435718605401398e+37
+maxvalue=1.65861480311719409e+36:2.4621186341809233e+31:3.71350966570566379e+31:1.37369626613249e+38:1.56743716391114335e+37:9.80087964188438231e+25
+categorical=FALSE
+[description]
+layername=xCoord:yCoord:bio15:bio19:bio5:bio6
+[georeference]
+nrows=231
+ncols=339
+xmin=112.833333332999999
+ymin=-35.4166666670000012
+xmax=126.958333332999999
+ymax=-25.7916666670000012
+projection=+proj=longlat +datum=WGS84 +no_defs
+wkt=GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)"],MEMBER["World Geodetic System 1984 (G730)"],MEMBER["World Geodetic System 1984 (G873)"],MEMBER["World Geodetic System 1984 (G1150)"],MEMBER["World Geodetic System 1984 (G1674)"],MEMBER["World Geodetic System 1984 (G1762)"],MEMBER["World Geodetic System 1984 (G2139)"],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ENSEMBLEACCURACY[2.0]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],USAGE[SCOPE["Horizontal component of 3D system."],AREA["World."],BBOX[-90,-180,90,180]],ID["EPSG",4326]]
