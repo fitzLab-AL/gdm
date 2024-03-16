@@ -335,7 +335,7 @@ pcaSamp <- prcomp(rastDat)
  
 # Predict the first three principle components for every cell in the rasters
 # note the use of the 'index' argument
-pcaRast <- raster::predict(transRasts, pcaSamp, index=1:3)
+pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
 # scale the PCA rasters to make full use of the colour spectrum
 pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
