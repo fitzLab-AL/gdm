@@ -30,7 +30,7 @@
 #'   \item a site-by-predictor matrix with a column for each predictor variable
 #'   and a row for each site \cr
 #'
-#'   \item a raster stack, with one raster for each predictor variable \cr
+#'   \item a terra object SpatRaster, with one raster for each predictor variable \cr
 #'
 #'   \item one or more site-by-site distance matrices using the "distPreds"
 #'   argument (see below).
@@ -94,7 +94,7 @@
 #' will be removed.
 #'
 #' @param predData The environmental predictor data. Accepts either a
-#' site-by-predictor table or a raster stack.
+#' site-by-predictor table or a terra object SpatRaster.
 #'
 #' @param distPreds An optional list of distance matrices to be used as predictors
 #' in combination with predData. For example, a site-by-site dissimilarity matrix
@@ -142,7 +142,7 @@
 #' data are provided with a site ID column (specified by siteCol) and, optionally,
 #'  two columns for the x & y coordinates of the sites. All remaining columns
 #'  contain the biological data, with a column for each biological entity (most
-#'  commonly species). In the case that a raster stack is provided for the
+#'  commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
 #'  environmental data (predData), x-y coordinates MUST be provided in bioData
 #'  to allow extraction of the environmental data at site locations. The x-y
 #'  coordinates will be intersected with the raster stack and, if the number of
@@ -160,7 +160,8 @@
 #' name / identifier of the species observed at that location, and optionally a
 #' fourth column indicating a measure of abundance.  If an abundance column is
 #' not provided, presence-only data are assumed. In the case that a raster stack
-#' is provided for the environmental data (predData), the x-y coordinates will
+#' (a terra object SpatRaster) is provided for the
+#' environmental data (predData), the x-y coordinates will
 #' be intersected with the raster stack and, if the number of unique cells
 #' intersected by the points is less than the number of unique site IDs
 #' (i.e. multiple sites fall within a single cell), the function will use the
@@ -206,7 +207,7 @@
 #' #' # next, let's try environmental raster data
 #' ## not run
 #' # rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-#' # envRast <- stack(rastFile)
+#' # envRast <- terra::rast(rastFile)
 #'
 #' ## site-species, table-raster
 #' ## not run
@@ -247,13 +248,9 @@
 #' @importFrom stats as.dist
 #' @importFrom vegan vegdist
 #' @importFrom reshape2 dcast
-#' @importFrom raster cellFromXY
-#' @importFrom raster xyFromCell
-#' @importFrom raster extract
-#' @importFrom raster aggregate
 #'
 #' @export
-formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
+formatsitepair2 <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
                            siteColumn=NULL, XColumn, YColumn, sppColumn=NULL,
                            abundColumn=NULL, sppFilter=0, predData, distPreds=NULL,
                            weightType="equal", custWeights=NULL, sampleSites=1,
@@ -305,11 +302,18 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   }
 
   ##makes sure predData is in an acceptable format
-  if(!(is(predData, "data.frame") | is(predData, "matrix") | is(predData, "RasterStack") | is(predData, "RasterLayer") | is(predData, "RasterBrick"))){
+  if(!(is(predData, "data.frame") | is(predData, "matrix") | .is_raster(predData))){
     "predData object needs to either of class data.frame, matrix, or raster."
   }
   if(is(predData, "data.frame") | is(predData, "matrix")){
     predData <- as.data.frame(predData, stringsAsFactors=F)
+  }
+
+  # make sure predData is a terra object or convert it to terra
+  if (.is_raster(predData)) {
+    # check terra package is available
+    .check_pkgs("terra")
+    predData <- .check_rast(predData, "predData")
   }
 
   ##if bioFormat is not an acceptable number, exit function
@@ -352,7 +356,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   #}
   ##makes sure that a site column is provided when using table type 2 and raster environmental data
   if(bioFormat==2 & is.null(siteColumn)==TRUE){
-    if(!(is(predData, "RasterStack") | is(predData, "RasterLayer") | is(predData, "RasterBrick"))){
+    if(!.is_raster(predData)){
       stop("A siteColumn needs to be provided in either the bioData or predData objects.")
     }
   }
@@ -463,21 +467,23 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       locs <- bioData[c(xCol,yCol)]
     }
 
-    ##checks unique sites against rasters
-    if(is(predData, "RasterStack") | is(predData, "RasterLayer") | is(predData, "RasterBrick")){
-      ##when using rasters, uses the cell as the site
+    # checks unique sites against rasters
+    if(.is_raster(predData)){
+
+      # when using rasters, uses the cell as the site
       warning("When using rasters for prediction data, sites are assigned to the
               cells in which they are located and then aggreagted as necessary (e.g.,
               if more than one site falls in the same raster cell - common for rasters
               with large cells).")
-      ##gets the cell location of the given coordinates
-      cellID <- as.data.frame(cellFromXY(predData, locs))
-      colnames(cellID)[which(colnames(cellID)=="cellFromXY(predData, locs)")] <- "cellName"
-      ##if none of the points intersected with the prediction raster
-      if(nrow(cellID)==sum(is.na(cellID$cellName))){
+      # gets the cell location of the given coordinates
+      cellID <- data.frame(cellName = terra::cellFromXY(predData, locs))
+
+      # if none of the points intersected with the prediction raster
+      if (all(is.na(cellID$cellName))) {
         stop("None of the data points provided intersect with the rasters. Double check spatial data.")
       }
-      cellLocs <- as.data.frame(xyFromCell(predData, cellID$cellName))
+
+      cellLocs <- as.data.frame(terra::xyFromCell(predData, cellID$cellName))
       ##temporarily keeps old site in to identify what to remove from other objects
       rastBioData <- cbind(cellID, cellLocs, bioData[-c(which(colnames(bioData) %in% c(XColumn, YColumn)))])
 
@@ -498,8 +504,8 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       bioData <- aggregate(rastBioData, rastBioData[cellNum], FUN=mean)
       bioData <- bioData[-cellNum]
 
-      ##extracts raster data into environmental prediction data table
-      rastEx <- as.data.frame(extract(predData, bioData$cellName))
+      # extracts raster data into environmental prediction data table
+      rastEx <- terra::extract(predData, bioData$cellName)
 
       ##renames bioData columns which have been updated from rasters
       colnames(bioData)[which(colnames(bioData)=="cellName")] <- siteColumn
