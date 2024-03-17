@@ -6,7 +6,7 @@
 .is_raster <- function(x){
   z <- class(x)
   return(
-    z == "SpatRaster" | z == "RasterStack" | z == "RasterLayer" | z == "RasterBrick"
+    z %in% c("SpatRaster", "RasterStack", "RasterLayer", "RasterBrick", "stars")
   )
 }
 
