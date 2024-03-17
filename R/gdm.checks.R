@@ -19,7 +19,7 @@
       },
       error = function(cond) {
         message(sprintf("'%s' is not convertible to a terra SpatRaster object!", name))
-        message(sprintf("'%s' must be a SpatRaster, stars, Raster* object, or path to raster files on disk.", name))
+        message(sprintf("'%s' must be a SpatRaster, stars, Raster* object.", name))
       }
     )
   }

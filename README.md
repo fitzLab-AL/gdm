@@ -38,6 +38,24 @@ devtools::install_github("fitzLab-AL/gdm")
 Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021)
 gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 
+# New update of v1.6
+
+The `gdm` package has been updated to leverage the
+[`terra`](https://cran.r-project.org/web/packages/terra/index.html)
+package as its raster processing engine, leading to faster raster file
+processing. Preferably, inputs should be provided as `SpatRaster`
+objects, or any convertible object to `terra`, such as
+[`raster`](https://cran.r-project.org/web/packages/raster/index.html)
+package objects or [`stars`](https://cran.r-project.org/package=stars)
+objects.
+
+With the transition to `terra`, the `gdm` package is now capable of
+efficiently handling very large raster files, thanks to the underlying
+`terra` functionalities. Memory management is handled automatically by
+`terra`, but in the event of encountering out-of-memory errors, you can
+utilize `terra::terraOptions(steps = ...)` to increase the number of
+processing steps for large files.
+
 # Getting Started
 
 GDM has been used in many published studies. In addition to working
@@ -411,7 +429,7 @@ summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Sun Mar 17 01:32:03 2024
+#> [1] Creation Date:  Sun Mar 17 12:05:04 2024
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -691,8 +709,6 @@ We again use the `predict` function, but with `time=TRUE` and provide
 the current and future climate raster stacks. Th resulting map shows the
 expected magnitude of change in vegetation composition, which can be
 interpreted as a biologically-scaled metric of climate stress.
-
-    #> Warning: package 'colorRamps' was built under R version 4.3.3
 
 ``` r
 timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)

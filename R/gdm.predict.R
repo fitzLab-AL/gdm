@@ -40,7 +40,10 @@
 #' different time in the past or future, with the same extent, resolution, and
 #' layer order as the data object. Required only if time=T.
 #'
-#' @param ... additional arguments that can be accepted by terra \code{\link[terra]{predict}} function.
+#' @param filename character. Output filename for rasters. When provided the raster layers are
+#' written to file directly.
+#'
+#' @param ... additional arguments to pass to terra \code{\link[terra]{predict}} function.
 #'
 #' @return predict returns either a response vector with the same length as the
 #'  number of rows in the input data frame or a raster depicting change through time across the study region.
@@ -57,7 +60,7 @@
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                              siteColumn="site", predData=envTab)
 #'
-##create GDM
+#' # create GDM
 #' gdmMod <- gdm(sitePairTab, geo=TRUE)
 #'
 #' ##predict GDM
@@ -148,12 +151,12 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
 
     # stack all the raster layers to for prediction
     data <- c(
-      setNames(dummData, "distance"),
-      setNames(dummData, "weights"),
-      setNames(x, "s1.xCoord"),
-      setNames(y, "s1.yCoord"),
-      setNames(x, "s2.xCoord"),
-      setNames(y, "s2.yCoord"),
+      stats::setNames(dummData, "distance"),
+      stats::setNames(dummData, "weights"),
+      stats::setNames(x, "s1.xCoord"),
+      stats::setNames(y, "s1.yCoord"),
+      stats::setNames(x, "s2.xCoord"),
+      stats::setNames(y, "s2.yCoord"),
       data,
       predRasts
     )

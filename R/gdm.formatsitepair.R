@@ -501,7 +501,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
       ##aggregates species data by cell
       cellNum <- which(colnames(rastBioData)=="cellName")
-      bioData <- aggregate(rastBioData, rastBioData[cellNum], FUN=mean)
+      bioData <- stats::aggregate(rastBioData, rastBioData[cellNum], FUN=mean)
       bioData <- bioData[-cellNum]
 
       # extracts raster data into environmental prediction data table

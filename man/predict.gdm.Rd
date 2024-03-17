@@ -36,7 +36,10 @@ the site-pair table used to fit the model.}
 different time in the past or future, with the same extent, resolution, and
 layer order as the data object. Required only if time=T.}
 
-\item{...}{additional arguments that can be accepted by terra \code{\link[terra]{predict}} function.}
+\item{filename}{character. Output filename for rasters. When provided the raster layers are
+written to file directly.}
+
+\item{...}{additional arguments to pass to terra \code{\link[terra]{predict}} function.}
 }
 \value{
 predict returns either a response vector with the same length as the
@@ -62,6 +65,7 @@ envTab <- envTab[,-c(2:6)]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
                              siteColumn="site", predData=envTab)
 
+# create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)
 
 ##predict GDM

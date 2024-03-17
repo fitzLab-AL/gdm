@@ -4,7 +4,7 @@
 #' fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2) a
 #' data frame or raster object containing predictor data for a set of sites.
 #'
-#' @usage gdm.transform(model, data, filename = "")
+#' @usage gdm.transform(model, data, filename = "", ...)
 #'
 #' @param model A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
@@ -18,8 +18,10 @@
 #'  need to be removed from the data to be transformed.
 #'  Output is provided in the same format as the input data.
 #'
-#'  @param filename character. Output filename for rasters. When provided the raster layers are
-#'  written to file directly.
+#' @param filename character. Output filename for rasters. When provided the raster layers are
+#' written to file directly.
+#'
+#' @param ... additional arguments to pass to terra \code{\link[terra]{predict}} function.
 #'
 #' @return
 #' gdm.transform returns either a data frame with the same number of rows as the input data frame or a SpatRaster,
@@ -69,7 +71,7 @@
 #' @keywords gdm
 #'
 #' @export
-gdm.transform <- function(model, data, filename = ""){
+gdm.transform <- function(model, data, filename = "", ...){
   options(warn.FPU = FALSE)
 
   # error checking of inputs
@@ -136,7 +138,8 @@ gdm.transform <- function(model, data, filename = ""){
       model = model,
       fun = gdm_trans,
       na.rm = TRUE,
-      filename = filename
+      filename = filename,
+      ...
     )
 
     # get the predictors with non-zero sum of coefficients

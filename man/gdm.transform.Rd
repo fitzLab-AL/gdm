@@ -4,7 +4,7 @@
 \alias{gdm.transform}
 \title{Transform Environmental Data Using a Fitted Generalized Dissimilarity Model}
 \usage{
-gdm.transform(model, data, filename = "")
+gdm.transform(model, data, filename = "", ...)
 }
 \arguments{
 \item{model}{A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.}
@@ -17,10 +17,12 @@ the site-pair table used in model fitting. There is currently no checking to ens
 of the variables to be transformed are the same as those in the site-pair table used in model fitting.
 If geographic distance was not used as a predictor in model fitting, the x- and y-columns
 need to be removed from the data to be transformed.
-Output is provided in the same format as the input data.
+Output is provided in the same format as the input data.}
 
-@param filename character. Output filename for rasters. When provided the raster layers are
+\item{filename}{character. Output filename for rasters. When provided the raster layers are
 written to file directly.}
+
+\item{...}{additional arguments to pass to terra \code{\link[terra]{predict}} function.}
 }
 \value{
 gdm.transform returns either a data frame with the same number of rows as the input data frame or a SpatRaster,

@@ -109,7 +109,7 @@
 #'  ##fit raster environmental data
 #'  ##sets up site-pair table
 #'  rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-#'  envRast <- raster::stack(rastFile)
+#'  envRast <- terra::rast(rastFile)
 #'
 #'  ##environmental raster data
 #'  sitePairRast <- formatsitepair(sppData, 2, XColumn="Long",
