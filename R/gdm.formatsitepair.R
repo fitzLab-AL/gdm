@@ -257,7 +257,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
                            verbose=FALSE){
   ###########################
   ##lines used to quickly test function
-  #bioData <- sppData
+  #bioData <- southwest[, c(1,2,13,14)]
   #bioFormat <- 2
   #dist <- "bray"
   #abundance <- F
@@ -267,7 +267,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   #sppColumn <- "species"
   #sppFilter <- 0
   #abundColumn <- NULL
-  #predData <- envTab
+  #predData <- southwest[, c(2:ncol(southwest))]
   #distPreds <- NULL
   #weightType <- "equal"
   #custWeights <- NULL
@@ -396,7 +396,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
            as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
       stop("Biological dissimilarity matrix must have the same number of rows
-           and columns. Did you forget to add a column for site ID's?")
+           and columns. Does the matrix have a column for site ID's as required?")
     }
   }
 
@@ -428,31 +428,33 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
       ##insert a site column if one was not given
       if(is.null(siteColumn)){
-        colnames(bioData)[which(colnames(bioData)==XColumn)] <- "myXness"
-        colnames(bioData)[which(colnames(bioData)==YColumn)] <- "myYness"
-        bioData <- transform(bioData, siteUltimateCoolness=as.numeric(interaction(bioData$myXness, bioData$myYness, drop=TRUE)))
-        siteColumn <- "siteUltimateCoolness"
-        colnames(bioData)[which(colnames(bioData)=="myXness")] <- XColumn
-        colnames(bioData)[which(colnames(bioData)=="myYness")] <- YColumn
+        colnames(bioData)[which(colnames(bioData)==XColumn)] <- "bioData_FSP_xColumn"
+        colnames(bioData)[which(colnames(bioData)==YColumn)] <- "bioData_FSP_yColumn"
+        bioData <- transform(bioData,
+                             griddedSiteID=as.numeric(interaction(bioData$bioData_FSP_xColumn,
+                                                                         bioData$bioData_FSP_yColumn,
+                                                                         drop=TRUE)))
+        siteColumn <- "griddedSiteID"
+        colnames(bioData)[which(colnames(bioData)=="bioData_FSP_xColumn")] <- XColumn
+        colnames(bioData)[which(colnames(bioData)=="bioData_FSP_yColumn")] <- YColumn
       }
 
       ##insert presence if abundance was not given
       if(is.null(abundColumn)){
-        warning("No abundance column was specified, so the species data are
-                assumed to be presences.")
-        bioData["reallysupercoolawesomedata"] <- 1
-        abundColumn <- "reallysupercoolawesomedata"
+        warning("No abundance column was specified, so the biological data are assumed to be presences.")
+        bioData[, "bioData_FSP_abundColumn"] <- 1
+        abundColumn <- "bioData_FSP_abundColumn"
       }
 
       ##rename the siteColumn and sppColumn in order to cast the data into a siteXspp matrix
       preCastBio <- bioData
-      colnames(preCastBio)[which(colnames(preCastBio)==siteColumn)] <- "siteUltimateCoolness"
-      colnames(preCastBio)[which(colnames(preCastBio)==sppColumn)] <- "spcodeUltimateCoolness"
-      castData <- dcast(preCastBio, fill=0, siteUltimateCoolness~spcodeUltimateCoolness, value.var=abundColumn)
+      colnames(preCastBio)[which(colnames(preCastBio)==siteColumn)] <- "griddedSiteID"
+      colnames(preCastBio)[which(colnames(preCastBio)==sppColumn)] <- "bioData_FSP_sppColumn"
+      castData <- dcast(preCastBio, fill=0, griddedSiteID~bioData_FSP_sppColumn, value.var=abundColumn)
       ##adds coordinates to the cast data
-      uniqueCoords <- unique(preCastBio[which(colnames(preCastBio) %in% c("siteUltimateCoolness", XColumn, YColumn))])
-      bioData <- merge(castData, uniqueCoords, by="siteUltimateCoolness")
-      colnames(bioData)[which(colnames(bioData)=="siteUltimateCoolness")] <- siteColumn
+      uniqueCoords <- unique(preCastBio[which(colnames(preCastBio) %in% c("griddedSiteID", XColumn, YColumn))])
+      bioData <- merge(castData, uniqueCoords, by="griddedSiteID")
+      colnames(bioData)[which(colnames(bioData)=="griddedSiteID")] <- siteColumn
     }
 
     ##checks to see if the coordinates can be found in bioData, if not, checks to see if
@@ -471,10 +473,9 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     if(.is_raster(predData)){
 
       # when using rasters, uses the cell as the site
-      warning("When using rasters for prediction data, sites are assigned to the
-              cells in which they are located and then aggreagted as necessary (e.g.,
-              if more than one site falls in the same raster cell - common for rasters
-              with large cells).")
+      warning("When using rasters for environmental covariates (predictors), each site is assigned to the
+              raster cell in which the site is located. If more than one site occurs within the same raster cell,
+              the biological data of thos sites are aggregated (more likely as raster resolution decreaes).")
       # gets the cell location of the given coordinates
       cellID <- data.frame(cellName = terra::cellFromXY(predData, locs))
 
@@ -527,7 +528,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     siteCol <- which(colnames(bioData)==siteColumn)
     xCol <- which(colnames(bioData)==XColumn)
     yCol <- which(colnames(bioData)==YColumn)
-    sppDat <- bioData[-c(siteCol, xCol, yCol)]
+    sppDat <- bioData[, -c(siteCol, xCol, yCol)]
     ##totals the number of species per site
     sppDat[sppDat>=1] <- 1
     sppDat[sppDat==0] <- 0
@@ -608,12 +609,13 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
   }else if(bioFormat==3){
     ##orders bioData to match ordering of predData below
     holdSite <- bioData[,which(siteColumn %in% colnames(bioData))]
-    bioData <- bioData[,-which(siteColumn %in% colnames(bioData))]
-    orderedData <- as.matrix(as.dist(bioData[order(holdSite),order(holdSite)]))
+    bioData.x <- as.matrix(bioData[,-which(siteColumn %in% colnames(bioData))])
+    #diag(bioData.x) <- NA
+    bioData.x <- bioData.x[order(holdSite),order(holdSite)]
 
     ##site-site distance already calculated
-    distData <- lower.tri(as.matrix(orderedData), diag=FALSE)
-    distData <- as.vector(orderedData[distData])
+    #distData <- lower.tri(orderedData, diag=FALSE)
+    distData <- as.vector(bioData.x[lower.tri(bioData.x, diag=F)])
     predData <- unique(predData)
     ##orders the prediction data by site
     hwap <- predData[siteColumn][,1]

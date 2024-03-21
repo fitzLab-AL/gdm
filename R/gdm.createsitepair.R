@@ -74,7 +74,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   if((siteCol %in% colnames(envInfo))==T){
     count <- seq(length(unique(envInfo[,siteCol]))-1,1,-1)
   }else{
-    count <- seq(length(unique(envInfo[,"siteUltimateCoolness"]))-1,1,-1)
+    count <- seq(length(unique(envInfo[,"griddedSiteID"]))-1,1,-1)
   }
   s1 <- unlist(sapply(seq(length(count),1), function(y){c(s1, rep((max(count)-y)+1, times=y))}))
   s2 <- unlist(sapply(seq(length(count),1), function(y){c(s2, (max(count)-y+2):(max(count)+1))}))
@@ -102,7 +102,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
     if((siteCol %in% colnames(envInfo))==T){
       checkTab <- table(envInfo[siteCol])
     }else{
-      checkTab <- table(envInfo["siteUltimateCoolness"])
+      checkTab <- table(envInfo[, "griddedSiteID"])
     }
 
     if(sum(checkTab>1)>0){
@@ -129,7 +129,7 @@ createsitepair <- function(dist, spdata, envInfo, dXCol, dYCol, siteCol,
   xhold <- which(names(envInfo)==dXCol)
   yhold <- which(names(envInfo)==dYCol)
   sitehold <- which(names(envInfo)==siteCol)
-  sitehold2 <- which(names(envInfo)=="siteUltimateCoolness")
+  sitehold2 <- which(names(envInfo)=="griddedSiteID")
   envInfo <- envInfo[-c(xhold, yhold, sitehold, sitehold2)]
 
   ##fills output table
