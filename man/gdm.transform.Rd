@@ -4,20 +4,36 @@
 \alias{gdm.transform}
 \title{Transform Environmental Data Using a Fitted Generalized Dissimilarity Model}
 \usage{
-gdm.transform(model, data)
+gdm.transform(model, data, filename = "", ...)
 }
 \arguments{
 \item{model}{A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.}
 
-\item{data}{Either (i) a data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN or (ii) a raster stack with one layer per predictor variable used in the model, excluding X and Y (rasters for x- and y-coordinates are built automatically from the input rasters if the model was fit with geo=T). The order of the columns (data frame) or raster layers (raster stack) MUST be the same as the order of the predictors in the site-pair table used in model fitting. There is currently no checking to ensure that the order of the variables to be transformed are the same as those in the site-pair table used in model fitting. If geographic distance was not used as a predictor in model fitting, the x- and y-columns need to be removed from the data to be transformed. Output is provided in the same format as the input data.}
+\item{data}{Either (i) a data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN or
+(ii) a terra object SpatRaster with one layer per predictor variable used in the model,
+excluding X and Y (rasters for x- and y-coordinates are built automatically from the input
+rasters if the model was fit with geo=TRUE). The order of the columns (data frame) or raster layers (SpatRaster) MUST be the same as the order of the predictors in
+the site-pair table used in model fitting. There is currently no checking to ensure that the order
+of the variables to be transformed are the same as those in the site-pair table used in model fitting.
+If geographic distance was not used as a predictor in model fitting, the x- and y-columns
+need to be removed from the data to be transformed.
+Output is provided in the same format as the input data.}
+
+\item{filename}{character. Output filename for rasters. When provided the raster layers are
+written to file directly.}
+
+\item{...}{additional arguments to pass to terra \code{\link[terra]{predict}} function.}
 }
 \value{
-gdm.transform returns either a data frame with the same number of rows as the input data frame or a raster stack, depending on the format of the input data. If the model uses geographic distance as a predictor the output object will contain columns or layers for the transformed X and Y values for each site. The transformed environmental data will be in the remaining columns or layers.
+gdm.transform returns either a data frame with the same number of rows as the input data frame or a SpatRaster,
+depending on the format of the input data. If the model uses geographic distance as a predictor the output object
+will contain columns or layers for the transformed X and Y values for each site.
+The transformed environmental data will be in the remaining columns or layers.
 }
 \description{
 This function transforms geographic and environmental predictors using (1) the
 fitted functions from a model object returned from \code{\link[gdm]{gdm}} and (2) a
-data frame or raster stack containing predictor data for a set of sites.
+data frame or raster object containing predictor data for a set of sites.
 }
 \examples{
 # start with the southwest data set
@@ -26,9 +42,11 @@ sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 
 ##fit gdm using rasters
 rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-envRast <- raster::stack(rastFile)
-sitePairRast <- formatsitepair(sppTab, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
-                               siteColumn="site", predData=envRast)
+envRast <- terra::rast(rastFile)
+
+sitePairRast <- formatsitepair(sppTab, 2, XColumn="Long", YColumn="Lat",
+                               sppColumn="species", siteColumn="site",
+                               predData=envRast)
 ##remove NA values
 sitePairRast <- na.omit(sitePairRast)
 
@@ -39,21 +57,18 @@ gdmRastMod <- gdm(sitePairRast, geo=TRUE)
 transRasts <- gdm.transform(gdmRastMod, envRast)
 
 # map biological patterns
-rastDat <- raster::sampleRandom(transRasts, 10000)
+rastDat <- terra::spatSample(transRasts, 10000, na.rm = TRUE)
 pcaSamp <- prcomp(rastDat)
 
 # note the use of the 'index' argument
-pcaRast <- raster::predict(transRasts, pcaSamp, index=1:3)
+pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
 # scale rasters
-pcaRast[[1]] <- (pcaRast[[1]]-pcaRast[[1]]@data@min) /
-  (pcaRast[[1]]@data@max-pcaRast[[1]]@data@min)*255
-pcaRast[[2]] <- (pcaRast[[2]]-pcaRast[[2]]@data@min) /
-  (pcaRast[[2]]@data@max-pcaRast[[2]]@data@min)*255
-pcaRast[[3]] <- (pcaRast[[3]]-pcaRast[[3]]@data@min) /
-  (pcaRast[[3]]@data@max-pcaRast[[3]]@data@min)*255
+pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
+pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
+pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
 
-raster::plotRGB(pcaRast, r=1, g=2, b=3)
+terra::plotRGB(pcaRast, r=1, g=2, b=3)
 
 }
 \references{

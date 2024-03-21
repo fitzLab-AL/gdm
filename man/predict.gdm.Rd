@@ -5,7 +5,7 @@
 \title{Predict Biological Dissimilarities Between Sites or Times Using a
 Fitted Generalized Dissimilarity Model}
 \usage{
-\method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, ...)
+\method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, filename="", ...)
 }
 \arguments{
 \item{object}{A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.}
@@ -36,7 +36,10 @@ the site-pair table used to fit the model.}
 different time in the past or future, with the same extent, resolution, and
 layer order as the data object. Required only if time=T.}
 
-\item{...}{Ignored.}
+\item{filename}{character. Output filename for rasters. When provided the raster layers are
+written to file directly.}
+
+\item{...}{additional arguments to pass to terra \code{\link[terra]{predict}} function.}
 }
 \value{
 predict returns either a response vector with the same length as the
@@ -62,6 +65,7 @@ envTab <- envTab[,-c(2:6)]
 sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
                              siteColumn="site", predData=envTab)
 
+# create GDM
 gdmMod <- gdm(sitePairTab, geo=TRUE)
 
 ##predict GDM
@@ -69,7 +73,7 @@ predDiss <- predict(gdmMod, sitePairTab)
 
 ##time example
 rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-envRast <- raster::stack(rastFile)
+envRast <- terra::rast(rastFile)
 
 ##make some fake climate change data
 futRasts <- envRast
@@ -77,7 +81,7 @@ futRasts <- envRast
 futRasts[[3]] <- futRasts[[3]]*0.75
 
 timePred <- predict(gdmMod, envRast, time=TRUE, predRasts=futRasts)
-raster::plot(timePred)
+terra::plot(timePred)
 
 }
 \seealso{

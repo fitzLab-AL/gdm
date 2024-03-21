@@ -10,7 +10,7 @@
 #'  bricks for environmental conditions at two time periods, each with a
 #'  layer for each environmental predictor in the fitted model.
 #'
-#' @usage \method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, ...)
+#' @usage \method{predict}{gdm}(object, data, time=FALSE, predRasts=NULL, filename="", ...)
 #'
 #' @param object A gdm model object resulting from a call to \code{\link[gdm]{gdm}}.
 #'
@@ -40,7 +40,10 @@
 #' different time in the past or future, with the same extent, resolution, and
 #' layer order as the data object. Required only if time=T.
 #'
-#' @param ... Ignored.
+#' @param filename character. Output filename for rasters. When provided the raster layers are
+#' written to file directly.
+#'
+#' @param ... additional arguments to pass to terra \code{\link[terra]{predict}} function.
 #'
 #' @return predict returns either a response vector with the same length as the
 #'  number of rows in the input data frame or a raster depicting change through time across the study region.
@@ -57,7 +60,7 @@
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                              siteColumn="site", predData=envTab)
 #'
-##create GDM
+#' # create GDM
 #' gdmMod <- gdm(sitePairTab, geo=TRUE)
 #'
 #' ##predict GDM
@@ -65,7 +68,7 @@
 #'
 #' ##time example
 #' rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-#' envRast <- raster::stack(rastFile)
+#' envRast <- terra::rast(rastFile)
 #'
 #' ##make some fake climate change data
 #' futRasts <- envRast
@@ -73,18 +76,14 @@
 #' futRasts[[3]] <- futRasts[[3]]*0.75
 #'
 #' timePred <- predict(gdmMod, envRast, time=TRUE, predRasts=futRasts)
-#' raster::plot(timePred)
+#' terra::plot(timePred)
 #'
 #' @keywords gdm
 #'
 #' @importFrom methods is
-#' @importFrom raster nlayers
-#' @importFrom raster stack
-#' @importFrom raster rasterToPoints
-#' @importFrom raster cellFromXY
 #'
 #' @export
-predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, ...){
+predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", ...){
   #################
   ##lines used to quickly test function
   ##object = gdm model
@@ -99,75 +98,115 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, ...){
   ##if making a time prediction, check if all data are in the correct format,
   ##and then transforms the raster data into data tables in order to utilize
   ##the C predict utility
-  if(time==TRUE){
-    ##checks to make sure the inputs are correct
-    if(is.null(predRasts)==TRUE){
+  if (time) {
+    .check_pkgs("terra")
+    # checks to make sure the inputs are correct
+    if (is.null(predRasts)) {
       stop("Prediction rasters required when time = TRUE")
     }
-    if(!is(data, "RasterStack") & !is(data, "RasterLayer") & !is(data, "RasterBrick")){
+    if (!.is_raster(data)) {
       stop("Prediction data need to be a raster object when time = TRUE")
     }
-    if(!is(predRasts, "RasterStack") & !is(predRasts, "RasterLayer") & !is(predRasts, "RasterBrick")){
+    if (!.is_raster(predRasts)) {
       stop("predRasts need to be a raster object when time = TRUE")
     }
-    if(nlayers(data)!=nlayers(predRasts)){
-      stop("Current and future raster objects must have the same number of layers")
-    }
-    if(object$geo==TRUE){
-      if(nlayers(data)!=length(object$predictors)-1 | nlayers(predRasts)!=length(object$predictors)-1){
-        stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
-      }
-    }else{
-      if(nlayers(data)!=length(object$predictors) | nlayers(predRasts)!=length(object$predictors)){
-        stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
-      }
-    }
+    data <- .check_rast(data, "data")
+    predRasts <- .check_rast(predRasts, "predRasts")
 
-    for(i in 1:nlayers(data)){
+    # tests to see if raster data is stackable
+    tryCatch(
+      {
+        terra::compareGeom(data, predRasts, lyrs=TRUE, crs=TRUE, ext=TRUE, rowcol=TRUE)
+      },
+      error = function(cond) {
+        message(
+          "Current and prediction raster objects must have matching layer counts and identical extent, resolution, and origin to be stackable."
+        )
+      }
+    )
+
+    for(i in 1:terra::nlyr(data)){
       if(names(data)[i]!=names(predRasts)[i]){
         stop("Layer names do not match the variables used to fit the model.")
       }
     }
-    ##tests to see if raster data is stackable
-    tryRasts <- try(stack(data[[1]], predRasts[[1]]), silent=TRUE)
-    if(is(tryRasts, "try-error")){
-      stop("Current and prediction rasters differ in extent, resolution, and / or origin and therefore are not stackable.")
+    if (object$geo) {
+      if(terra::nlyr(data)!=length(object$predictors)-1 | terra::nlyr(predRasts)!=length(object$predictors)-1){
+        stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
+      }
+    } else {
+      if(terra::nlyr(data)!=length(object$predictors) | terra::nlyr(predRasts)!=length(object$predictors)){
+        stop("Number of variables supplied for prediction does not equal the number used to fit the model.")
+      }
     }
 
-    ##sets up sitepair table with current and future data
-    predLayer <- data[[1]]
-    currXY <- as.data.frame(na.omit(rasterToPoints(data, progress='text')))
-    predXY <- as.data.frame(na.omit(rasterToPoints(predRasts, progress='text')))
-    cells <- cellFromXY(predLayer, cbind(currXY$x, currXY$y))
-    dummData <- rep.int(0, nrow(currXY))
-    data <- cbind(dummData, dummData, currXY[,1:2], currXY, predXY[,-c(1,2)])
-    ##adds s1 or s2 to the variables name of the data
-    t1var <- paste("s1.", colnames(currXY)[-c(1,2)], sep="")
-    t2var <- paste("s2.", colnames(predXY)[-c(1,2)], sep="")
-    ##sets the correct names to the data
-    colnames(data) <- c("distance", "weights", "s1.xCoord", "s1.yCoord",
-                        "s2.xCoord", "s2.yCoord", t1var, t2var)
+    # create XY rasters; data and predRasts must have the same XY
+    x <- terra::init(data, fun = "x")
+    y <- terra::init(data, fun = "y")
+    dummData <- terra::init(data[[1]], fun = 0L)
+
+    # sets the correct names to the data
+    names(data) <- paste0("s1.", names(data))
+    names(predRasts) <- paste0("s2.", names(predRasts))
+
+    # stack all the raster layers to for prediction
+    data <- c(
+      stats::setNames(dummData, "distance"),
+      stats::setNames(dummData, "weights"),
+      stats::setNames(x, "s1.xCoord"),
+      stats::setNames(y, "s1.yCoord"),
+      stats::setNames(x, "s2.xCoord"),
+      stats::setNames(y, "s2.yCoord"),
+      data,
+      predRasts
+    )
+
   }
 
-  ##makes the prediction based on the data object
-  predicted <- rep(0,times=nrow(data))
-  z <- .C( "GDM_PredictFromTable",
-           as.matrix(data),
-           as.integer(object$geo),
-           as.integer(length(object$predictors)),
-           as.integer(nrow(data)),
-           as.double(object$knots),
-           as.integer(object$splines),
-           as.double(c(object$intercept,object$coefficients)),
-           preddata = as.double(predicted),
-           PACKAGE = "gdm")
+  # makes the prediction based on the data object
+  gdm_predict <- function(mod, dat, ...) {
 
-  ##if a time prediction, maps the predicted values to a raster and returns
-  ##the layer, otherwise returns a dataframe of the predicted values
-  if(time==FALSE){
-    return(z$preddata)
-  }else{
-    predLayer[cells] <- z$preddata
-    return(predLayer)
+    nr <- nrow(dat)
+    predicted <- rep(0, times = nr)
+
+    z <- .C( "GDM_PredictFromTable",
+             as.matrix(dat),
+             as.integer(mod$geo),
+             as.integer(length(mod$predictors)),
+             as.integer(nr),
+             as.double(mod$knots),
+             as.integer(mod$splines),
+             as.double(c(mod$intercept, mod$coefficients)),
+             preddata = as.double(predicted),
+             PACKAGE = "gdm")
+
+    return(
+      z$preddata
+    )
+  }
+
+  # if a time prediction, maps the predicted values to a raster and returns
+  # the layer, otherwise returns a dataframe of the predicted values
+  if(time){
+    # predict using gdm model and terra package
+    output <- terra::predict(
+      object = data,
+      model = object,
+      fun = gdm_predict,
+      na.rm = TRUE,
+      filename = filename,
+      ...
+    )
+
+    return(output)
+
+  } else{
+    # predict using a data.frame
+    output <- gdm_predict(
+      mod = object,
+      dat = data
+    )
+
+    return(output)
   }
 }

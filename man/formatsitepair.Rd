@@ -63,7 +63,7 @@ example, if sppFilter = 5, all sites with fewer than 5 recorded species
 will be removed.}
 
 \item{predData}{The environmental predictor data. Accepts either a
-site-by-predictor table or a raster stack.}
+site-by-predictor table or a terra object SpatRaster.}
 
 \item{distPreds}{An optional list of distance matrices to be used as predictors
 in combination with predData. For example, a site-by-site dissimilarity matrix
@@ -138,7 +138,7 @@ Predictor data can be provided in three formats: \cr
 \item a site-by-predictor matrix with a column for each predictor variable
 and a row for each site \cr
 
-\item a raster stack, with one raster for each predictor variable \cr
+\item a terra object SpatRaster, with one raster for each predictor variable \cr
 
 \item one or more site-by-site distance matrices using the "distPreds"
 argument (see below).
@@ -152,7 +152,7 @@ bioData = site-by-species matrix; bioFormat = 1: assumes that the response
 data are provided with a site ID column (specified by siteCol) and, optionally,
 two columns for the x & y coordinates of the sites. All remaining columns
 contain the biological data, with a column for each biological entity (most
-commonly species). In the case that a raster stack is provided for the
+commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
 environmental data (predData), x-y coordinates MUST be provided in bioData
 to allow extraction of the environmental data at site locations. The x-y
 coordinates will be intersected with the raster stack and, if the number of
@@ -170,7 +170,8 @@ being the x & y coordinates of species records, the third (sppCol) being the
 name / identifier of the species observed at that location, and optionally a
 fourth column indicating a measure of abundance.  If an abundance column is
 not provided, presence-only data are assumed. In the case that a raster stack
-is provided for the environmental data (predData), the x-y coordinates will
+(a terra object SpatRaster) is provided for the
+environmental data (predData), the x-y coordinates will
 be intersected with the raster stack and, if the number of unique cells
 intersected by the points is less than the number of unique site IDs
 (i.e. multiple sites fall within a single cell), the function will use the
@@ -212,7 +213,7 @@ YColumn="Lat", predData=envTab)
 #' # next, let's try environmental raster data
 ## not run
 # rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-# envRast <- stack(rastFile)
+# envRast <- terra::rast(rastFile)
 
 ## site-species, table-raster
 ## not run

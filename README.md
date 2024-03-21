@@ -1,4 +1,5 @@
 
+<!-- DO NOT EDIT BY HAND! README.Rmd is generated from README.md. Please edit that file. -->
 
 # gdm <img src="man/figures/gdmLogo.png" align="right" width="120" />
 
@@ -16,14 +17,14 @@ Generalized Dissimilarity Models.
 The **gdm** package is available on CRAN, development versions are
 available on GitHub.
 
--   Install from CRAN:
+- Install from CRAN:
 
 ``` r
 install.packages("gdm")
 ```
 
--   Install latest development version from GitHub (requires
-    [devtools](https://github.com/r-lib/devtools) package):
+- Install latest development version from GitHub (requires
+  [devtools](https://github.com/r-lib/devtools) package):
 
 ``` r
 if (!require("devtools")) {
@@ -34,34 +35,98 @@ devtools::install_github("fitzLab-AL/gdm")
 
 # Package Citation
 
-Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2022)
+Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021)
 gdm: Generalized Dissimilarity Modeling. R package version 1.5.
+
+# New update of v1.6
+
+The `gdm` package has been updated to leverage the
+[`terra`](https://cran.r-project.org/web/packages/terra/index.html)
+package as its raster processing engine, leading to faster raster file
+processing. Preferably, inputs should be provided as `SpatRaster`
+objects, or any convertible object to `terra`, such as
+[`raster`](https://cran.r-project.org/web/packages/raster/index.html)
+package objects or [`stars`](https://cran.r-project.org/package=stars)
+objects.
+
+With the transition to `terra`, the `gdm` package is now capable of
+efficiently handling very large raster files, thanks to the underlying
+`terra` functionalities. Memory management is handled automatically by
+`terra`, but in the event of encountering out-of-memory errors, you can
+utilize `terra::terraOptions(steps = ...)` to increase the number of
+processing steps for large files.
 
 # Getting Started
 
-GDM has been used in many published studies. In addition to working through the examples here and those throughout the package documentation, we recommend reading these publications for background information:
+GDM has been used in many published studies. In addition to working
+through the examples here and those throughout the package
+documentation, we recommend reading these publications for background
+information:
 
-Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized dissimilarity modelling to analyse and predict patterns of beta diversity in regional biodiversity assessment. Diversity & Distributions 13: 252-264. [https://doi.org/10.1111/j.1472-4642.2007.00341.x](https://doi.org/10.1111/j.1472-4642.2007.00341.x)
+Ferrier S, Manion G, Elith J, Richardson, K (2007) Using generalized
+dissimilarity modelling to analyse and predict patterns of beta
+diversity in regional biodiversity assessment. Diversity & Distributions
+13: 252-264.<https://doi.org/10.1111/j.1472-4642.2007.00341.x>
 
-Mokany K, Ware C, Woolley, SNC, Ferrier S, Fitzpatrick MC (2022) A working guide to harnessing generalized dissimilarity modelling for biodiversity analysis and conservation assessment. Global Ecology and Biogeography, 31, 802– 821. [https://doi.org/10.1111/geb.13459](https://doi.org/10.1111/geb.13459) 
+Mokany K, Ware C, Woolley, SNC, Ferrier S, Fitzpatrick MC (2022) A
+working guide to harnessing generalized dissimilarity modelling for
+biodiversity analysis and conservation assessment. Global Ecology and
+Biogeography, 31, 802– 821. <https://doi.org/10.1111/geb.13459>
 
 # Introduction
 
-The R package **gdm** implements Generalized Dissimilarity Modeling [(Ferrier et al. 2007)](https://doi.org/10.1111/j.1472-4642.2007.00341.x) to analyze and map spatial patterns of biodiversity. GDM models biological variation as a function of environment and geography using distance matrices – specifically by relating biological dissimilarity between sites to how much sites differ in their environmental conditions (environmental distance) and how isolated they are from one another (geographical distance). Here we demonstrate how to fit, apply, and interpret GDM in the context of analyzing and mapping species-level patterns. GDM also can be used to model other biological levels of organization, notably genetic [(Fitzpatrick & Keller 2015)](https://doi.org/10.1111/ele.12376), phylogenetic [(Rosauer et al. 2014)](https://doi.org/10.1111/j.1600-0587.2013.00466.x), or function/traits [(Thomassen et al. 2010)](https://doi.org/10.1111/j.1752-4571.2009.00093.x), and the approaches for doing so are largely identical to the species-level case with the exception of using a different biological dissimilarity metric depending on the type of response variable.  
+The R package **gdm** implements Generalized Dissimilarity Modeling
+[Ferrier et al. 2007](https://doi.org/10.1111/j.1472-4642.2007.00341.x)
+to analyze and map spatial patterns of biodiversity. GDM models
+biological variation as a function of environment and geography using
+distance matrices – specifically by relating biological dissimilarity
+between sites to how much sites differ in their environmental conditions
+(environmental distance) and how isolated they are from one another
+(geographical distance). Here we demonstrate how to fit, apply, and
+interpret GDM in the context of analyzing and mapping species-level
+patterns. GDM also can be used to model other biological levels of
+organization, notably genetic [Fitzpatrick & Keller
+2015](https://doi.org/10.1111/ele.12376), phylogenetic [Rosauer et
+al. 2014](https://doi.org/10.1111/j.1600-0587.2013.00466.x), or
+function/traits [Thomassen et
+al. 2010](https://doi.org/10.1111/j.1752-4571.2009.00093.x), and the
+approaches for doing so are largely identical to the species-level case
+with the exception of using a different biological dissimilarity metric
+depending on the type of response variable.
 
 ## Preparing the data for GDM: The site-pair table.
 
-The initial step in fitting a generalized dissimilarity model is to combine the biological and environmental data into "site-pair" table format using the `formatsitepair` function. 
+The initial step in fitting a generalized dissimilarity model is to
+combine the biological and environmental data into “site-pair” table
+format using the `formatsitepair` function.
 
-GDM can use several data formats as input. Most common are site-by-species tables (sites in rows, species across columns) for the response and site-by-environment tables (sites in rows, predictors across columns) as the predictors, though distance matrices and rasters also are accommodated as demonstrated below. 
+GDM can use several data formats as input. Most common are
+site-by-species tables (sites in rows, species across columns) for the
+response and site-by-environment tables (sites in rows, predictors
+across columns) as the predictors, though distance matrices and rasters
+also are accommodated as demonstrated below.
 
-The **gdm** package comes with two example biological data sets and two example environmental data sets in a number of formats. Example data include:
-
-  - `southwest`: A data frame that contains x-y coordinates, 10 columns of predictors (five soil and five bioclimatic variables), and occurrence data for 900+ species of plants from southwest Australia (representing a subset of the data used in [@fitzpatrick_2013]). Note that the format of the `southwest` table is an x-y species list (i.e., `bioFormat = 2`, see below) where there is one row *per species record rather than per site*. These biological data are similar to what would be obtained from online databases such as [GBIF](https://www.gbif.org/).
-  
-  - `gdmDissim`: A pairwise biological dissimilarity matrix derived from the species data provided in `southwest`. `gdmDissim` is provided to demonstrate how to proceed when you when you want to fit GDM using an existing biological distance matrix (e.g., pairwise Fst) as the response variable (i.e., `bioFormat = 3`, see below). Note however that distance matrices can also be used as predictors (e.g., to model compositional variation in one group as a function of compositional variation in another group [(Jones et al 2013)](https://doi.org/10.1111/1365-2745.12053).
-  
-  - `swBioclims`: a raster stack of the five bioclimatic predictors provided in the `southwest` data.
+The **gdm** package comes with two example biological data sets and two
+example environmental data sets in a number of formats. Example data
+include: - `southwest`: A data frame that contains x-y coordinates, 10
+columns of predictors (five soil and five bioclimatic variables), and
+occurrence data for 900+ species of plants from southwest Australia
+(representing a subset of the data used in \[@fitzpatrick_2013\]). Note
+that the format of the `southwest` table is an x-y species list (i.e.,
+`bioFormat = 2`, see below) where there is one row *per species record
+rather than per site*. These biological data are similar to what would
+be obtained from online databases such as
+[GBIF](https://www.gbif.org/). - `gdmDissim`: A pairwise biological
+dissimilarity matrix derived from the species data provided in
+`southwest`. `gdmDissim` is provided to demonstrate how to proceed when
+you when you want to fit GDM using an existing biological distance
+matrix (e.g., pairwise Fst) as the response variable (i.e.,
+`bioFormat = 3`, see below). Note however that distance matrices can
+also be used as predictors (e.g., to model compositional variation in
+one group as a function of compositional variation in another group
+[Jones et al 2013](https://doi.org/10.1111/1365-2745.12053). -
+`swBioclims`: a raster stack of the five bioclimatic predictors provided
+in the `southwest` data.
 
 Note that for all input data the rows and their order must match in the
 biological and environmental data frames and must not include NAs. This
@@ -116,8 +181,6 @@ gdmTab <- formatsitepair(bioData=sppTab,
                          sppColumn="species", 
                          siteColumn="site", 
                          predData=envTab)
-#> [1] "Site weighting type: Equal"
-#> [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."
 ```
 
     #>        distance weights s1.xCoord s1.yCoord s2.xCoord s2.yCoord s1.awcA
@@ -204,8 +267,6 @@ gdmTab.dis <- formatsitepair(bioData=gdmDissim,
                              YColumn="Lat", 
                              predData=envTab, 
                              siteColumn="site")
-#> [1] "Site weighting type: Equal"
-#> [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."
 ```
 
     #>        distance weights s1.xCoord s1.yCoord s2.xCoord s2.yCoord s1.awcA
@@ -232,7 +293,7 @@ species list (`bioFormat=2`).
 
 ``` r
 # environmental raster data for sw oz
-swBioclims <- raster::stack(system.file("./extdata/swBioclims.grd", package="gdm"))
+swBioclims <- terra::rast(system.file("./extdata/swBioclims.grd", package="gdm"))
 
 gdmTab.rast <- formatsitepair(bioData=sppTab, 
                               bioFormat=2, # x-y spp list
@@ -241,8 +302,6 @@ gdmTab.rast <- formatsitepair(bioData=sppTab,
                               sppColumn="species",
                               siteColumn="site",
                               predData=swBioclims) #raster stack
-#> [1] "Site weighting type: Equal"
-#> [1] "Site-pair table created with 4371 rows (94 unique sites) and 16 columns (5 environmental variables)."
 ```
 
 Because some sites might not overlap with the rasters, we should check
@@ -297,8 +356,6 @@ gdmTab.rw <- formatsitepair(bioData=sppTab,
                             siteColumn="site", 
                             predData=envTab, 
                             weightType="richness")
-#> [1] "Site weighting type: Richness"
-#> [1] "Site-pair table created with 4371 rows (94 unique sites) and 26 columns (10 environmental variables)."
 
 # weights based on richness (number of species records)
 gdmTab.rw[1:5, 1:5]
@@ -321,8 +378,6 @@ gdmTab.sf <- formatsitepair(bioData=sppTab,
                             siteColumn="site", 
                             predData=envTab, 
                             sppFilter=10)
-#> [1] "Site weighting type: Equal"
-#> [1] "Site-pair table created with 4095 rows (91 unique sites) and 26 columns (10 environmental variables)."
 ```
 
 ## GDM fitting
@@ -359,22 +414,22 @@ gdm.1 <- gdm(data=gdmTab, geo=TRUE)
 The `summary` function provides an overview of the model, the most
 important items to note are:
 
--   Percent Deviance Explained: goodness-of-fit
--   Intercept: expected dissimilarity between sites that do not differ
-    in the predictors
--   Summary of the fitted I-splines for each predictor, including the
-    values of the coefficients and their sum. The sum indicates the
-    amount of compositional turnover associated with that variable,
-    holding all other variables constant. I-spline summaries are order
-    by coefficient sum. Variables with all coefficients=0 have no
-    relationship with the modeled biological pattern.
+- Percent Deviance Explained: goodness-of-fit
+- Intercept: expected dissimilarity between sites that do not differ in
+  the predictors
+- Summary of the fitted I-splines for each predictor, including the
+  values of the coefficients and their sum. The sum indicates the amount
+  of compositional turnover associated with that variable, holding all
+  other variables constant. I-spline summaries are order by coefficient
+  sum. Variables with all coefficients=0 have no relationship with the
+  modeled biological pattern.
 
 ``` r
 summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Wed Dec  8 13:15:12 2021
+#> [1] Creation Date:  Sun Mar 17 12:05:04 2024
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -657,7 +712,7 @@ interpreted as a biologically-scaled metric of climate stress.
 
 ``` r
 timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)
-raster::plot(timePred, col=rgb.tables(1000))
+terra::plot(timePred, col=rgb.tables(1000))
 ```
 
 <div class="figure">
@@ -691,7 +746,7 @@ We then use the `gdm.transform` function to rescale the rasters.
 
 ``` r
 transRasts <- gdm.transform(model=gdmRastMod, data=swBioclims)
-raster::plot(transRasts, col=rgb.tables(1000))
+terra::plot(transRasts, col=rgb.tables(1000))
 ```
 
 <img src="man/figures/README-transformGDM-1.png" width="100%" />
@@ -712,30 +767,28 @@ expected plant species composition (in other words, cells with similar
 colors are expected to contain similar plant communities).
 
 ``` r
+
 # Get the data from the gdm transformed rasters as a table
-rastDat <- na.omit(raster::getValues(transRasts))
+# rastDat <- na.omit(terra::values(transRasts))
 
 # The PCA can be fit on a sample of grid cells if the rasters are large
-rastDat <- raster::sampleRandom(transRasts, 50000) 
+rastDat <- terra::spatSample(transRasts, 50000, na.rm = TRUE) 
 
 # perform the principle components analysis
 pcaSamp <- prcomp(rastDat)
  
 # Predict the first three principle components for every cell in the rasters
 # note the use of the 'index' argument
-pcaRast <- raster::predict(transRasts, pcaSamp, index=1:3)
+pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
 # scale the PCA rasters to make full use of the colour spectrum
-pcaRast[[1]] <- (pcaRast[[1]]-pcaRast[[1]]@data@min) /
-  (pcaRast[[1]]@data@max-pcaRast[[1]]@data@min)*255
-pcaRast[[2]] <- (pcaRast[[2]]-pcaRast[[2]]@data@min) /
-  (pcaRast[[2]]@data@max-pcaRast[[2]]@data@min)*255
-pcaRast[[3]] <- (pcaRast[[3]]-pcaRast[[3]]@data@min) /
-  (pcaRast[[3]]@data@max-pcaRast[[3]]@data@min)*255
+pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
+pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
+pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
 
 # Plot the three PCA rasters simultaneously, each representing a different colour 
 #  (red, green, blue)
-raster::plotRGB(pcaRast, r=1, g=2, b=3)
+terra::plotRGB(pcaRast, r=1, g=2, b=3)
 ```
 
 <div class="figure">
