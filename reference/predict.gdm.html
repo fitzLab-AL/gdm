@@ -32,7 +32,7 @@ layer for each environmental predictor in the fitted model."><!-- mathjax --><sc
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.0</span>
       </span>
     </div>
 
@@ -77,7 +77,7 @@ layer for each environmental predictor in the fitted model.</p>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for gdm</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, time<span class="op">=</span><span class="cn">FALSE</span>, predRasts<span class="op">=</span><span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, time<span class="op">=</span><span class="cn">FALSE</span>, predRasts<span class="op">=</span><span class="cn">NULL</span>, filename<span class="op">=</span><span class="st">""</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -116,8 +116,13 @@ different time in the past or future, with the same extent, resolution, and
 layer order as the data object. Required only if time=T.</p></dd>
 
 
+<dt>filename</dt>
+<dd><p>character. Output filename for rasters. When provided the raster layers are
+written to file directly.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Ignored.</p></dd>
+<dd><p>additional arguments to pass to terra <code><a href="https://rspatial.github.io/terra/reference/predict.html" class="external-link">predict</a></code> function.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -142,10 +147,10 @@ number of rows in the input data frame or a raster depicting change through time
 <span class="r-in"><span><span class="va">envTab</span> <span class="op">&lt;-</span> <span class="va">envTab</span><span class="op">[</span>,<span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">6</span><span class="op">)</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="va">sitePairTab</span> <span class="op">&lt;-</span> <span class="fu"><a href="formatsitepair.html">formatsitepair</a></span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>, sppColumn<span class="op">=</span><span class="st">"species"</span>,</span></span>
 <span class="r-in"><span>                             siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the biological data are assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create GDM</span></span></span>
 <span class="r-in"><span><span class="va">gdmMod</span> <span class="op">&lt;-</span> <span class="fu"><a href="gdm.html">gdm</a></span><span class="op">(</span><span class="va">sitePairTab</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##predict GDM</span></span></span>
@@ -153,7 +158,7 @@ number of rows in the input data frame or a raster depicting change through time
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##time example</span></span></span>
 <span class="r-in"><span><span class="va">rastFile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"./extdata/swBioclims.grd"</span>, package<span class="op">=</span><span class="st">"gdm"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">envRast</span> <span class="op">&lt;-</span> <span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/raster/man/stack.html" class="external-link">stack</a></span><span class="op">(</span><span class="va">rastFile</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">envRast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">rastFile</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">##make some fake climate change data</span></span></span>
 <span class="r-in"><span><span class="va">futRasts</span> <span class="op">&lt;-</span> <span class="va">envRast</span></span></span>
@@ -161,7 +166,7 @@ number of rows in the input data frame or a raster depicting change through time
 <span class="r-in"><span><span class="va">futRasts</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">futRasts</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">*</span><span class="fl">0.75</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">timePred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gdmMod</span>, <span class="va">envRast</span>, time<span class="op">=</span><span class="cn">TRUE</span>, predRasts<span class="op">=</span><span class="va">futRasts</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">raster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/base/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">timePred</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">timePred</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="predict.gdm-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -178,7 +183,7 @@ number of rows in the input data frame or a raster depicting change through time
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

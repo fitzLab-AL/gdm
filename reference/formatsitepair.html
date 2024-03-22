@@ -23,7 +23,7 @@ Predictor data can be provided in three formats:
 
 a site-by-predictor matrix with a column for each predictor variable
 and a row for each site 
-a raster stack, with one raster for each predictor variable 
+a terra object SpatRaster, with one raster for each predictor variable 
 one or more site-by-site distance matrices using the "distPreds"
 argument (see below).
 
@@ -51,7 +51,7 @@ argument (see below).
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gdm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0-9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.6.0</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@ appropriate distance metric is also supplied (see "dist" argument): <br></p>
 </ol><p>Predictor data can be provided in three formats: <br></p>
 <ol><li><p>a site-by-predictor matrix with a column for each predictor variable
 and a row for each site <br></p></li>
-<li><p>a raster stack, with one raster for each predictor variable <br></p></li>
+<li><p>a terra object SpatRaster, with one raster for each predictor variable <br></p></li>
 <li><p>one or more site-by-site distance matrices using the "distPreds"
 argument (see below).</p></li>
 </ol></div>
@@ -189,7 +189,7 @@ will be removed.</p></dd>
 
 <dt>predData</dt>
 <dd><p>The environmental predictor data. Accepts either a
-site-by-predictor table or a raster stack.</p></dd>
+site-by-predictor table or a terra object SpatRaster.</p></dd>
 
 
 <dt>distPreds</dt>
@@ -256,7 +256,7 @@ The function accepts biological data in the following formats:</p>
 data are provided with a site ID column (specified by siteCol) and, optionally,
 two columns for the x &amp; y coordinates of the sites. All remaining columns
 contain the biological data, with a column for each biological entity (most
-commonly species). In the case that a raster stack is provided for the
+commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
 environmental data (predData), x-y coordinates MUST be provided in bioData
 to allow extraction of the environmental data at site locations. The x-y
 coordinates will be intersected with the raster stack and, if the number of
@@ -273,7 +273,8 @@ being the x &amp; y coordinates of species records, the third (sppCol) being the
 name / identifier of the species observed at that location, and optionally a
 fourth column indicating a measure of abundance.  If an abundance column is
 not provided, presence-only data are assumed. In the case that a raster stack
-is provided for the environmental data (predData), the x-y coordinates will
+(a terra object SpatRaster) is provided for the
+environmental data (predData), the x-y coordinates will
 be intersected with the raster stack and, if the number of unique cells
 intersected by the points is less than the number of unique site IDs
 (i.e. multiple sites fall within a single cell), the function will use the
@@ -331,7 +332,7 @@ exact same coordinates.</p>
 <span class="r-in"><span><span class="co">#' # next, let's try environmental raster data</span></span></span>
 <span class="r-in"><span><span class="co">## not run</span></span></span>
 <span class="r-in"><span><span class="co"># rastFile &lt;- system.file("./extdata/swBioclims.grd", package="gdm")</span></span></span>
-<span class="r-in"><span><span class="co"># envRast &lt;- stack(rastFile)</span></span></span>
+<span class="r-in"><span><span class="co"># envRast &lt;- terra::rast(rastFile)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## site-species, table-raster</span></span></span>
 <span class="r-in"><span><span class="co">## not run</span></span></span>
@@ -342,8 +343,7 @@ exact same coordinates.</p>
 <span class="r-in"><span><span class="co">## site xy spp list, table-table</span></span></span>
 <span class="r-in"><span><span class="va">exFormat2a</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">sppData</span>, <span class="fl">2</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span></span>
 <span class="r-in"><span>sppColumn<span class="op">=</span><span class="st">"species"</span>, siteColumn<span class="op">=</span><span class="st">"site"</span>, predData<span class="op">=</span><span class="va">envTab</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the species data are</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>                 assumed to be presences.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>No abundance column was specified, so the biological data are assumed to be presences.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregation function missing: defaulting to length</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## site xy spp list, table-raster</span></span></span>
@@ -357,12 +357,12 @@ exact same coordinates.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co">#square pairwise distance matrix</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 94 94</span>
 <span class="r-in"><span><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          V1        V2        V3        V4        V5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.0000000 0.8181818 1.0000000 0.5000000 0.7500000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0.8181818 0.0000000 0.9000000 0.7777778 0.6551724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1.0000000 0.9000000 0.0000000 1.0000000 0.5757576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0.5000000 0.7777778 1.0000000 0.0000000 0.9090909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            1         2         3         4         5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V1 0.0000000 0.4485981 0.7575758 0.8939394 0.9178082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V2 0.4485981 0.0000000 0.5837563 0.8170732 0.8202247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V3 0.7575758 0.5837563 0.0000000 0.4782609 0.5813953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V4 0.8939394 0.8170732 0.4782609 0.0000000 0.4375000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V5 0.9178082 0.8202247 0.5813953 0.4375000 0.0000000</span>
 <span class="r-in"><span><span class="co"># need to add a site ID column</span></span></span>
 <span class="r-in"><span><span class="va">site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">$</span><span class="va">site</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gdmDissim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">site</span>, <span class="va">gdmDissim</span><span class="op">)</span></span></span>
@@ -390,7 +390,7 @@ exact same coordinates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
