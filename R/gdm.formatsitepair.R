@@ -168,6 +168,12 @@
 #' raster cell as the site ID and aggregate sites accordingly. Therefore, model
 #' fitting will be sensitive to raster cell size.
 #'
+#' bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used
+#' when a site-site distance (dissimilarity) matrix has already been created.
+#' Only the lower half of the triangle is needed to create the site-pair output
+#' table, but this function automatically removes the upper half if present.
+#' This is the only case in which the environmental data MAY NOT be a raster stack.
+#'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
 #' table, this option allows the user to add one or more distance matrices (see
 #' distPreds above) to the existing site-pair table and/or sub-sample the
