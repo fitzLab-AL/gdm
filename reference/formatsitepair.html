@@ -355,20 +355,22 @@ exact same coordinates.</p>
 <span class="r-in"><span><span class="co">## It is possible to format a site-pair table by starting</span></span></span>
 <span class="r-in"><span><span class="co"># with a pre-calculated matrix of biological distances</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co">#square pairwise distance matrix</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 94 94</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 94 95</span>
 <span class="r-in"><span><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            1         2         3         4         5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> V1 0.0000000 0.4485981 0.7575758 0.8939394 0.9178082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> V2 0.4485981 0.0000000 0.5837563 0.8170732 0.8202247</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> V3 0.7575758 0.5837563 0.0000000 0.4782609 0.5813953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> V4 0.8939394 0.8170732 0.4782609 0.0000000 0.4375000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> V5 0.9178082 0.8202247 0.5813953 0.4375000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    site         1         2         3         4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V1  881 0.0000000 0.4485981 0.7575758 0.8939394</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V2  882 0.4485981 0.0000000 0.5837563 0.8170732</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V3  883 0.7575758 0.5837563 0.0000000 0.4782609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V4  884 0.8939394 0.8170732 0.4782609 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> V5  885 0.9178082 0.8202247 0.5813953 0.4375000</span>
 <span class="r-in"><span><span class="co"># need to add a site ID column</span></span></span>
 <span class="r-in"><span><span class="va">site</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sppData</span><span class="op">$</span><span class="va">site</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gdmDissim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">site</span>, <span class="va">gdmDissim</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># now we can format the table:</span></span></span>
 <span class="r-in"><span><span class="va">exFormat3</span> <span class="op">&lt;-</span> <span class="fu">formatsitepair</span><span class="op">(</span><span class="va">gdmDissim</span>, <span class="fl">3</span>, XColumn<span class="op">=</span><span class="st">"Long"</span>, YColumn<span class="op">=</span><span class="st">"Lat"</span>,</span></span>
 <span class="r-in"><span>predData<span class="op">=</span><span class="va">envTab</span>, siteColumn<span class="op">=</span><span class="st">"site"</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in formatsitepair(gdmDissim, 3, XColumn = "Long", YColumn = "Lat",     predData = envTab, siteColumn = "site"):</span> Biological dissimilarity matrix must have the same number of rows</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>            and columns. Does the matrix have a column for site ID's as required?</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#########table type 4</span></span></span>
 <span class="r-in"><span><span class="co">## adds a predictor matrix to an existing site-pair table, in this case,</span></span></span>
