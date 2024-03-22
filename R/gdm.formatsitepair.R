@@ -170,9 +170,12 @@
 #'
 #' bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used
 #' when a site-site distance (dissimilarity) matrix has already been created.
-#' Only the lower half of the triangle is needed to create the site-pair output
-#' table, but this function automatically removes the upper half if present.
-#' This is the only case in which the environmental data MAY NOT be a raster stack.
+#' Only the lower triangle of the matrix is needed to create the site-pair output
+#' table, but this function automatically removes the upper triangle if present.
+#' The code checks and aligns the order or sites in the distance matrix and
+#' the predictor data to ensure they match, so a site column is required in both the
+#' # predictor data and distance matrix. This is the only bioFormat in which the
+#' environmental data MAY NOT be a raster stack.
 #'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
 #' table, this option allows the user to add one or more distance matrices (see
