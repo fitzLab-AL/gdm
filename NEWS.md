@@ -1,5 +1,10 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.6
+* Transition to `terra` functionality for much faster processing of rasters.
+### bug fixes
+* Fix bug in the `formatsitepair` function for bio data provided as distance matrix.
+
 # gdm 1.5.0-9
 ### bug fixes
 * Fix bug in the `varImp` function related to NULL models
