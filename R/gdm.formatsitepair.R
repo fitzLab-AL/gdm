@@ -484,7 +484,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       # when using rasters, uses the cell as the site
       warning("When using rasters for environmental covariates (predictors), each site is assigned to the
               raster cell in which the site is located. If more than one site occurs within the same raster cell,
-              the biological data of thos sites are aggregated (more likely as raster resolution decreaes).")
+              the biological data of those sites are aggregated (more likely as raster resolution decreases).")
       # gets the cell location of the given coordinates
       cellID <- data.frame(cellName = terra::cellFromXY(predData, locs))
 
