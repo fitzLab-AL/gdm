@@ -1,7 +1,7 @@
 Package: gdm
 Title: Generalized Dissimilarity Modeling
 Version: 1.6.0
-Date: 2024-03-16
+Date: 2024-03-22
 Authors@R: 
     c(person("Matt", "Fitzpatrick", email="mfitzpatrick@umces.edu", 
     role = c("aut", "cre"),
@@ -13,6 +13,7 @@ Authors@R:
 		    comment=c(ORCID = "0000-0003-4135-2881")),
 		    person("Simon", "Ferrier", role="aut",
 		    comment = c(ORCID = "0000-0001-7884-2388")),
+		    person("Roozbeh", "Valavi", role="ctb"),
 		    person("Matthew", "Lisk", role="ctb"),
 		    person("Chris", "Ware", role="ctb"),
 		    person("Skip", "Woolley", role="ctb"),
