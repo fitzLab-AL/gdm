@@ -235,15 +235,12 @@
 #'
 #' #########table type 3
 #' ## It is possible to format a site-pair table by starting
-#' # with a pre-calculated matrix of biological distances (e.g., genetic distances).
-#' dim(gdmDissim) #square pairwise biological distance matrix
+#' # with a pre-calculated matrix of biological distances
+#' dim(gdmDissim) #square pairwise distance matrix + 1 column for site IDs
 #' gdmDissim[1:5, 1:5]
-#' # Must have a site ID column
-#' site <- unique(sppData$site)
-#' gdmDissim <- cbind(site, gdmDissim)
 #' # now we can format the table:
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
-#' predData=envTab, siteColumn="site")
+#'                             predData=envTab, siteColumn="site")
 #'
 #' #########table type 4
 #' ## adds a predictor matrix to an existing site-pair table, in this case,
