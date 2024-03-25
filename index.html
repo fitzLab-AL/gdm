@@ -103,7 +103,7 @@
 <p>Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Generalized Dissimilarity Modeling. R package version 1.5.</p>
 </div>
 <div class="section level1">
-<h1 id="new-update-of-v160">New update of v1.6.0<a class="anchor" aria-label="anchor" href="#new-update-of-v160"></a>
+<h1 id="new-update-of-v16">New update of v1.6<a class="anchor" aria-label="anchor" href="#new-update-of-v16"></a>
 </h1>
 <p>The <code>gdm</code> package has been updated to leverage the <a href="https://cran.r-project.org/web/packages/terra/index.html" class="external-link"><code>terra</code></a> package as its raster processing engine, leading to faster raster file processing. Preferably, inputs should be provided as <code>SpatRaster</code> objects, or any convertible object to <code>terra</code>, such as <a href="https://cran.r-project.org/web/packages/raster/index.html" class="external-link"><code>raster</code></a> package objects or <a href="https://cran.r-project.org/package=stars" class="external-link"><code>stars</code></a> objects.</p>
 <p>With the transition to <code>terra</code>, the <code>gdm</code> package is now capable of efficiently handling very large raster files, thanks to the underlying <code>terra</code> functionalities. Memory management is handled automatically by <code>terra</code>, but in the event of encountering out-of-memory errors, you can utilize <code>terra::terraOptions(steps = ...)</code> to increase the number of processing steps for large files.</p>
@@ -189,14 +189,14 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Biological distance matrix example</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 94 94</span></span>
+<span><span class="co">#&gt; [1] 94 95</span></span>
 <span><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt;          V1        V2        V3        V4        V5</span></span>
-<span><span class="co">#&gt; 1 0.0000000 0.8181818 1.0000000 0.5000000 0.7500000</span></span>
-<span><span class="co">#&gt; 2 0.8181818 0.0000000 0.9000000 0.7777778 0.6551724</span></span>
-<span><span class="co">#&gt; 3 1.0000000 0.9000000 0.0000000 1.0000000 0.5757576</span></span>
-<span><span class="co">#&gt; 4 0.5000000 0.7777778 1.0000000 0.0000000 0.9090909</span></span>
-<span><span class="co">#&gt; 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000</span></span></code></pre></div>
+<span><span class="co">#&gt;    site         1         2         3         4</span></span>
+<span><span class="co">#&gt; V1  881 0.0000000 0.4485981 0.7575758 0.8939394</span></span>
+<span><span class="co">#&gt; V2  882 0.4485981 0.0000000 0.5837563 0.8170732</span></span>
+<span><span class="co">#&gt; V3  883 0.7575758 0.5837563 0.0000000 0.4782609</span></span>
+<span><span class="co">#&gt; V4  884 0.8939394 0.8170732 0.4782609 0.0000000</span></span>
+<span><span class="co">#&gt; V5  885 0.9178082 0.8202247 0.5813953 0.4375000</span></span></code></pre></div>
 <p>We can provide the <code>gdmDissim</code> object to <code>formatsitepair</code> as follows:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gdmTab.dis</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/formatsitepair.html">formatsitepair</a></span><span class="op">(</span>bioData<span class="op">=</span><span class="va">gdmDissim</span>, </span>
@@ -296,7 +296,7 @@
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] GDM Modelling Summary</span></span>
-<span><span class="co">#&gt; [1] Creation Date:  Sun Mar 17 12:05:04 2024</span></span>
+<span><span class="co">#&gt; [1] Creation Date:  Mon Mar 25 16:02:28 2024</span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] Name:  gdm.1</span></span>
 <span><span class="co">#&gt; [1] </span></span>
@@ -561,7 +561,7 @@ Predicted magnitude of biological change through time
 <span><span class="co">#  (red, green, blue)</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plotRGB.html" class="external-link">plotRGB</a></span><span class="op">(</span><span class="va">pcaRast</span>, r<span class="op">=</span><span class="fl">1</span>, g<span class="op">=</span><span class="fl">2</span>, b<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-10-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%"><p class="caption">
+<img src="reference/figures/README-unnamed-chunk-9-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%"><p class="caption">
 Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities.
 </p>
 </div>
@@ -617,6 +617,7 @@ Predicted spatial variation in plant species composition. Colors represent gradi
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=gdm" class="external-link"><img src="https://www.r-pkg.org/badges/version/gdm?color=blue" alt="CRAN_Status_Badge"></a></li>
 <li><a href="https://CRAN.R-project.org/package=gdm" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/gdm?color=blue" alt="Downloads"></a></li>
+<li><a href="https://github.com/fitzLab-AL/gdm/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/fitzLab-AL/gdm/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 </ul>
 </div>
 
