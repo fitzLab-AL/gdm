@@ -402,7 +402,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
            as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
       stop("Biological dissimilarity matrix must have the same number of rows
-           and columns. Does the matrix have a column for site ID's as required?")
+           and columns. Does the matrix have a column for site IDs as required?")
     }
   }
 
