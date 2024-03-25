@@ -285,11 +285,9 @@ when a site-site distance (dissimilarity) matrix has already been created.
 Only the lower triangle of the matrix is needed to create the site-pair output
 table, but this function automatically removes the upper triangle if present.
 The code checks and aligns the order or sites in the distance matrix and
-the predictor data to ensure they match, so a site column is required in both the</p>
-    </div>
-    <div id="predictor-data-and-distance-matrix-this-is-the-only-bioformat-in-which-the">
-    <h2>predictor data and distance matrix. This is the only bioFormat in which the</h2>
-    <p>environmental data MAY NOT be a raster stack.</p>
+the predictor data to ensure they match, so a site column is required in both the
+predictor data and distance matrix. This is the only bioFormat in which the
+environmental data MAY NOT be a raster stack.</p>
 <p>bioData = site-pair table; bioFormat = 4: with an already created site-pair
 table, this option allows the user to add one or more distance matrices (see
 distPreds above) to the existing site-pair table and/or sub-sample the
@@ -364,7 +362,7 @@ exact same coordinates.</p>
 <span class="r-in"><span><span class="co">#########table type 3</span></span></span>
 <span class="r-in"><span><span class="co">## It is possible to format a site-pair table by starting</span></span></span>
 <span class="r-in"><span><span class="co"># with a pre-calculated matrix of biological distances</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co">#square pairwise distance matrix + 1 column for site IDs</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">gdmDissim</span><span class="op">)</span> <span class="co"># pairwise distance matrix + 1 column for site IDs</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 94 95</span>
 <span class="r-in"><span><span class="va">gdmDissim</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    site         1         2         3         4</span>
