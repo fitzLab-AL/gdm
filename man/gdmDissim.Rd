@@ -5,7 +5,7 @@
 \alias{gdmDissim}
 \title{An example biological dissimilarity matrix}
 \format{
-A data frame with 94 rows and 94 columns:
+A data frame with 94 rows and 95 columns (extra column holds site IDs):
 }
 \usage{
 gdmDissim

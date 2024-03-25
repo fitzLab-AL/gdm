@@ -38,7 +38,7 @@ devtools::install_github("fitzLab-AL/gdm")
 Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021)
 gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 
-# New update of v1.6
+# New update of v1.6.0
 
 The `gdm` package has been updated to leverage the
 [`terra`](https://cran.r-project.org/web/packages/terra/index.html)
@@ -222,10 +222,11 @@ number more depending on how many predictors are included. See
 
 What if you already have a biological distance matrix because you are
 working with, say, genetic data? In that case, it is simple as changing
-the `bioFormat` argument **and also making sure the rows in your
-biological and environmental tables are in the same order**. Let’s have
+the `bioFormat` argument and providing that matrix as the `bioData` object to 
+the `sitepairformat` function. However, in addition to the pairwise dissimilarity
+values, the object must include a column containing the site IDs. Let’s have
 a quick look at `gdmDissim`, a pairwise biological distance matrix
-prodvided with the package:
+provided with the package (note that the first column contains site IDs):
 
 ``` r
 # Biological distance matrix example
@@ -240,25 +241,7 @@ gdmDissim[1:5, 1:5]
 #> 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000
 ```
 
-We first need to add a site ID column to `gdmDissim`. We already know
-the sites are in the correct order, so we do not check here, but you
-should confirm for your data.
-
-``` r
-# get the site column from sppTab
-site <- unique(sppTab$site)
-# bind to gdmDissim
-gdmDissim <- cbind(site, gdmDissim)
-gdmDissim[1:5, 1:5]
-#>   site        V1        V2        V3        V4
-#> 1 1066 0.0000000 0.8181818 1.0000000 0.5000000
-#> 2 1026 0.8181818 0.0000000 0.9000000 0.7777778
-#> 3 1025 1.0000000 0.9000000 0.0000000 1.0000000
-#> 4 1027 0.5000000 0.7777778 1.0000000 0.0000000
-#> 5 1047 0.7500000 0.6551724 0.5757576 0.9090909
-```
-
-Now we are ready to use `formatsitepair`:
+We can provide the `gdmDissim` object to `formatsitepair` as follows:
 
 ``` r
 gdmTab.dis <- formatsitepair(bioData=gdmDissim, 
