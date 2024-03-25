@@ -184,8 +184,7 @@ Only the lower triangle of the matrix is needed to create the site-pair output
 table, but this function automatically removes the upper triangle if present.
 The code checks and aligns the order or sites in the distance matrix and
 the predictor data to ensure they match, so a site column is required in both the
-}
-\section{predictor data and distance matrix. This is the only bioFormat in which the}{
+predictor data and distance matrix. This is the only bioFormat in which the
 environmental data MAY NOT be a raster stack.
 
 bioData = site-pair table; bioFormat = 4: with an already created site-pair
@@ -203,7 +202,6 @@ Therefore, the function will fail should a given site has more than one sets of
 coordinates associated with it, as well as multiple sites being given the
 exact same coordinates.
 }
-
 \examples{
 ## tabular data
 # start with the southwest data table
@@ -244,7 +242,7 @@ sppColumn="species", siteColumn="site", predData=envTab)
 #########table type 3
 ## It is possible to format a site-pair table by starting
 # with a pre-calculated matrix of biological distances
-dim(gdmDissim) #square pairwise distance matrix + 1 column for site IDs
+dim(gdmDissim) # pairwise distance matrix + 1 column for site IDs
 gdmDissim[1:5, 1:5]
 # now we can format the table:
 exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",

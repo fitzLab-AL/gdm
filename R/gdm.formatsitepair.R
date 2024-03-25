@@ -140,19 +140,19 @@
 #'
 #' bioData = site-by-species matrix; bioFormat = 1: assumes that the response
 #' data are provided with a site ID column (specified by siteCol) and, optionally,
-#'  two columns for the x & y coordinates of the sites. All remaining columns
-#'  contain the biological data, with a column for each biological entity (most
-#'  commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
-#'  environmental data (predData), x-y coordinates MUST be provided in bioData
-#'  to allow extraction of the environmental data at site locations. The x-y
-#'  coordinates will be intersected with the raster stack and, if the number of
-#'  unique cells intersected by the points is less than the number of unique site
-#'  IDs (i.e. multiple sites fall within a single cell), the function will use
-#'  the raster cell as the site ID and aggregate sites accordingly. Therefore,
-#'  model fitting will be sensitive to raster cell size. If the environmental
-#'  data are in tabular format, they should have the same number of sites
-#'  (i.e., same number of rows) as bioData. The x-y coordinate and site ID
-#'  columns must have the same names in bioData and predData.
+#' two columns for the x & y coordinates of the sites. All remaining columns
+#' contain the biological data, with a column for each biological entity (most
+#' commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
+#' environmental data (predData), x-y coordinates MUST be provided in bioData
+#' to allow extraction of the environmental data at site locations. The x-y
+#' coordinates will be intersected with the raster stack and, if the number of
+#' unique cells intersected by the points is less than the number of unique site
+#' IDs (i.e. multiple sites fall within a single cell), the function will use
+#' the raster cell as the site ID and aggregate sites accordingly. Therefore,
+#' model fitting will be sensitive to raster cell size. If the environmental
+#' data are in tabular format, they should have the same number of sites
+#' (i.e., same number of rows) as bioData. The x-y coordinate and site ID
+#' columns must have the same names in bioData and predData.
 #'
 #' bioData = x, y, species list (optionally a fourth column with abundance can
 #' be provided); bioFormat = 2: assumes a table of 3 or 4 columns, the first two
@@ -174,7 +174,7 @@
 #' table, but this function automatically removes the upper triangle if present.
 #' The code checks and aligns the order or sites in the distance matrix and
 #' the predictor data to ensure they match, so a site column is required in both the
-#' # predictor data and distance matrix. This is the only bioFormat in which the
+#' predictor data and distance matrix. This is the only bioFormat in which the
 #' environmental data MAY NOT be a raster stack.
 #'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
@@ -236,7 +236,7 @@
 #' #########table type 3
 #' ## It is possible to format a site-pair table by starting
 #' # with a pre-calculated matrix of biological distances
-#' dim(gdmDissim) #square pairwise distance matrix + 1 column for site IDs
+#' dim(gdmDissim) # pairwise distance matrix + 1 column for site IDs
 #' gdmDissim[1:5, 1:5]
 #' # now we can format the table:
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
@@ -401,8 +401,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       stop("Cannot weight by site richness when supplying the biological data
            as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
-      stop("Biological dissimilarity matrix must have the same number of rows
-           and columns. Does the matrix have a column for site IDs as required?")
+      stop("Check dimensions of the bioData object. Does the biological dissimilarity matrix have a column for site IDs as required?")
     }
   }
 
