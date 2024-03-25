@@ -27,5 +27,5 @@
 #' Pairwise Bray-Curtis dissimilarity calculated using the species
 #' occurrence data from the \code{\link[gdm]{southwest}} data set.
 #'
-#' @format A data frame with 94 rows and 94 columns:
+#' @format A data frame with 94 rows and 95 columns (extra column holds site IDs):
 "gdmDissim"
