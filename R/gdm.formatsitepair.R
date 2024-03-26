@@ -615,9 +615,6 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     predData <- unique(predData)
     ##orders the predData by site
     predData <- predData[order(predData[siteColumn][,1]),]
-    if(!is.numeric(predData[siteColumn][,1])){
-      stop("When using bioFormat=3, site IDs must be a number.")
-    }
 
     # now get all unique combinations of site-pairs, ordered to
     # match row order in eventual site-pair table (and order of sites in predData)
@@ -642,13 +639,15 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
 
     # extract bio distances and match ordering of predData
     holdSite <- bioData[,which(siteColumn %in% colnames(bioData))]
-    bioData.x <- rbind(c(9999, holdSite), bioData)
+    bioData.x <- rbind(c(9999,holdSite), bioData)
     distData <- list()
-    distData <- lapply(1:nrow(pairwiseSites), function(x,pws=pairwiseSites,bd=bioData.x){
-      data.frame(pws[x,], distance=bd[which(bd[,1]==pws[x,]$column),
-                                      which(colnames(bd)==pws[x,]$row)])})
+    for(cr in 1:nrow(pairwiseSites)){
+      distData[[cr]] <- data.frame(pairwiseSites[cr,], distance=bioData.x[which(bioData.x[,1]==pairwiseSites[cr,]$column),
+                                  which(bioData.x[1,]==pairwiseSites[cr,]$row)])
+    }
     distData <- do.call(rbind, distData) # correct order to match eventual site-pair table
     distData <- distData[order(distData$column),]$distance
+
     ########################################################################
     ##site pair table, already prepped
   }else if(bioFormat==4){
