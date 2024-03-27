@@ -273,21 +273,22 @@ being the x &amp; y coordinates of species records, the third (sppCol) being the
 name / identifier of the species observed at that location, and optionally a
 fourth column indicating a measure of abundance.  If an abundance column is
 not provided, presence-only data are assumed. In the case that a raster stack
-(a terra object SpatRaster) is provided for the
-environmental data (predData), the x-y coordinates will
-be intersected with the raster stack and, if the number of unique cells
-intersected by the points is less than the number of unique site IDs
-(i.e. multiple sites fall within a single cell), the function will use the
-raster cell as the site ID and aggregate sites accordingly. Therefore, model
-fitting will be sensitive to raster cell size.</p>
-<p>bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used
-when a site-site distance (dissimilarity) matrix has already been created.
-Only the lower triangle of the matrix is needed to create the site-pair output
-table, but this function automatically removes the upper triangle if present.
-The code checks and aligns the order or sites in the distance matrix and
-the predictor data to ensure they match, so a site column is required in both the
-predictor data and distance matrix. This is the only bioFormat in which the
-environmental data MAY NOT be a raster stack.</p>
+(a terra object SpatRaster) is provided for the environmental data (predData),
+the x-y coordinates will be intersected with the raster stack and, if the
+number of unique cells intersected by the points is less than the number of
+unique site IDs (i.e. multiple sites fall within a single cell), the function
+will use the raster cell as the site ID and aggregate sites accordingly.
+Therefore, model fitting will be sensitive to raster cell size.</p>
+<p>bioData = site-site distance (dissimilarity) matrix; bioFormat = 3. This option
+allows the use of an existing site-site distance (dissimilarity) matrix, such as
+genetic distance matrix calculated outside of the gdm package. Only the lower
+triangle of the matrix is required to create the site-pair table, but the
+function will automatically removes the upper triangle if present. The code
+checks and aligns the order of sites in the distance matrix and the predictor
+data to ensure they match. To do so, (1) a site column is required in both
+the distance matrix and the predictor data and (2) site IDs are required to
+be a number. This is the only bioFormat in which the environmental data MAY
+NOT be a raster stack.</p>
 <p>bioData = site-pair table; bioFormat = 4: with an already created site-pair
 table, this option allows the user to add one or more distance matrices (see
 distPreds above) to the existing site-pair table and/or sub-sample the
