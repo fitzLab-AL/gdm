@@ -173,10 +173,10 @@
 #' triangle of the matrix is required to create the site-pair table, but the
 #' function will automatically removes the upper triangle if present. The code
 #' checks and aligns the order of sites in the distance matrix and the predictor
-#' data to ensure they match, therefore (1) a site column is required in both
-#' the distance matrix and the predictor data, and (2) at present, site IDs must
-#' are required to be a number. This is the only bioFormat in which the
-#' environmental data MAY NOT be a raster stack.
+#' data to ensure they match. To do so, (1) a site column is required in both
+#' the distance matrix and the predictor data and (2) site IDs are required to
+#' be a number. This is the only bioFormat in which the environmental data MAY
+#' NOT be a raster stack.
 #'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
 #' table, this option allows the user to add one or more distance matrices (see
