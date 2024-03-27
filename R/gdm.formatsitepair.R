@@ -168,13 +168,15 @@
 #' Therefore, model fitting will be sensitive to raster cell size.
 #'
 #' bioData = site-site distance (dissimilarity) matrix; bioFormat = 3. This option
-#' allows the use of an existing site-site distance (dissimilarity) matrix.
-#' Only the lower triangle of the matrix is needed to create the site-pair output
-#' table, but this function automatically removes the upper triangle if present.
-#' The code checks and aligns the order of sites in the distance matrix and
-#' the predictor data to ensure they match, so (1) a site column is required in both
-#' and (2) site IDs must be a number. This is the only bioFormat in which the
-#' environmental data MAY NOT be a raster stack.
+#' allows the use of an existing site-site distance (dissimilarity) matrix, such as
+#' genetic distance matrix calculated outside of the gdm package. Only the lower
+#' triangle of the matrix is required to create the site-pair table, but the
+#' function will automatically removes the upper triangle if present. The code
+#' checks and aligns the order of sites in the distance matrix and the predictor
+#' data to ensure they match, therefore (1) a site column is required in both
+#' the distance matrix and the predictor data, and (2) site IDs must be a number.
+#' This is the only bioFormat in which the environmental data MAY NOT be a raster
+#' stack.
 #'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
 #' table, this option allows the user to add one or more distance matrices (see
@@ -611,43 +613,19 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ########################################################################
     ##species data as site-by-site distance matrix
   }else if(bioFormat==3){
-    # start with env data and order rows by site
+    holdSite <- bioData[, which(siteColumn %in% colnames(bioData))]
+    if(!is.numeric(holdSite)){
+      stop("Site IDs must be numeric when providing a site-by-site distance matrix (bioFormat=3).")
+    }
+    bioData <- bioData[, -which(siteColumn %in% colnames(bioData))]
+    orderedData <- as.matrix(as.dist(bioData[order(holdSite),
+                                             order(holdSite)]))
+    distData <- lower.tri(as.matrix(orderedData), diag = FALSE)
+    distData <- as.vector(orderedData[distData])
     predData <- unique(predData)
-    ##orders the predData by site
-    predData <- predData[order(predData[siteColumn][,1]),]
-
-    # now get all unique combinations of site-pairs, ordered to
-    # match row order in eventual site-pair table (and order of sites in predData)
-    siteCombs <- expand.grid(row=predData$site[order(predData$site)],
-                             column=predData$site[order(predData$site)])
-    siteCombs <- siteCombs[-which(siteCombs$row==siteCombs$column),2:1]
-
-    siteGrab <- unique(siteCombs[,1])
-    siteCombs.x <- NULL
-    for(s in 1:(length(siteGrab)-1)){
-      sss <- siteGrab[s]
-      if(s<2){
-      siteCombs.x[[s]] <- siteCombs[siteCombs$column==sss,]
-      } else {
-        siteCombs <- siteCombs[-c(which(siteCombs$row==siteGrab[s-1]),
-                                         which(siteCombs$column==siteGrab[s-1])),]
-        siteCombs.x[[s]] <- siteCombs[which(siteCombs$column==sss),]
-      }
-    }
-    # all unique combinations of site-pairs
-    pairwiseSites <- do.call(rbind, siteCombs.x)
-
-    # extract bio distances and match ordering of predData
-    holdSite <- bioData[,which(siteColumn %in% colnames(bioData))]
-    bioData.x <- rbind(c(9999,holdSite), bioData)
-    distData <- list()
-    for(cr in 1:nrow(pairwiseSites)){
-      distData[[cr]] <- data.frame(pairwiseSites[cr,], distance=bioData.x[which(bioData.x[,1]==pairwiseSites[cr,]$column),
-                                  which(bioData.x[1,]==pairwiseSites[cr,]$row)])
-    }
-    distData <- do.call(rbind, distData) # correct order to match eventual site-pair table
-    distData <- distData[order(distData$column),]$distance
-
+    hwap <- predData[siteColumn][, 1]
+    hwap <- order(hwap)
+    predData <- predData[order(holdSite), ]
     ########################################################################
     ##site pair table, already prepped
   }else if(bioFormat==4){
