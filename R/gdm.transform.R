@@ -96,11 +96,14 @@ gdm.transform <- function(model, data, filename = "", ...){
 
   # create XY rasters for prediction using geo
   if (.is_raster(data) && geo) {
-    nms <- names(data)
-    x <- terra::init(data, fun = "x")
-    y <- terra::init(data, fun = "y")
-    data <- c(x, y, data)
-    names(data) <- c("xCoord", "yCoord", nms)
+    x <- terra::init(data[[1]], fun = "x")
+    y <- terra::init(data[[1]], fun = "y")
+    # stack xy raster layers with input raster data
+    data <- c(
+      stats::setNames(x, "xCoord"),
+      stats::setNames(y, "yCoord"),
+      data
+    )
   }
 
   # create a general predict function to benefit from terra::predict function
