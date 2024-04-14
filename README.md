@@ -7,6 +7,7 @@
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
 [![Downloads](https://cranlogs.r-pkg.org/badges/gdm?color=blue)](https://CRAN.R-project.org/package=gdm)
+[![R-CMD-check](https://github.com/fitzLab-AL/gdm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fitzLab-AL/gdm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The `gdm` package provides functions to fit, plot, summarize, and apply
@@ -222,43 +223,27 @@ number more depending on how many predictors are included. See
 
 What if you already have a biological distance matrix because you are
 working with, say, genetic data? In that case, it is simple as changing
-the `bioFormat` argument **and also making sure the rows in your
-biological and environmental tables are in the same order**. Let’s have
-a quick look at `gdmDissim`, a pairwise biological distance matrix
-prodvided with the package:
+the `bioFormat` argument and providing that matrix as the `bioData`
+object to the `sitepairformat` function. However, in addition to the
+pairwise dissimilarity values, the object must include a column
+containing the site IDs. Let’s have a quick look at `gdmDissim`, a
+pairwise biological distance matrix provided with the package (note that
+the first column contains site IDs):
 
 ``` r
 # Biological distance matrix example
 dim(gdmDissim)
-#> [1] 94 94
+#> [1] 94 95
 gdmDissim[1:5, 1:5]
-#>          V1        V2        V3        V4        V5
-#> 1 0.0000000 0.8181818 1.0000000 0.5000000 0.7500000
-#> 2 0.8181818 0.0000000 0.9000000 0.7777778 0.6551724
-#> 3 1.0000000 0.9000000 0.0000000 1.0000000 0.5757576
-#> 4 0.5000000 0.7777778 1.0000000 0.0000000 0.9090909
-#> 5 0.7500000 0.6551724 0.5757576 0.9090909 0.0000000
+#>    site         1         2         3         4
+#> V1  881 0.0000000 0.4485981 0.7575758 0.8939394
+#> V2  882 0.4485981 0.0000000 0.5837563 0.8170732
+#> V3  883 0.7575758 0.5837563 0.0000000 0.4782609
+#> V4  884 0.8939394 0.8170732 0.4782609 0.0000000
+#> V5  885 0.9178082 0.8202247 0.5813953 0.4375000
 ```
 
-We first need to add a site ID column to `gdmDissim`. We already know
-the sites are in the correct order, so we do not check here, but you
-should confirm for your data.
-
-``` r
-# get the site column from sppTab
-site <- unique(sppTab$site)
-# bind to gdmDissim
-gdmDissim <- cbind(site, gdmDissim)
-gdmDissim[1:5, 1:5]
-#>   site        V1        V2        V3        V4
-#> 1 1066 0.0000000 0.8181818 1.0000000 0.5000000
-#> 2 1026 0.8181818 0.0000000 0.9000000 0.7777778
-#> 3 1025 1.0000000 0.9000000 0.0000000 1.0000000
-#> 4 1027 0.5000000 0.7777778 1.0000000 0.0000000
-#> 5 1047 0.7500000 0.6551724 0.5757576 0.9090909
-```
-
-Now we are ready to use `formatsitepair`:
+We can provide the `gdmDissim` object to `formatsitepair` as follows:
 
 ``` r
 gdmTab.dis <- formatsitepair(bioData=gdmDissim, 
@@ -429,7 +414,7 @@ summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Sun Mar 17 12:05:04 2024
+#> [1] Creation Date:  Wed Mar 27 10:15:19 2024
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -793,7 +778,7 @@ terra::plotRGB(pcaRast, r=1, g=2, b=3)
 
 <div class="figure">
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" alt="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities." width="100%" />
 <p class="caption">
 Predicted spatial variation in plant species composition. Colors
 represent gradients in species composition derived from transformed

@@ -73,10 +73,10 @@ names of the sites (therefore the matrix will not be square). The name of the
 column containing the site names should have the same name as that provided
 for the siteColumn argument. Site IDs are required here to ensure correct ordering
 of sites in the construction of the site-pair table. Note that the formatsitepair
-function will not accept only distances matrices as predictors
-(i.e., at least one predictor variable is required). If you wish to fit GDM
-using only distance matrices, provide one fake predictor (e.g., with all sites
-having the same value), plus site and coordinate columns if needed. The s1 and
+function will not accept distance matrices in the as the only predictors
+(i.e., at least one additional, non-distPreds predictor variable is required). If you wish to fit GDM
+using only distance matrices provided using distPreds, provide one fake predictor (e.g., with all sites
+having the same value), plus site and coordinate columns. The s1 and
 s2 columns for this fake variable can then be removed by hand before fitting the GDM.}
 
 \item{weightType}{Default = "equal". Defines the weighting for sites. Can be
@@ -170,13 +170,23 @@ being the x & y coordinates of species records, the third (sppCol) being the
 name / identifier of the species observed at that location, and optionally a
 fourth column indicating a measure of abundance.  If an abundance column is
 not provided, presence-only data are assumed. In the case that a raster stack
-(a terra object SpatRaster) is provided for the
-environmental data (predData), the x-y coordinates will
-be intersected with the raster stack and, if the number of unique cells
-intersected by the points is less than the number of unique site IDs
-(i.e. multiple sites fall within a single cell), the function will use the
-raster cell as the site ID and aggregate sites accordingly. Therefore, model
-fitting will be sensitive to raster cell size.
+(a terra object SpatRaster) is provided for the environmental data (predData),
+the x-y coordinates will be intersected with the raster stack and, if the
+number of unique cells intersected by the points is less than the number of
+unique site IDs (i.e. multiple sites fall within a single cell), the function
+will use the raster cell as the site ID and aggregate sites accordingly.
+Therefore, model fitting will be sensitive to raster cell size.
+
+bioData = site-site distance (dissimilarity) matrix; bioFormat = 3. This option
+allows the use of an existing site-site distance (dissimilarity) matrix, such as
+genetic distance matrix calculated outside of the gdm package. Only the lower
+triangle of the matrix is required to create the site-pair table, but the
+function will automatically removes the upper triangle if present. The code
+checks and aligns the order of sites in the distance matrix and the predictor
+data to ensure they match. To do so, (1) a site column is required in both
+the distance matrix and the predictor data and (2) site IDs are required to
+be a number. This is the only bioFormat in which the environmental data MAY
+NOT be a raster stack.
 
 bioData = site-pair table; bioFormat = 4: with an already created site-pair
 table, this option allows the user to add one or more distance matrices (see
@@ -233,14 +243,11 @@ sppColumn="species", siteColumn="site", predData=envTab)
 #########table type 3
 ## It is possible to format a site-pair table by starting
 # with a pre-calculated matrix of biological distances
-dim(gdmDissim) #square pairwise distance matrix
+dim(gdmDissim) # pairwise distance matrix + 1 column for site IDs
 gdmDissim[1:5, 1:5]
-# need to add a site ID column
-site <- unique(sppData$site)
-gdmDissim <- cbind(site, gdmDissim)
 # now we can format the table:
 exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
-predData=envTab, siteColumn="site")
+                            predData=envTab, siteColumn="site")
 
 #########table type 4
 ## adds a predictor matrix to an existing site-pair table, in this case,

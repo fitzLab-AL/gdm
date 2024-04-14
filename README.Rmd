@@ -117,7 +117,7 @@ A properly formatted site-pair table will have at least six columns (distance, w
 
 ### Formatting a site-pair table using a distance matrix.
 
-What if you already have a biological distance matrix because you are working with, say, genetic data? In that case, it is simple as changing the `bioFormat` argument **and also making sure the rows in your biological and environmental tables are in the same order**. Let's have a quick look at `gdmDissim`, a pairwise biological distance matrix prodvided with the package:
+What if you already have a biological distance matrix because you are working with, say, genetic data? In that case, it is simple as changing the `bioFormat` argument and providing that matrix as the `bioData` object to the `sitepairformat` function. However, in addition to the pairwise dissimilarity values, the object must include a column containing the site IDs. Let’s have a quick look at `gdmDissim`, a pairwise biological distance matrix provided with the package (note that the first column contains site IDs):
 
 ```{r}
 # Biological distance matrix example
@@ -125,17 +125,7 @@ dim(gdmDissim)
 gdmDissim[1:5, 1:5]
 ```
 
-We first need to add a site ID column to `gdmDissim`. We already know the sites are in the correct order, so we do not check here, but you should confirm for your data.
-
-```{r}
-# get the site column from sppTab
-site <- unique(sppTab$site)
-# bind to gdmDissim
-gdmDissim <- cbind(site, gdmDissim)
-gdmDissim[1:5, 1:5]
-```
-
-Now we are ready to use `formatsitepair`:
+We can provide the `gdmDissim` object to `formatsitepair` as follows:
 
 ```{r}
 gdmTab.dis <- formatsitepair(bioData=gdmDissim, 

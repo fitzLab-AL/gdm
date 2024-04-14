@@ -140,19 +140,19 @@
 #'
 #' bioData = site-by-species matrix; bioFormat = 1: assumes that the response
 #' data are provided with a site ID column (specified by siteCol) and, optionally,
-#'  two columns for the x & y coordinates of the sites. All remaining columns
-#'  contain the biological data, with a column for each biological entity (most
-#'  commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
-#'  environmental data (predData), x-y coordinates MUST be provided in bioData
-#'  to allow extraction of the environmental data at site locations. The x-y
-#'  coordinates will be intersected with the raster stack and, if the number of
-#'  unique cells intersected by the points is less than the number of unique site
-#'  IDs (i.e. multiple sites fall within a single cell), the function will use
-#'  the raster cell as the site ID and aggregate sites accordingly. Therefore,
-#'  model fitting will be sensitive to raster cell size. If the environmental
-#'  data are in tabular format, they should have the same number of sites
-#'  (i.e., same number of rows) as bioData. The x-y coordinate and site ID
-#'  columns must have the same names in bioData and predData.
+#' two columns for the x & y coordinates of the sites. All remaining columns
+#' contain the biological data, with a column for each biological entity (most
+#' commonly species). In the case that a raster stack (a terra object SpatRaster) is provided for the
+#' environmental data (predData), x-y coordinates MUST be provided in bioData
+#' to allow extraction of the environmental data at site locations. The x-y
+#' coordinates will be intersected with the raster stack and, if the number of
+#' unique cells intersected by the points is less than the number of unique site
+#' IDs (i.e. multiple sites fall within a single cell), the function will use
+#' the raster cell as the site ID and aggregate sites accordingly. Therefore,
+#' model fitting will be sensitive to raster cell size. If the environmental
+#' data are in tabular format, they should have the same number of sites
+#' (i.e., same number of rows) as bioData. The x-y coordinate and site ID
+#' columns must have the same names in bioData and predData.
 #'
 #' bioData = x, y, species list (optionally a fourth column with abundance can
 #' be provided); bioFormat = 2: assumes a table of 3 or 4 columns, the first two
@@ -160,22 +160,23 @@
 #' name / identifier of the species observed at that location, and optionally a
 #' fourth column indicating a measure of abundance.  If an abundance column is
 #' not provided, presence-only data are assumed. In the case that a raster stack
-#' (a terra object SpatRaster) is provided for the
-#' environmental data (predData), the x-y coordinates will
-#' be intersected with the raster stack and, if the number of unique cells
-#' intersected by the points is less than the number of unique site IDs
-#' (i.e. multiple sites fall within a single cell), the function will use the
-#' raster cell as the site ID and aggregate sites accordingly. Therefore, model
-#' fitting will be sensitive to raster cell size.
+#' (a terra object SpatRaster) is provided for the environmental data (predData),
+#' the x-y coordinates will be intersected with the raster stack and, if the
+#' number of unique cells intersected by the points is less than the number of
+#' unique site IDs (i.e. multiple sites fall within a single cell), the function
+#' will use the raster cell as the site ID and aggregate sites accordingly.
+#' Therefore, model fitting will be sensitive to raster cell size.
 #'
-#' bioData = site-site distance (dissimilarity) matrix; bioFormat = 3: is used
-#' when a site-site distance (dissimilarity) matrix has already been created.
-#' Only the lower triangle of the matrix is needed to create the site-pair output
-#' table, but this function automatically removes the upper triangle if present.
-#' The code checks and aligns the order or sites in the distance matrix and
-#' the predictor data to ensure they match, so a site column is required in both the
-#' # predictor data and distance matrix. This is the only bioFormat in which the
-#' environmental data MAY NOT be a raster stack.
+#' bioData = site-site distance (dissimilarity) matrix; bioFormat = 3. This option
+#' allows the use of an existing site-site distance (dissimilarity) matrix, such as
+#' genetic distance matrix calculated outside of the gdm package. Only the lower
+#' triangle of the matrix is required to create the site-pair table, but the
+#' function will automatically removes the upper triangle if present. The code
+#' checks and aligns the order of sites in the distance matrix and the predictor
+#' data to ensure they match. To do so, (1) a site column is required in both
+#' the distance matrix and the predictor data and (2) site IDs are required to
+#' be a number. This is the only bioFormat in which the environmental data MAY
+#' NOT be a raster stack.
 #'
 #' bioData = site-pair table; bioFormat = 4: with an already created site-pair
 #' table, this option allows the user to add one or more distance matrices (see
@@ -236,7 +237,7 @@
 #' #########table type 3
 #' ## It is possible to format a site-pair table by starting
 #' # with a pre-calculated matrix of biological distances
-#' dim(gdmDissim) #square pairwise distance matrix + 1 column for site IDs
+#' dim(gdmDissim) # pairwise distance matrix + 1 column for site IDs
 #' gdmDissim[1:5, 1:5]
 #' # now we can format the table:
 #' exFormat3 <- formatsitepair(gdmDissim, 3, XColumn="Long", YColumn="Lat",
@@ -401,8 +402,7 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
       stop("Cannot weight by site richness when supplying the biological data
            as a distance matrix.")
     }else if(nrow(bioData)!=(ncol(bioData)-1)){
-      stop("Biological dissimilarity matrix must have the same number of rows
-           and columns. Does the matrix have a column for site ID's as required?")
+      stop("Check dimensions of the bioData object. Does the biological dissimilarity matrix have a column for site IDs as required?")
     }
   }
 
@@ -613,43 +613,19 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     ########################################################################
     ##species data as site-by-site distance matrix
   }else if(bioFormat==3){
-    # start with env data and order rows by site
+    holdSite <- bioData[, which(siteColumn %in% colnames(bioData))]
+    if(!is.numeric(holdSite)){
+      stop("Site IDs must be numeric when providing a site-by-site distance matrix (bioFormat=3).")
+    }
+    bioData <- bioData[, -which(siteColumn %in% colnames(bioData))]
+    orderedData <- as.matrix(as.dist(bioData[order(holdSite),
+                                             order(holdSite)]))
+    distData <- lower.tri(as.matrix(orderedData), diag = FALSE)
+    distData <- as.vector(orderedData[distData])
     predData <- unique(predData)
-    ##orders the predData by site
-    predData <- predData[order(predData[siteColumn][,1]),]
-
-    # now get all unique combinations of site-pairs, ordered to
-    # match row order in eventual site-pair table (and order of sites in predData)
-    siteCombs <- expand.grid(row=predData$site[order(predData$site)],
-                             column=predData$site[order(predData$site)])
-    siteCombs <- siteCombs[-which(siteCombs$row==siteCombs$column),2:1]
-
-    siteGrab <- unique(siteCombs[,1])
-    siteCombs.x <- NULL
-    for(s in 1:(length(siteGrab)-1)){
-      sss <- siteGrab[s]
-      if(s<2){
-      siteCombs.x[[s]] <- siteCombs[siteCombs$column==sss,]
-      } else {
-        siteCombs <- siteCombs[-c(which(siteCombs$row==siteGrab[s-1]),
-                                         which(siteCombs$column==siteGrab[s-1])),]
-        siteCombs.x[[s]] <- siteCombs[which(siteCombs$column==sss),]
-      }
-    }
-    # all unique combinations of site-pairs
-    pairwiseSites <- do.call(rbind, siteCombs.x)
-
-    # extract bio distances and match ordering of predData
-    holdSite <- bioData[,which(siteColumn %in% colnames(bioData))]
-    bioData.x <- rbind(c(9999,holdSite), bioData)
-    distData <- list()
-    for(cr in 1:nrow(pairwiseSites)){
-      distData[[cr]] <- data.frame(pairwiseSites[cr,], distance=bioData.x[which(bioData.x[,1]==pairwiseSites[cr,]$column),
-                                  which(bioData.x[1,]==pairwiseSites[cr,]$row)])
-    }
-    distData <- do.call(rbind, distData) # correct order to match eventual site-pair table
-    distData <- distData[order(distData$column),]$distance
-
+    hwap <- predData[siteColumn][, 1]
+    hwap <- order(hwap)
+    predData <- predData[order(holdSite), ]
     ########################################################################
     ##site pair table, already prepped
   }else if(bioFormat==4){
