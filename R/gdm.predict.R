@@ -141,9 +141,9 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
     }
 
     # create XY rasters; data and predRasts must have the same XY
-    x <- terra::init(data, fun = "x")
-    y <- terra::init(data, fun = "y")
-    dummData <- terra::init(data[[1]], fun = 0L)
+    x <- terra::init(data[[1]], fun = "x")
+    y <- terra::init(data[[1]], fun = "y")
+    # dummData <- terra::init(data[[1]], fun = 0L)
 
     # sets the correct names to the data
     names(data) <- paste0("s1.", names(data))
@@ -151,8 +151,8 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
 
     # stack all the raster layers to for prediction
     data <- c(
-      stats::setNames(dummData, "distance"),
-      stats::setNames(dummData, "weights"),
+      # stats::setNames(dummData, "distance"),
+      # stats::setNames(dummData, "weights"),
       stats::setNames(x, "s1.xCoord"),
       stats::setNames(y, "s1.yCoord"),
       stats::setNames(x, "s2.xCoord"),
@@ -169,8 +169,15 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
     nr <- nrow(dat)
     predicted <- rep(0, times = nr)
 
+    # convert to matrix once
+    dat <- as.matrix(dat)
+    # add the constants
+    const <- matrix(0L, nrow = nr, ncol = 2)
+    colnames(const) <- c("distance", "weights")
+    dat <- cbind(const, dat)
+
     z <- .C( "GDM_PredictFromTable",
-             as.matrix(dat),
+             dat,
              as.integer(mod$geo),
              as.integer(length(mod$predictors)),
              as.integer(nr),
