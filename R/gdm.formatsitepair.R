@@ -627,7 +627,6 @@ formatsitepair <- function(bioData, bioFormat, dist="bray", abundance=FALSE,
     distData <- lower.tri(as.matrix(orderedData), diag = FALSE)
     # distData <- as.vector(orderedData[distData])
     distData <- as.vector(t(orderedData)[distData])
-  
     predData <- unique(predData)
     hwap <- predData[siteColumn][, 1]
     hwap <- order(hwap)
