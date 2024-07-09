@@ -69,7 +69,7 @@ gdm.single.crossvalidation=function(spTable_train,
 
   # and fit a gdm to the test data to get the null deviance
   test.mod <- gdm(GDM_Table_Testing[,c(1:6)],
-                       geo=TRUE)
+                       geo=geo)
 
   # reset the warnings
   options(warn = oldw)
