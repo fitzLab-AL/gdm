@@ -52,7 +52,7 @@ gdm.crossvalidation <- function(spTable,
 {
   ##checks to see if in site-pair format from formatsitepair function
   if(class(spTable)[1] != "gdmData"){
-    warning("spTable class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model will not fit.")
+    warning("spTable class does not include type 'gdmData'. Make sure your data is in site-pair format or the gdm model may not fit.")
   }
   ##checks to makes sure data is a matrix or data frame
   if(!(class(spTable)[1]=="gdmData" | class(spTable)[1]=="matrix" | class(spTable)[1]=="data.frame")){

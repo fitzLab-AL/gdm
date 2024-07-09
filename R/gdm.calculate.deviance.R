@@ -34,7 +34,7 @@ calculate.gdm.deviance <- function(predDiss, obsDiss){
       }# end else
     }# end else
     # accumulate the running sum
-    dTotal <- dTotal+(t1 + t2)
+    dTotal <- dTotal + (t1 + t2)
   }# end for i.row
   dTotal <- dTotal * 2
   return(dTotal)
