@@ -11,7 +11,7 @@ the sites randomly selected to be removed in both s1 and s2 positions."><!-- mat
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -39,20 +39,20 @@ the sites randomly selected to be removed in both s1 and s2 positions."><!-- mat
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Remove Sites at Random from a Site-Pair Table</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.subsample.sitepair.R" class="external-link"><code>R/gdm.subsample.sitepair.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.subsample.sitepair.R" class="external-link"><code>R/gdm.subsample.sitepair.R</code></a></small>
     <div class="hidden name"><code>subsample.sitepair.Rd</code></div>
     </div>
 
@@ -68,11 +68,13 @@ the sites randomly selected to be removed in both s1 and s2 positions.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>spTable</dt>
+
+
+<dl><dt id="arg-sptable">spTable<a class="anchor" aria-label="anchor" href="#arg-sptable"></a></dt>
 <dd><p>A site-pair table, same as used to fit a <code><a href="gdm.html">gdm</a></code>.</p></dd>
 
 
-<dt>sampleSites</dt>
+<dt id="arg-samplesites">sampleSites<a class="anchor" aria-label="anchor" href="#arg-samplesites"></a></dt>
 <dd><p>The fraction (0-1, though a value of 0 would be silly,
 wouldn't it?) of <em>sites to retain</em> from the full site-pair table. If
 less than 1, this argument will completely remove a fraction of sites such
@@ -81,9 +83,7 @@ that they are not used in the permutation routines.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A site-pair table, such as one created by <code><a href="formatsitepair.html">formatsitepair</a></code>,
+    <p>A site-pair table, such as one created by <code><a href="formatsitepair.html">formatsitepair</a></code>,
 ideally smaller than the one given. In the very rare case where the function
 determines not to remove any sites, or should the sampleSites argument be 1,
 then the function will return the full site-pair table.</p>
@@ -8711,15 +8711,15 @@ in the site-pair table.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

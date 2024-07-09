@@ -11,7 +11,7 @@ data frame or raster object containing predictor data for a set of sites."><!-- 
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -39,20 +39,20 @@ data frame or raster object containing predictor data for a set of sites."><!-- 
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Transform Environmental Data Using a Fitted Generalized Dissimilarity Model</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.transform.R" class="external-link"><code>R/gdm.transform.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.transform.R" class="external-link"><code>R/gdm.transform.R</code></a></small>
     <div class="hidden name"><code>gdm.transform.Rd</code></div>
     </div>
 
@@ -68,11 +68,13 @@ data frame or raster object containing predictor data for a set of sites.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>model</dt>
+
+
+<dl><dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
 <dd><p>A gdm model object resulting from a call to <code><a href="gdm.html">gdm</a></code>.</p></dd>
 
 
-<dt>data</dt>
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>Either (i) a data frame containing values for each predictor variable in the model, formatted as follows: X, Y, var1, var2, var3, ..., varN or
 (ii) a terra object SpatRaster with one layer per predictor variable used in the model,
 excluding X and Y (rasters for x- and y-coordinates are built automatically from the input
@@ -84,20 +86,18 @@ need to be removed from the data to be transformed.
 Output is provided in the same format as the input data.</p></dd>
 
 
-<dt>filename</dt>
+<dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>character. Output filename for rasters. When provided the raster layers are
 written to file directly.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments to pass to terra <code><a href="https://rspatial.github.io/terra/reference/predict.html" class="external-link">predict</a></code> function.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>gdm.transform returns either a data frame with the same number of rows as the input data frame or a SpatRaster,
+    <p>gdm.transform returns either a data frame with the same number of rows as the input data frame or a SpatRaster,
 depending on the format of the input data. If the model uses geographic distance as a predictor the output object
 will contain columns or layers for the transformed X and Y values for each site.
 The transformed environmental data will be in the remaining columns or layers.</p>
@@ -164,15 +164,15 @@ The transformed environmental data will be in the remaining columns or layers.</
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

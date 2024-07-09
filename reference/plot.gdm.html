@@ -10,7 +10,7 @@ dissimilarity model created using the gdm function."><!-- mathjax --><script src
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -38,20 +38,20 @@ dissimilarity model created using the gdm function."><!-- mathjax --><script src
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot Model Fit and I-splines from a Fitted Generalized Dissimilarity Model.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.plot.R" class="external-link"><code>R/gdm.plot.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.plot.R" class="external-link"><code>R/gdm.plot.R</code></a></small>
     <div class="hidden name"><code>plot.gdm.Rd</code></div>
     </div>
 
@@ -61,18 +61,20 @@ dissimilarity model created using the <code><a href="gdm.html">gdm</a></code> fu
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for gdm</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'gdm'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, plot.layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, plot.color <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>  plot.linewidth <span class="op">=</span> <span class="fl">2</span>, include.rug <span class="op">=</span> <span class="cn">FALSE</span>, rug.sitepair <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A gdm model object returned from <code><a href="gdm.html">gdm</a></code>.</p></dd>
 
 
-<dt>plot.layout</dt>
+<dt id="arg-plot-layout">plot.layout<a class="anchor" aria-label="anchor" href="#arg-plot-layout"></a></dt>
 <dd><p>This argument specifies the row and column layout for the
 plots, including: (1) a single page plot of observed response data against
 the raw linear predictor (ecological distance) from the model, and (2) a
@@ -86,37 +88,35 @@ of the I-spline plots for those predictors that featured in the model fitting
 process (i.e., predictors with all-zero I-spline coefficients are not plotted).</p></dd>
 
 
-<dt>plot.color</dt>
+<dt id="arg-plot-color">plot.color<a class="anchor" aria-label="anchor" href="#arg-plot-color"></a></dt>
 <dd><p>Color of the data points that are plotted for the overall plots.</p></dd>
 
 
-<dt>plot.linewidth</dt>
+<dt id="arg-plot-linewidth">plot.linewidth<a class="anchor" aria-label="anchor" href="#arg-plot-linewidth"></a></dt>
 <dd><p>The line width for the regression line over-plotted in
 the two overall plots to optimize the display of the line over the data points.</p></dd>
 
 
-<dt>include.rug</dt>
+<dt id="arg-include-rug">include.rug<a class="anchor" aria-label="anchor" href="#arg-include-rug"></a></dt>
 <dd><p>Whether or not to include a rug plot of the predictor
 values used to fit the gdm in the I-spline plots. When set to TRUE, a s
 ite-pair table must be supplied for the rug.sitepair argument. Default is FALSE.</p></dd>
 
 
-<dt>rug.sitepair</dt>
+<dt id="arg-rug-sitepair">rug.sitepair<a class="anchor" aria-label="anchor" href="#arg-rug-sitepair"></a></dt>
 <dd><p>A site-pair table used to add a rug plot of the predictor
 values used to fit the gdm in the I-spline plots. This should be the same
 site-pair table used to fit the gdm model being plotted. The function does
 not check whether the supplied site-pair table matches that used in model fitting.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Ignored.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>plot returns NULL. Use <code><a href="summary.gdm.html">summary.gdm</a></code> to obtain a
+    <p>plot returns NULL. Use <code><a href="summary.gdm.html">summary.gdm</a></code> to obtain a
 synopsis of the model object.</p>
     </div>
     <div id="references">
@@ -164,15 +164,15 @@ beta diversity in regional biodiversity assessment.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

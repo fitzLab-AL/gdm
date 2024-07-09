@@ -1,78 +1,28 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/404.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/calculate.gdm.deviance.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/createsitepair.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/formatsitepair.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm-package.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.crossvalidation.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.partition.deviance.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.single.crossvalidation.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.transform.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.varImp.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdmDissim.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/isplineExtract.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/permutateSitePair.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/plot.gdm.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/plotUncertainty.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/predict.gdm.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/southwest.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/subsample.sitepair.html</loc>
-  </url>
-  <url>
-    <loc>https://mfitzpatrick.al.umces.edu/gdm/reference/summary.gdm.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/404.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/LICENSE.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/authors.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/index.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/news/index.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/calculate.gdm.deviance.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/createsitepair.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/formatsitepair.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm-package.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.crossvalidation.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.partition.deviance.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.single.crossvalidation.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.transform.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdm.varImp.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/gdmDissim.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/index.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/isplineExtract.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/permutateSitePair.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/plot.gdm.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/plotUncertainty.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/predict.gdm.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/southwest.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/subsample.sitepair.html</loc></url>
+<url><loc>https://mfitzpatrick.al.umces.edu/gdm/reference/summary.gdm.html</loc></url>
 </urlset>
+

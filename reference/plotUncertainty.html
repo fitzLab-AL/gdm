@@ -17,7 +17,7 @@ x and y values containing the lower bound, full model, and upper bound."><!-- ma
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -45,20 +45,20 @@ x and y values containing the lower bound, full model, and upper bound."><!-- ma
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot I-splines With Error Bands Using Bootstrapping.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.plot.uncertainty.R" class="external-link"><code>R/gdm.plot.uncertainty.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.plot.uncertainty.R" class="external-link"><code>R/gdm.plot.uncertainty.R</code></a></small>
     <div class="hidden name"><code>plotUncertainty.Rd</code></div>
     </div>
 
@@ -83,74 +83,74 @@ x and y values containing the lower bound, full model, and upper bound.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>spTable</dt>
+
+
+<dl><dt id="arg-sptable">spTable<a class="anchor" aria-label="anchor" href="#arg-sptable"></a></dt>
 <dd><p>A site-pair table, same as used to fit a <code><a href="gdm.html">gdm</a></code>.</p></dd>
 
 
-<dt>sampleSites</dt>
+<dt id="arg-samplesites">sampleSites<a class="anchor" aria-label="anchor" href="#arg-samplesites"></a></dt>
 <dd><p>The fraction (0-1) of sites to retain from the full
 site-pair table when subsampling.</p></dd>
 
 
-<dt>bsIters</dt>
+<dt id="arg-bsiters">bsIters<a class="anchor" aria-label="anchor" href="#arg-bsiters"></a></dt>
 <dd><p>The number of bootstrap iterations to perform.</p></dd>
 
 
-<dt>geo</dt>
+<dt id="arg-geo">geo<a class="anchor" aria-label="anchor" href="#arg-geo"></a></dt>
 <dd><p>Same as the <code><a href="gdm.html">gdm</a></code> geo argument.</p></dd>
 
 
-<dt>splines</dt>
+<dt id="arg-splines">splines<a class="anchor" aria-label="anchor" href="#arg-splines"></a></dt>
 <dd><p>Same as the <code><a href="gdm.html">gdm</a></code> splines argument.</p></dd>
 
 
-<dt>knots</dt>
+<dt id="arg-knots">knots<a class="anchor" aria-label="anchor" href="#arg-knots"></a></dt>
 <dd><p>Same as the <code><a href="gdm.html">gdm</a></code> knots argument.</p></dd>
 
 
-<dt>splineCol</dt>
+<dt id="arg-splinecol">splineCol<a class="anchor" aria-label="anchor" href="#arg-splinecol"></a></dt>
 <dd><p>The color of the plotted mean spline. The default is "blue".</p></dd>
 
 
-<dt>errCol</dt>
+<dt id="arg-errcol">errCol<a class="anchor" aria-label="anchor" href="#arg-errcol"></a></dt>
 <dd><p>The color of shading for the error bands (+/- one standard
 deviation around the mean line). The default is "grey80".</p></dd>
 
 
-<dt>plot.linewidth</dt>
+<dt id="arg-plot-linewidth">plot.linewidth<a class="anchor" aria-label="anchor" href="#arg-plot-linewidth"></a></dt>
 <dd><p>The line width of the plotted mean spline line. The
 default is 2.</p></dd>
 
 
-<dt>plot.layout</dt>
+<dt id="arg-plot-layout">plot.layout<a class="anchor" aria-label="anchor" href="#arg-plot-layout"></a></dt>
 <dd><p>Same as the <code><a href="plot.gdm.html">plot.gdm</a></code> plot.layout argument.</p></dd>
 
 
-<dt>parallel</dt>
+<dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
 <dd><p>Perform the uncertainty assessment using multiple
 cores? Default = FALSE.</p></dd>
 
 
-<dt>cores</dt>
+<dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
 <dd><p>When the parallel argument is set to TRUE, the number of
 cores to be registered for the foreach loop. Must be &lt;= the number of cores
 in the machine running the function.</p></dd>
 
 
-<dt>save</dt>
+<dt id="arg-save">save<a class="anchor" aria-label="anchor" href="#arg-save"></a></dt>
 <dd><p>Save the function result (e.g., for custom plotting)? Default=FALSE.</p></dd>
 
 
-<dt>fileName</dt>
+<dt id="arg-filename">fileName<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>Name of the csv file to save the data frame that contains the function
 result. Default = gdm.plotUncertainy.csv. Ignored if save=FALSE.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>plotUncertainty returns NULL. Saves a csv to disk if save=TRUE.</p>
+    <p>plotUncertainty returns NULL. Saves a csv to disk if save=TRUE.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -197,15 +197,15 @@ ecological restoration. <em>Conservation Genetics</em> 16:1303-1317.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

@@ -16,7 +16,7 @@ cross-validation test metrics."><!-- mathjax --><script src="https://cdnjs.cloud
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -44,20 +44,20 @@ cross-validation test metrics."><!-- mathjax --><script src="https://cdnjs.cloud
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Cross-Validation Assessment of a Fitted GDM</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.crossvalidation.R" class="external-link"><code>R/gdm.crossvalidation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.crossvalidation.R" class="external-link"><code>R/gdm.crossvalidation.R</code></a></small>
     <div class="hidden name"><code>gdm.crossvalidation.Rd</code></div>
     </div>
 
@@ -79,42 +79,42 @@ cross-validation test metrics.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>spTable</dt>
+
+
+<dl><dt id="arg-sptable">spTable<a class="anchor" aria-label="anchor" href="#arg-sptable"></a></dt>
 <dd><p>(dataframe) A dataframe holding the GDM input table for model
 fitting.</p></dd>
 
 
-<dt>train.proportion</dt>
+<dt id="arg-train-proportion">train.proportion<a class="anchor" aria-label="anchor" href="#arg-train-proportion"></a></dt>
 <dd><p>(float) The proportion of sites in 'spTable' to use
 in training the GDM, with the remaining proportion used to test the model.
 (default = 0.9)</p></dd>
 
 
-<dt>n.crossvalid.tests</dt>
+<dt id="arg-n-crossvalid-tests">n.crossvalid.tests<a class="anchor" aria-label="anchor" href="#arg-n-crossvalid-tests"></a></dt>
 <dd><p>(integer) The number of cross-validation sets to
 use in testing the GDM. (default = 1)</p></dd>
 
 
-<dt>geo</dt>
+<dt id="arg-geo">geo<a class="anchor" aria-label="anchor" href="#arg-geo"></a></dt>
 <dd><p>(boolean) Geographic distance to be used in model fitting
 (default = FALSE).</p></dd>
 
 
-<dt>splines</dt>
+<dt id="arg-splines">splines<a class="anchor" aria-label="anchor" href="#arg-splines"></a></dt>
 <dd><p>(vector) An optional vector of the number of I-spline basis
 functions to be used for each predictor in fitting the model.</p></dd>
 
 
-<dt>knots</dt>
+<dt id="arg-knots">knots<a class="anchor" aria-label="anchor" href="#arg-knots"></a></dt>
 <dd><p>(vector) An optional vector of knots in units of the predictor
 variables to be used in the fitting process.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
+    <p>List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
 sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
 'Deviance.Explained' (the deviance explained for the training data);
 'Test.Deviance.Explained' (the deviance explained for the test data);
@@ -138,15 +138,15 @@ sitepair training table predicts the dissimilarities in the sitepair testing tab
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

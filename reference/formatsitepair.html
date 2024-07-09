@@ -5,23 +5,23 @@ for fitting a Generalized Dissimilarity Model using the gdm
 function. NOTE: x-y coordinates of sites MUST be present in either the
 biological or the environmental data. Site coordinates ideally should be in a
 projected coordinate system (i.e., not longitude-latitude) to ensure proper
-calculation of geographic distances. 
+calculation of geographic distances.
 The input biological data can be in one of the following four formats. Note
 that the general term "species" is used, but any classification of biological
 entities (e.g. functional types, haplotypes, etc) can be used as long as an
-appropriate distance metric is also supplied (see "dist" argument): 
+appropriate distance metric is also supplied (see "dist" argument):
 
-site-by-species matrix 
-x, y, species list 
-site-by-site biological distance (dissimilarity) matrix 
-an existing site-pair table (see Details) 
+site-by-species matrix
+x, y, species list
+site-by-site biological distance (dissimilarity) matrix
+an existing site-pair table (see Details)
 
 
-Predictor data can be provided in three formats: 
+Predictor data can be provided in three formats:
 
 a site-by-predictor matrix with a column for each predictor variable
-and a row for each site 
-a terra object SpatRaster, with one raster for each predictor variable 
+and a row for each site
+a terra object SpatRaster, with one raster for each predictor variable
 one or more site-by-site distance matrices using the "distPreds"
 argument (see below).
 
@@ -35,7 +35,7 @@ argument (see below).
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -63,20 +63,20 @@ argument (see below).
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Combines Biological and Environmental Data to Produce a GDM-formatted Site-Pair Table</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.formatsitepair.R" class="external-link"><code>R/gdm.formatsitepair.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.formatsitepair.R" class="external-link"><code>R/gdm.formatsitepair.R</code></a></small>
     <div class="hidden name"><code>formatsitepair.Rd</code></div>
     </div>
 
@@ -112,17 +112,19 @@ argument (see below).</p></li>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>bioData</dt>
+
+
+<dl><dt id="arg-biodata">bioData<a class="anchor" aria-label="anchor" href="#arg-biodata"></a></dt>
 <dd><p>The input biological (the response variable) data table, in
 one of the four formats defined above (see Details).</p></dd>
 
 
-<dt>bioFormat</dt>
+<dt id="arg-bioformat">bioFormat<a class="anchor" aria-label="anchor" href="#arg-bioformat"></a></dt>
 <dd><p>An integer code specifying the format of bioData. Acceptable
 values are 1, 2, 3, or 4 (see Details).</p></dd>
 
 
-<dt>dist</dt>
+<dt id="arg-dist">dist<a class="anchor" aria-label="anchor" href="#arg-dist"></a></dt>
 <dd><p>Default = "bray". A character code indicating the metric to
 quantify pairwise site distances / dissimilarities. Calls the
 <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code> function from the <span class="pkg">vegan</span> package to
@@ -130,19 +132,19 @@ calculate dissimilarity and therefore accepts any method available from
 <code><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></code>.</p></dd>
 
 
-<dt>abundance</dt>
+<dt id="arg-abundance">abundance<a class="anchor" aria-label="anchor" href="#arg-abundance"></a></dt>
 <dd><p>Default = FALSE. Indicates whether the biological data are
 abundance data (TRUE) or presence-absence (0, 1) data (FALSE).</p></dd>
 
 
-<dt>siteColumn</dt>
+<dt id="arg-sitecolumn">siteColumn<a class="anchor" aria-label="anchor" href="#arg-sitecolumn"></a></dt>
 <dd><p>The name of the column in either the biological or
 environmental data table containing a unique site identifier. If a site column
 is provided in both the biological and environmental data, the site column name
 must be the same in both tables.</p></dd>
 
 
-<dt>XColumn</dt>
+<dt id="arg-xcolumn">XColumn<a class="anchor" aria-label="anchor" href="#arg-xcolumn"></a></dt>
 <dd><p>The name of the column containing x-coordinates of sites.
 X-coordinates can be provided in either the biological or environmental data
 tables, but MUST be in at least one of them. If an x-coordinate column is
@@ -153,7 +155,7 @@ geographic distances. Note that if you are using rasters, they must be in the
 same coordinate system as the site coordinates.</p></dd>
 
 
-<dt>YColumn</dt>
+<dt id="arg-ycolumn">YColumn<a class="anchor" aria-label="anchor" href="#arg-ycolumn"></a></dt>
 <dd><p>The name of the column containing y-coordinates of sample sites.
 Y-coordinates can be provided in either the biological or environmental data
 tables, but MUST be in at least one of them. If a y-coordinate column is
@@ -164,19 +166,19 @@ geographic distances. Note that if you are using rasters, they must be in the
 same coordinate system as the site coordinates.</p></dd>
 
 
-<dt>sppColumn</dt>
+<dt id="arg-sppcolumn">sppColumn<a class="anchor" aria-label="anchor" href="#arg-sppcolumn"></a></dt>
 <dd><p>Only used if bioFormat = 2 (x, y, species list). The name of
 the column containing unique name / identifier for each species.</p></dd>
 
 
-<dt>abundColumn</dt>
+<dt id="arg-abundcolumn">abundColumn<a class="anchor" aria-label="anchor" href="#arg-abundcolumn"></a></dt>
 <dd><p>If abundance = TRUE, this parameter identifies the column
 containing the measure of abundance at each site. Only used if bioFormat = 2
 (i.e., x, y, species list), though in the case of abundance data, the table
 would have four columns: x, y, species, abundance.</p></dd>
 
 
-<dt>sppFilter</dt>
+<dt id="arg-sppfilter">sppFilter<a class="anchor" aria-label="anchor" href="#arg-sppfilter"></a></dt>
 <dd><p>Default = 0. To account for limited sampling effort at some
 sites, sppFilter removes all sites at which the number of recorded species
 (i.e., observed species richness) is less than the specified value. For
@@ -184,12 +186,12 @@ example, if sppFilter = 5, all sites with fewer than 5 recorded species
 will be removed.</p></dd>
 
 
-<dt>predData</dt>
+<dt id="arg-preddata">predData<a class="anchor" aria-label="anchor" href="#arg-preddata"></a></dt>
 <dd><p>The environmental predictor data. Accepts either a
 site-by-predictor table or a terra object SpatRaster.</p></dd>
 
 
-<dt>distPreds</dt>
+<dt id="arg-distpreds">distPreds<a class="anchor" aria-label="anchor" href="#arg-distpreds"></a></dt>
 <dd><p>An optional list of distance matrices to be used as predictors
 in combination with predData. For example, a site-by-site dissimilarity matrix
 for one biological group (e.g., trees) can be used as a predictor for another
@@ -205,7 +207,7 @@ having the same value), plus site and coordinate columns. The s1 and
 s2 columns for this fake variable can then be removed by hand before fitting the GDM.</p></dd>
 
 
-<dt>weightType</dt>
+<dt id="arg-weighttype">weightType<a class="anchor" aria-label="anchor" href="#arg-weighttype"></a></dt>
 <dd><p>Default = "equal". Defines the weighting for sites. Can be
 either: (1) "equal" (weights for all sites set = 1), (2) "richness" (each
 site weighted according to number of species recorded), or (3) "custom"
@@ -215,7 +217,7 @@ before species filtering (sppFilter argument) or sub-sampling is taken into
 account (sampleSites argument)).</p></dd>
 
 
-<dt>custWeights</dt>
+<dt id="arg-custweights">custWeights<a class="anchor" aria-label="anchor" href="#arg-custweights"></a></dt>
 <dd><p>A two column matrix or data frame of user-defined site
 weights. The first column should be the site name and should be named the same
 as that provided for the siteColumn argument. The second column should be numeric
@@ -225,23 +227,21 @@ site-pair table is an average of the two sites in each site-pair. Required
 when weightType = "custom". Ignored otherwise.</p></dd>
 
 
-<dt>sampleSites</dt>
+<dt id="arg-samplesites">sampleSites<a class="anchor" aria-label="anchor" href="#arg-samplesites"></a></dt>
 <dd><p>Default = 1. A number between 0-1 indicating the fraction
 of sites to be used to construct the site-pair table. This argument can be
 used to reduce the number of sites to overcome possible memory limitations
 when fitting models with very large numbers of sites.</p></dd>
 
 
-<dt>verbose</dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Default = FALSE. If TRUE, summary of information regarding
 dimensions of the site-pair table will be printed that can be useful for diagnostics.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A formatted site-pair table containing the response (biological
+    <p>A formatted site-pair table containing the response (biological
 distance or dissimilarity), predictors, and weights as required for fitting
 Generalized Dissimilarity Models.</p>
     </div>
@@ -393,15 +393,15 @@ exact same coordinates.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

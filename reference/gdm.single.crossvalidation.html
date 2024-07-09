@@ -10,7 +10,7 @@ training and testing dataset."><!-- mathjax --><script src="https://cdnjs.cloudf
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -38,20 +38,20 @@ training and testing dataset."><!-- mathjax --><script src="https://cdnjs.cloudf
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Single GDM Cross-Validation Test, Internal Function</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.single.crossvalidation.R" class="external-link"><code>R/gdm.single.crossvalidation.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.single.crossvalidation.R" class="external-link"><code>R/gdm.single.crossvalidation.R</code></a></small>
     <div class="hidden name"><code>gdm.single.crossvalidation.Rd</code></div>
     </div>
 
@@ -67,37 +67,37 @@ training and testing dataset.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>spTable_train</dt>
+
+
+<dl><dt id="arg-sptable-train">spTable_train<a class="anchor" aria-label="anchor" href="#arg-sptable-train"></a></dt>
 <dd><p>(dataframe) A dataframe holding the GDM input table for
 model fitting.</p></dd>
 
 
-<dt>spTable_test</dt>
+<dt id="arg-sptable-test">spTable_test<a class="anchor" aria-label="anchor" href="#arg-sptable-test"></a></dt>
 <dd><p>(dataframe) A dataframe holding the GDM input table for
 model testing, having identical column names to 'spTable_train' but using
 different site-pairs.</p></dd>
 
 
-<dt>geo</dt>
+<dt id="arg-geo">geo<a class="anchor" aria-label="anchor" href="#arg-geo"></a></dt>
 <dd><p>(boolean) Geographic distance to be used in model fitting
 (default = FALSE).</p></dd>
 
 
-<dt>splines</dt>
+<dt id="arg-splines">splines<a class="anchor" aria-label="anchor" href="#arg-splines"></a></dt>
 <dd><p>(vector) An optional vector of the number of I-spline basis
 functions to be used for each predictor in fitting the model.</p></dd>
 
 
-<dt>knots</dt>
+<dt id="arg-knots">knots<a class="anchor" aria-label="anchor" href="#arg-knots"></a></dt>
 <dd><p>(vector) An optional vector of knots in units of the predictor
 variables to be used in the fitting process.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>List, providing cross-validation statistics. These are metrics that
+    <p>List, providing cross-validation statistics. These are metrics that
 describe how well the model fit using the sitepair training table predicts
 the dissimilarities in the sitepair testing table. Metrics provided include:
 'Deviance.Explained' (the deviance explained for the training data);
@@ -122,15 +122,15 @@ the dissimilarities in the sitepair testing table. Metrics provided include:
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

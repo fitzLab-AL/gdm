@@ -16,7 +16,7 @@ layer for each environmental predictor in the fitted model."><!-- mathjax --><sc
 
   gtag('config', 'UA-44767849-4');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -44,20 +44,20 @@ layer for each environmental predictor in the fitted model."><!-- mathjax --><sc
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/fitzLab-AL/gdm/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Predict Biological Dissimilarities Between Sites or Times Using a Fitted Generalized Dissimilarity Model</h1>
-    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/HEAD/R/gdm.predict.R" class="external-link"><code>R/gdm.predict.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/fitzLab-AL/gdm/blob/master/R/gdm.predict.R" class="external-link"><code>R/gdm.predict.R</code></a></small>
     <div class="hidden name"><code>predict.gdm.Rd</code></div>
     </div>
 
@@ -73,17 +73,19 @@ layer for each environmental predictor in the fitted model.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for gdm</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'gdm'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">data</span>, time<span class="op">=</span><span class="cn">FALSE</span>, predRasts<span class="op">=</span><span class="cn">NULL</span>, filename<span class="op">=</span><span class="st">""</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>object</dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>A gdm model object resulting from a call to <code><a href="gdm.html">gdm</a></code>.</p></dd>
 
 
-<dt>data</dt>
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>Either a data frame containing the values of predictors for pairs
 of sites, in the same format and structure as used to fit the model using
 <code><a href="gdm.html">gdm</a></code> or a raster stack if a prediction of biological change
@@ -103,30 +105,28 @@ layer for each environmental predictor in the same order as the columns in
 the site-pair table used to fit the model.</p></dd>
 
 
-<dt>time</dt>
+<dt id="arg-time">time<a class="anchor" aria-label="anchor" href="#arg-time"></a></dt>
 <dd><p>TRUE/FALSE: Is the model prediction for biological change through time?</p></dd>
 
 
-<dt>predRasts</dt>
+<dt id="arg-predrasts">predRasts<a class="anchor" aria-label="anchor" href="#arg-predrasts"></a></dt>
 <dd><p>A raster stack characterizing environmental conditions for a
 different time in the past or future, with the same extent, resolution, and
 layer order as the data object. Required only if time=T.</p></dd>
 
 
-<dt>filename</dt>
+<dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>character. Output filename for rasters. When provided the raster layers are
 written to file directly.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments to pass to terra <code><a href="https://rspatial.github.io/terra/reference/predict.html" class="external-link">predict</a></code> function.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>predict returns either a response vector with the same length as the
+    <p>predict returns either a response vector with the same length as the
 number of rows in the input data frame or a raster depicting change through time across the study region.</p>
     </div>
     <div id="see-also">
@@ -180,15 +180,15 @@ number of rows in the input data frame or a raster depicting change through time
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
