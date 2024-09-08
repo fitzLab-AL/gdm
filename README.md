@@ -414,7 +414,7 @@ summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Sun Sep  8 19:16:27 2024
+#> [1] Creation Date:  Sun Sep  8 23:57:50 2024
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -680,7 +680,7 @@ create some fake future climate rasters to use as example data.
 
 ``` r
 # fit a new gdm using a table with climate data only (to match rasters)
-gdm.rast <- gdm(gdmTab.rast, geo=T)
+gdm.rast <- gdm(gdmTab.rast, geo=TRUE)
 
 # make some fake climate change data
 futRasts <- swBioclims
@@ -696,7 +696,7 @@ expected magnitude of change in vegetation composition, which can be
 interpreted as a biologically-scaled metric of climate stress.
 
 ``` r
-timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)
+timePred <- predict(gdm.rast, swBioclims, time=TRUE, predRasts=futRasts)
 terra::plot(timePred, col=rgb.tables(1000))
 ```
 

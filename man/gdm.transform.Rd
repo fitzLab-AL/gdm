@@ -56,17 +56,14 @@ gdmRastMod <- gdm(sitePairRast, geo=TRUE)
 ##raster input, raster output
 transRasts <- gdm.transform(gdmRastMod, envRast)
 
-# map biological patterns
-rastDat <- terra::spatSample(transRasts, 10000, na.rm = TRUE)
-pcaSamp <- prcomp(rastDat)
+# map biological patterns; increase maxcell if using large rasters
+pcaSamp <- terra::prcomp(transRasts, maxcell = 1e4)
 
 # note the use of the 'index' argument
 pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
-# scale rasters
-pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
+# stretch the PCA rasters to make full use of the colour spectrum
+pcaRast <- terra::stretch(pcaRast)
 
 terra::plotRGB(pcaRast, r=1, g=2, b=3)
 

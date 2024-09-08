@@ -140,23 +140,12 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
       }
     }
 
-    # create XY rasters; data and predRasts must have the same XY
-    x <- terra::init(data[[1]], fun = "x")
-    y <- terra::init(data[[1]], fun = "y")
-    # dummData <- terra::init(data[[1]], fun = 0L)
-
     # sets the correct names to the data
     names(data) <- paste0("s1.", names(data))
     names(predRasts) <- paste0("s2.", names(predRasts))
 
     # stack all the raster layers to for prediction
     data <- c(
-      # stats::setNames(dummData, "distance"),
-      # stats::setNames(dummData, "weights"),
-      # stats::setNames(x, "s1.xCoord"),
-      # stats::setNames(y, "s1.yCoord"),
-      # stats::setNames(x, "s2.xCoord"),
-      # stats::setNames(y, "s2.yCoord"),
       data,
       predRasts
     )
@@ -171,7 +160,7 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
 
     # convert to matrix once
     dat <- as.matrix(dat)
-    # # add the constants
+    # if predicting with rasters get xy from interpolate and add constants
     if (raster) {
       const <- matrix(0L, nrow = nr, ncol = 2)
       colnames(const) <- c("distance", "weights")
@@ -199,7 +188,7 @@ predict.gdm <- function(object, data, time=FALSE, predRasts=NULL, filename="", .
   # if a time prediction, maps the predicted values to a raster and returns
   # the layer, otherwise returns a dataframe of the predicted values
   if (time) {
-    # predict using gdm model and terra package
+    # predict using gdm model and terra package using terra::interpolate to get xy too
     output <- terra::interpolate(
       object = data,
       model = object,

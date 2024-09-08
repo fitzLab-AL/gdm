@@ -278,7 +278,7 @@ First we fit a new model using only the climate variables and then create some f
 
 ```{r}
 # fit a new gdm using a table with climate data only (to match rasters)
-gdm.rast <- gdm(gdmTab.rast, geo=T)
+gdm.rast <- gdm(gdmTab.rast, geo=TRUE)
 
 # make some fake climate change data
 futRasts <- swBioclims
@@ -295,7 +295,7 @@ library(colorRamps)
 ```
 
 ```{r predictTimeGDM, warning=FALSE, message=FALSE, fig.height=4, fig.width=4, fig.cap="Predicted magnitude of biological change through time"}
-timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)
+timePred <- predict(gdm.rast, swBioclims, time=TRUE, predRasts=futRasts)
 terra::plot(timePred, col=rgb.tables(1000))
 ```
 
