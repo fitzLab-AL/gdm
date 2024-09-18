@@ -42,11 +42,11 @@ gdm: Generalized Dissimilarity Modeling. R package version 1.5.
 # New update of v1.6
 
 The `gdm` package has been updated to leverage the
-[`terra`](https://cran.r-project.org/web/packages/terra/index.html)
+[`terra`](https://cran.r-project.org/package=terra)
 package as its raster processing engine, leading to faster raster file
 processing. Preferably, inputs should be provided as `SpatRaster`
 objects, or any convertible object to `terra`, such as
-[`raster`](https://cran.r-project.org/web/packages/raster/index.html)
+[`raster`](https://cran.r-project.org/package=raster)
 package objects or [`stars`](https://cran.r-project.org/package=stars)
 objects.
 

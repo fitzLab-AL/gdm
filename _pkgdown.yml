@@ -3,3 +3,4 @@ url: https://mfitzpatrick.al.umces.edu/gdm/
 template:
   params:
     ganalytics: UA-44767849-4
+  bootstrap: 5
