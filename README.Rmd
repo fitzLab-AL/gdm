@@ -49,7 +49,7 @@ Fitzpatrick MC, Mokany K, Manion G, Nieto-Lugilde D, Ferrier S. (2021) gdm: Gene
 
 # New update of v1.6
 
-The `gdm` package has been updated to leverage the [`terra`](https://cran.r-project.org/web/packages/terra/index.html) package as its raster processing engine, leading to faster raster file processing. Preferably, inputs should be provided as `SpatRaster` objects, or any convertible object to `terra`, such as [`raster`](https://cran.r-project.org/web/packages/raster/index.html) package objects or [`stars`](https://cran.r-project.org/package=stars) objects.
+The `gdm` package has been updated to leverage the [`terra`](https://cran.r-project.org/package=terra) package as its raster processing engine, leading to faster raster file processing. Preferably, inputs should be provided as `SpatRaster` objects, or any convertible object to `terra`, such as [`raster`](https://cran.r-project.org/package=raster) package objects or [`stars`](https://cran.r-project.org/package=stars) objects.
 
 With the transition to `terra`, the `gdm` package is now capable of efficiently handling very large raster files, thanks to the underlying `terra` functionalities. Memory management is handled automatically by `terra`, but in the event of encountering out-of-memory errors, you can utilize `terra::terraOptions(steps = ...)` to increase the number of processing steps for large files.
 
