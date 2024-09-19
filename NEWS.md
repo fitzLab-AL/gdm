@@ -1,6 +1,6 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
-# gdm 1.6.0-1
+# gdm 1.6.0-2
 * Minor update to address new CRAN C++11 requirements.
 
 # gdm 1.6.0
