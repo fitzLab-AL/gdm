@@ -1,8 +1,8 @@
 #' @title Cross-Validation Assessment of a Fitted GDM
 #'
 #' @description Undertake a cross-validation assessment of a GDM fit using all
-#' the predictors included in the formated GDM input table (spTable). The
-#' cross-validation is run using a specified proportion (train.proportion) of
+#' the predictors included in the formatted GDM input site-pair table (spTable).
+#' The cross-validation is run using a specified proportion (train.proportion) of
 #' the randomly selected sites included in spTable to train the model, with the
 #' remaining sites being used to test the performance of the model predictions.
 #' The test is repeated a specified number of times (n.crossvalid.tests), with
@@ -32,15 +32,15 @@
 #' variables to be used in the fitting process.
 #'
 #' @return List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
-#' sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
-#' 'Deviance.Explained' (the deviance explained for the training data);
+#' sitepair training table predicts the dissimilarities in the site-pair testing table. Metrics provided include:
+#' 'Train.Deviance.Explained' (the deviance explained for the training data);
 #' 'Test.Deviance.Explained' (the deviance explained for the test data);
 #' 'Mean.Error';
 #' 'Mean.Absolute.Error';
-#' 'Root.Mean.Squre.Error';
+#' 'Root.Mean.Square.Error';
 #' 'Obs.Pred.Correlation' (Pearson's correlation coefficient between observed and predicted values);
-#' 'Equalised.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimialrity units));
-#' 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
+#' 'Equalized.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimilarity units));
+#' 'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimilarity units)).
 #'
 #'@export
 gdm.crossvalidation <- function(spTable,
@@ -99,7 +99,8 @@ gdm.crossvalidation <- function(spTable,
     }
 
   # Set up the catcher for the cross-validation outputs
-  Deviance.Explained <- NULL
+  Train.Deviance.Explained <- NULL
+  Test.Deviance.Explained <- NULL
   Mean.Error <- NULL
   Mean.Absolute.Error <- NULL
   Root.Mean.Squre.Error <- NULL
@@ -136,7 +137,8 @@ gdm.crossvalidation <- function(spTable,
                                                    splines=splines,
                                                    knots=knots)
     # Catch the outputs
-    Deviance.Explained <- c(Deviance.Explained, cv.test.out$Test.Deviance.Explained)
+    Train.Deviance.Explained <- c(Train.Deviance.Explained, cv.test.out$Deviance.Explained)
+    Test.Deviance.Explained <- c(Test.Deviance.Explained, cv.test.out$Test.Deviance.Explained)
     Mean.Error <- c(Mean.Error, cv.test.out$Mean.Error)
     Mean.Absolute.Error <- c(Mean.Absolute.Error, cv.test.out$Mean.Absolute.Error)
     Root.Mean.Squre.Error <- c(Root.Mean.Squre.Error, cv.test.out$Root.Mean.Squre.Error)
@@ -158,14 +160,16 @@ gdm.crossvalidation <- function(spTable,
 
   # Now generate outputs for the cross-validation
   # write the outputs of the function
-  list(Deviance.Explained = mean(Deviance.Explained),
+  list(Train.Deviance.Explained = mean(na.omit(Train.Deviance.Explained)),
+       Test.Deviance.Explained = mean(na.omit(Test.Deviance.Explained)),
        Mean.Error = mean(Mean.Error),
        Mean.Absolute.Error = mean(Mean.Absolute.Error),
        Root.Mean.Squre.Error = mean(Root.Mean.Squre.Error),
        Obs.Pred.Correlation = mean(Obs.Pred.Correlation),
        Equalised.RMSE = mean(Equalised.RMSE),
        Error.by.Observed.Value = Error.by.Observed.Value,
-       Full.Crossvalidation.Stats = list(Deviance.Explained = Deviance.Explained,
+       Full.Crossvalidation.Stats = list(Train.Deviance.Explained = Train.Deviance.Explained,
+                                         Test.Deviance.Explained = Test.Deviance.Explained,
                                          Mean.Error = Mean.Error,
                                          Mean.Absolute.Error = Mean.Absolute.Error,
                                          Root.Mean.Squre.Error = Root.Mean.Squre.Error,

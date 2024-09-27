@@ -63,20 +63,28 @@ gdm.single.crossvalidation=function(spTable_train,
                         knots=knots)
 
   # now predict the dissimilarity for the test sites (pairs)
-#NOTE - have to use predict.gdm for testing. Not sure this is appropriate or viable for package function
-  pred.test <- predict(train.mod,
-                            GDM_Table_Testing)
+  pred.test <- predict(train.mod, GDM_Table_Testing)
 
   # and fit a gdm to the test data to get the null deviance
   test.mod <- gdm(GDM_Table_Testing[,c(1:6)],
-                       geo=geo)
+                       geo=TRUE)
 
   # reset the warnings
   options(warn = oldw)
 
+  if(!is.null(test.mod)){
   # Calculate deviance explained for the test data
-  test.data.gdm.deviance <- calculate.gdm.deviance(pred.test, GDM_Table_Testing$distance)
+  test.data.gdm.deviance <- calculate.gdm.deviance(predDiss=pred.test,
+                                                   obsDiss=GDM_Table_Testing$distance)
   test.D2 <- ((test.mod$nulldeviance - test.data.gdm.deviance) / test.mod$nulldeviance)*100
+
+  # if the deviance explained is negative, set it to zero
+  if(test.D2 < 0){
+    test.D2 <- 0
+  }
+  }else{
+    test.D2 <- NA
+  }
 
   # calculate an array of test statistics using observed & predicted dissimilarities in the
   # testing data
