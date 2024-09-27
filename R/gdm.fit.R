@@ -188,7 +188,7 @@ gdm <- function (data, geo=FALSE, splines=NULL, knots=NULL){
 
   ##checks to make sure at least one predictor is available
   if(nPreds < 1){
-    stop("Data has no predictor varaibles.")
+    stop("Data has no predictor variables.")
   }
 
   ##setup the predictor name list, and removes the "s1." and "s2." to make resulting names more intuitive
