@@ -54,17 +54,14 @@
 #' ##raster input, raster output
 #' transRasts <- gdm.transform(gdmRastMod, envRast)
 #'
-#' # map biological patterns
-#' rastDat <- terra::spatSample(transRasts, 10000, na.rm = TRUE)
-#' pcaSamp <- prcomp(rastDat)
+#' # map biological patterns; increase maxcell if using large rasters
+#' pcaSamp <- terra::prcomp(transRasts, maxcell = 1e4)
 #'
 #' # note the use of the 'index' argument
 #' pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 #'
-#' # scale rasters
-#' pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
-#' pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
-#' pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
+#' # stretch the PCA rasters to make full use of the colour spectrum
+#' pcaRast <- terra::stretch(pcaRast)
 #'
 #' terra::plotRGB(pcaRast, r=1, g=2, b=3)
 #'
@@ -94,24 +91,13 @@ gdm.transform <- function(model, data, filename = "", ...){
   # checks rather geo was T or F in the model object
   geo <- model$geo
 
-  # create XY rasters for prediction using geo
-  if (.is_raster(data) && geo) {
-    x <- terra::init(data[[1]], fun = "x")
-    y <- terra::init(data[[1]], fun = "y")
-    # stack xy raster layers with input raster data
-    data <- c(
-      stats::setNames(x, "xCoord"),
-      stats::setNames(y, "yCoord"),
-      data
-    )
-  }
-
   # create a general predict function to benefit from terra::predict function
   # does this need xy min and max?
   gdm_trans <- function(mod, dat, ...){
 
     nr <- nrow(dat)
     nc <- ncol(dat)
+    nm <- colnames(dat)
 
     z <- .C( "GDM_TransformFromTable",
              as.integer(nr),
@@ -126,6 +112,7 @@ gdm.transform <- function(model, data, filename = "", ...){
              PACKAGE = "gdm")
 
     transformed <- matrix(z$trandata, nrow = nr, byrow = FALSE)
+    colnames(transformed) <- nm
 
     return(
       transformed
@@ -136,14 +123,27 @@ gdm.transform <- function(model, data, filename = "", ...){
   # produce outputs
   if (.is_raster(data)) {
     # transform the env data using gdm model and terra package
-    output <- terra::predict(
-      object = data,
-      model = model,
-      fun = gdm_trans,
-      na.rm = TRUE,
-      filename = filename,
-      ...
-    )
+    # if geo, use interpolate to get xy; otherwise use predict without xy
+    if (geo) {
+      output <- terra::interpolate(
+        object = data,
+        model = model,
+        fun = gdm_trans,
+        xyNames = c("xCoord", "yCoord"),
+        na.rm = TRUE,
+        filename = filename,
+        ...
+      )
+    } else {
+      output <- terra::predict(
+        object = data,
+        model = model,
+        fun = gdm_trans,
+        na.rm = TRUE,
+        filename = filename,
+        ...
+      )
+    }
 
     # get the predictors with non-zero sum of coefficients
     splineindex <- 1

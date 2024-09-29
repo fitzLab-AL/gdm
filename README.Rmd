@@ -207,6 +207,7 @@ Here we fit GDM with geo=T and default settings for all other parameters.
 
 ```{r fitGDM, warning=FALSE, message=FALSE}
 gdm.1 <- gdm(data=gdmTab, geo=TRUE)
+
 ```
 
 The `summary` function provides an overview of the model, the most important items to note are:
@@ -277,7 +278,7 @@ First we fit a new model using only the climate variables and then create some f
 
 ```{r}
 # fit a new gdm using a table with climate data only (to match rasters)
-gdm.rast <- gdm(gdmTab.rast, geo=T)
+gdm.rast <- gdm(gdmTab.rast, geo=TRUE)
 
 # make some fake climate change data
 futRasts <- swBioclims
@@ -294,7 +295,7 @@ library(colorRamps)
 ```
 
 ```{r predictTimeGDM, warning=FALSE, message=FALSE, fig.height=4, fig.width=4, fig.cap="Predicted magnitude of biological change through time"}
-timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)
+timePred <- predict(gdm.rast, swBioclims, time=TRUE, predRasts=futRasts)
 terra::plot(timePred, col=rgb.tables(1000))
 ```
 
@@ -322,23 +323,15 @@ Site-pair based biological distances are difficult to visualize. However, if the
 
 ```{r, warning=FALSE, message=FALSE, fig.height=3, fig.width=3, fig.cap="Predicted spatial variation in plant species composition. Colors represent gradients in species composition derived from transformed environmental predictors. Locations with similar colors are expected to contain similar plant communities."}
 
-# Get the data from the gdm transformed rasters as a table
-# rastDat <- na.omit(terra::values(transRasts))
-
-# The PCA can be fit on a sample of grid cells if the rasters are large
-rastDat <- terra::spatSample(transRasts, 50000, na.rm = TRUE) 
-
-# perform the principle components analysis
-pcaSamp <- prcomp(rastDat)
+# Perform the principle components analysis on the gdm transformed rasters
+pcaSamp <- terra::prcomp(transRasts, maxcell = 5e5)
  
 # Predict the first three principle components for every cell in the rasters
 # note the use of the 'index' argument
 pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
-# scale the PCA rasters to make full use of the colour spectrum
-pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
+# Stretch the PCA rasters to make full use of the colour spectrum
+pcaRast <- terra::stretch(pcaRast)
 
 # Plot the three PCA rasters simultaneously, each representing a different colour 
 #  (red, green, blue)
