@@ -277,7 +277,7 @@
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] GDM Modelling Summary</span></span>
-<span><span class="co">#&gt; [1] Creation Date:  Wed Mar 27 10:15:19 2024</span></span>
+<span><span class="co">#&gt; [1] Creation Date:  Sun Sep  8 23:57:50 2024</span></span>
 <span><span class="co">#&gt; [1] </span></span>
 <span><span class="co">#&gt; [1] Name:  gdm.1</span></span>
 <span><span class="co">#&gt; [1] </span></span>
@@ -482,7 +482,7 @@ Predicted vs. observed compositional dissimilarity.
 <p>First we fit a new model using only the climate variables and then create some fake future climate rasters to use as example data.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fit a new gdm using a table with climate data only (to match rasters)</span></span>
-<span><span class="va">gdm.rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.html">gdm</a></span><span class="op">(</span><span class="va">gdmTab.rast</span>, geo<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
+<span><span class="va">gdm.rast</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/gdm.html">gdm</a></span><span class="op">(</span><span class="va">gdmTab.rast</span>, geo<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># make some fake climate change data</span></span>
 <span><span class="va">futRasts</span> <span class="op">&lt;-</span> <span class="va">swBioclims</span></span>
@@ -492,7 +492,7 @@ Predicted vs. observed compositional dissimilarity.
 <span><span class="va">futRasts</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">futRasts</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">+</span><span class="fl">3</span></span></code></pre></div>
 <p>We again use the <code>predict</code> function, but with <code>time=TRUE</code> and provide the current and future climate raster stacks. Th resulting map shows the expected magnitude of change in vegetation composition, which can be interpreted as a biologically-scaled metric of climate stress.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">timePred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gdm.rast</span>, <span class="va">swBioclims</span>, time<span class="op">=</span><span class="cn">T</span>, predRasts<span class="op">=</span><span class="va">futRasts</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">timePred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gdm.rast</span>, <span class="va">swBioclims</span>, time<span class="op">=</span><span class="cn">TRUE</span>, predRasts<span class="op">=</span><span class="va">futRasts</span><span class="op">)</span></span>
 <span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">timePred</span>, col<span class="op">=</span><span class="fu">rgb.tables</span><span class="op">(</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="reference/figures/README-predictTimeGDM-1.png" alt="Predicted magnitude of biological change through time" width="100%"><p class="caption">
@@ -520,23 +520,15 @@ Predicted magnitude of biological change through time
 <p>Site-pair based biological distances are difficult to visualize. However, if the <code>transform</code> function is applied to rasters, the resulting multi-dimensional biological space can be mapped to reveal biological patterns in geographic space. Alternatively, a biplot can be used to depict where sites fall relative to each other in biological space and therefore how sites differ in predicted biological composition. In either case, the multi-dimensional biological space can be most effectively visualized by taking a PCA to reduce dimensionality and assigning the first three components to an RGB color palette. In the resulting map, color similarity corresponds to the similarity of expected plant species composition (in other words, cells with similar colors are expected to contain similar plant communities).</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co"># Get the data from the gdm transformed rasters as a table</span></span>
-<span><span class="co"># rastDat &lt;- na.omit(terra::values(transRasts))</span></span>
-<span></span>
-<span><span class="co"># The PCA can be fit on a sample of grid cells if the rasters are large</span></span>
-<span><span class="va">rastDat</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/sample.html" class="external-link">spatSample</a></span><span class="op">(</span><span class="va">transRasts</span>, <span class="fl">50000</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="co"># perform the principle components analysis</span></span>
-<span><span class="va">pcaSamp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp</a></span><span class="op">(</span><span class="va">rastDat</span><span class="op">)</span></span>
+<span><span class="co"># Perform the principle components analysis on the gdm transformed rasters</span></span>
+<span><span class="va">pcaSamp</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/prcomp.html" class="external-link">prcomp</a></span><span class="op">(</span><span class="va">transRasts</span>, maxcell <span class="op">=</span> <span class="fl">5e5</span><span class="op">)</span></span>
 <span> </span>
 <span><span class="co"># Predict the first three principle components for every cell in the rasters</span></span>
 <span><span class="co"># note the use of the 'index' argument</span></span>
 <span><span class="va">pcaRast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">transRasts</span>, <span class="va">pcaSamp</span>, index<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># scale the PCA rasters to make full use of the colour spectrum</span></span>
-<span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, fun <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/rescale.html" class="external-link">rescale</a></span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, fun <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/rescale.html" class="external-link">rescale</a></span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/app.html" class="external-link">app</a></span><span class="op">(</span><span class="va">pcaRast</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>, fun <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/rescale.html" class="external-link">rescale</a></span>, to <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">255</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Stretch the PCA rasters to make full use of the colour spectrum</span></span>
+<span><span class="va">pcaRast</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/stretch.html" class="external-link">stretch</a></span><span class="op">(</span><span class="va">pcaRast</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot the three PCA rasters simultaneously, each representing a different colour </span></span>
 <span><span class="co">#  (red, green, blue)</span></span>
