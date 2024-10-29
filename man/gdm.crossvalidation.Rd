@@ -29,20 +29,20 @@ variables to be used in the fitting process.}
 }
 \value{
 List, providing cross-validation statistics. These are metrics that describe how well the model fit using the
-sitepair training table predicts the dissimilarities in the sitepair testing table. Metrics provided include:
-'Deviance.Explained' (the deviance explained for the training data);
+sitepair training table predicts the dissimilarities in the site-pair testing table. Metrics provided include:
+'Train.Deviance.Explained' (the deviance explained for the training data);
 'Test.Deviance.Explained' (the deviance explained for the test data);
 'Mean.Error';
 'Mean.Absolute.Error';
-'Root.Mean.Squre.Error';
+'Root.Mean.Square.Error';
 'Obs.Pred.Correlation' (Pearson's correlation coefficient between observed and predicted values);
-'Equalised.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimialrity units));
-'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimialrity units)).
+'Equalized.RMSE' (the average root mean square error across bands of observed dissimilarities (0.05 dissimilarity units));
+'Error.by.Observed.Value' (the average root mean square error and number of observations within bands of observed dissimilarities (0.05 dissimilarity units)).
 }
 \description{
 Undertake a cross-validation assessment of a GDM fit using all
-the predictors included in the formated GDM input table (spTable). The
-cross-validation is run using a specified proportion (train.proportion) of
+the predictors included in the formatted GDM input site-pair table (spTable).
+The cross-validation is run using a specified proportion (train.proportion) of
 the randomly selected sites included in spTable to train the model, with the
 remaining sites being used to test the performance of the model predictions.
 The test is repeated a specified number of times (n.crossvalid.tests), with
