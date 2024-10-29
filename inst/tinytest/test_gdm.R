@@ -45,7 +45,8 @@ expect_silent({
     object = gdmRastMod,
     data = envRast,
     time = TRUE,
-    predRasts = futureRast
+    predRasts = futureRast,
+    filename = tempfile(fileext = ".tif")
   )
 
 })
@@ -68,7 +69,11 @@ expect_true(
 # check gdm.transform is done silently i.e. no errors/warnings
 expect_silent({
 
-  trans_raster <- gdm.transform(model = gdmRastMod, data = envRast)
+  trans_raster <- gdm.transform(
+    model = gdmRastMod, 
+    data = envRast,
+    filename = tempfile(fileext = ".tif")
+  )
 
 })
 
