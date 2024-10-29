@@ -414,7 +414,7 @@ summary(gdm.1)
 #> [1] 
 #> [1] 
 #> [1] GDM Modelling Summary
-#> [1] Creation Date:  Wed Mar 27 10:15:19 2024
+#> [1] Creation Date:  Sun Sep  8 23:57:50 2024
 #> [1] 
 #> [1] Name:  gdm.1
 #> [1] 
@@ -680,7 +680,7 @@ create some fake future climate rasters to use as example data.
 
 ``` r
 # fit a new gdm using a table with climate data only (to match rasters)
-gdm.rast <- gdm(gdmTab.rast, geo=T)
+gdm.rast <- gdm(gdmTab.rast, geo=TRUE)
 
 # make some fake climate change data
 futRasts <- swBioclims
@@ -696,7 +696,7 @@ expected magnitude of change in vegetation composition, which can be
 interpreted as a biologically-scaled metric of climate stress.
 
 ``` r
-timePred <- predict(gdm.rast, swBioclims, time=T, predRasts=futRasts)
+timePred <- predict(gdm.rast, swBioclims, time=TRUE, predRasts=futRasts)
 terra::plot(timePred, col=rgb.tables(1000))
 ```
 
@@ -753,23 +753,15 @@ colors are expected to contain similar plant communities).
 
 ``` r
 
-# Get the data from the gdm transformed rasters as a table
-# rastDat <- na.omit(terra::values(transRasts))
-
-# The PCA can be fit on a sample of grid cells if the rasters are large
-rastDat <- terra::spatSample(transRasts, 50000, na.rm = TRUE) 
-
-# perform the principle components analysis
-pcaSamp <- prcomp(rastDat)
+# Perform the principle components analysis on the gdm transformed rasters
+pcaSamp <- terra::prcomp(transRasts, maxcell = 5e5)
  
 # Predict the first three principle components for every cell in the rasters
 # note the use of the 'index' argument
 pcaRast <- terra::predict(transRasts, pcaSamp, index=1:3)
 
-# scale the PCA rasters to make full use of the colour spectrum
-pcaRast[[1]] <- terra::app(pcaRast[[1]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[2]] <- terra::app(pcaRast[[2]], fun = scales::rescale, to = c(0, 255))
-pcaRast[[3]] <- terra::app(pcaRast[[3]], fun = scales::rescale, to = c(0, 255))
+# Stretch the PCA rasters to make full use of the colour spectrum
+pcaRast <- terra::stretch(pcaRast)
 
 # Plot the three PCA rasters simultaneously, each representing a different colour 
 #  (red, green, blue)
