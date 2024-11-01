@@ -1,9 +1,10 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
-# gdm 1.6.0-2
+# gdm 1.6.0-3
 ### bug fixes
-* Fix negative deviance explained values returned by `gdm.crossvalidation`.  
-
+* Fix bug in `gdm.predict` and `gdm.transform` functions (also impacted `gdm.crossvalidation` results)
+  
+# gdm 1.6.0-2
 ### Updates
 * Address new CRAN C++11 requirements.
 
