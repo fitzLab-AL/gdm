@@ -1,6 +1,4 @@
 
-<!-- DO NOT EDIT BY HAND! README.Rmd is generated from README.md. Please edit that file. -->
-
 # gdm <img src="man/figures/gdmLogo.png" align="right" width="120" />
 
 <!-- badges: start -->
