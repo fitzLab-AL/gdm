@@ -201,8 +201,8 @@
 #' ## tabular data
 #' # start with the southwest data table
 #'  head(southwest)
-#'  sppData <- southwest[c(1,2,13,14)]
-#'  envTab <- southwest[c(2:ncol(southwest))]
+#'  sppData <- southwest[, c(1,2,13,14)]
+#'  envTab <- southwest[, c(2:ncol(southwest))]
 #'
 #' #########table type 1
 #' ## site-species table without coordinates

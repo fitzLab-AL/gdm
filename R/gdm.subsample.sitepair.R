@@ -28,8 +28,8 @@
 #'
 #' @examples
 #' ##set up site-pair table using the southwest data set
-#' sppData <- southwest[c(1,2,13,14)]
-#' envTab <- southwest[c(2:ncol(southwest))]
+#' sppData <- southwest[, c(1,2,13,14)]
+#' envTab <- southwest[, c(2:ncol(southwest))]
 #' sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
 #'                               siteColumn="site", predData=envTab)
 #'
