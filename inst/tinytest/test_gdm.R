@@ -7,7 +7,7 @@ rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
 envRast <- terra::rast(rastFile)
 
 
-# test sitepareformat function --------------------------------------------
+# test formatsitepair function --------------------------------------------
 
 # expect warning because of using raster inputs
 expect_warning({
@@ -70,7 +70,7 @@ expect_true(
 expect_silent({
 
   trans_raster <- gdm.transform(
-    model = gdmRastMod, 
+    model = gdmRastMod,
     data = envRast,
     filename = tempfile(fileext = ".tif")
   )
