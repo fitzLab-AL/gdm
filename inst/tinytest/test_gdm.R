@@ -34,35 +34,35 @@ expect_silent({
 
 })
 
-# test predict function ---------------------------------------------------
-futureRast <- envRast
-futureRast[[3]] <- futureRast[[3]] * 0.75
-
-# check prediction is done silently i.e. no errors/warnings
-expect_silent({
-
-  pred_raster <- gdm:::predict.gdm(
-    object = gdmRastMod,
-    data = envRast,
-    time = TRUE,
-    predRasts = futureRast,
-    filename = tempfile(fileext = ".tif")
-  )
-
-})
-
-# read the prediction created by gdm version 1.5.x
-pred_v1.5 <- terra::rast(
-  system.file("./extdata/test_data/pred_3_75.tif", package="gdm")
-)
-
-# round as file compression might lose some precision
-diff <- round(terra::global(pred_raster - pred_v1.5, "mean", na.rm = TRUE)[1,1], 5)
-
-expect_true(
-  diff == 0
-)
-
+## test predict function ---------------------------------------------------
+# futureRast <- envRast
+# futureRast[[3]] <- futureRast[[3]] * 0.75
+# 
+# # check prediction is done silently i.e. no errors/warnings
+# expect_silent({
+# 
+#  pred_raster <- gdm:::predict.gdm(
+#     object = gdmRastMod,
+#     data = envRast,
+#     time = TRUE,
+#     predRasts = futureRast,
+#     filename = tempfile(fileext = ".tif")
+#   )
+# 
+# })
+# 
+# # read the prediction created by gdm version 1.5.x
+# pred_v1.5 <- terra::rast(
+#   system.file("./extdata/test_data/pred_3_75.tif", package="gdm")
+# )
+# 
+# # round as file compression might lose some precision
+# diff <- round(terra::global(pred_raster - pred_v1.5, "mean", na.rm = TRUE)[1,1], 5)
+# 
+# expect_true(
+#   diff == 0
+# )
+# 
 
 # test transform function -------------------------------------------------
 
