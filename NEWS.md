@@ -1,5 +1,8 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.6.0-4
+* Incremental update to package testing scripts.
+
 # gdm 1.6.0-3
 ### bug fixes
 * Fix bug in `gdm.predict` and `gdm.transform` functions (also impacted `gdm.crossvalidation` results)
