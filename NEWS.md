@@ -1,5 +1,9 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.6.0-5
+* Updated `gdm.transform` to handle NAs in large rasters and prevent write error (issue #52).
+* Added the `colorRamps::` to the README file examples (issue #50).
+
 # gdm 1.6.0-4
 * Incremental update to package testing scripts.
 

@@ -95,8 +95,8 @@ s1.Rain, s1.Bedrock, s2.Temp, s2.Rain, s2.Bedrock
  ##fit table environmental data
  # format site-pair table using the southwest data table
  head(southwest)
- sppData <- southwest[c(1,2,13,14)]
- envTab <- southwest[c(2:ncol(southwest))]
+ sppData <- southwest[, c(1,2,13,14)]
+ envTab <- southwest[, c(2:ncol(southwest))]
 
  sitePairTab <- formatsitepair(sppData, 2, XColumn="Long", YColumn="Lat", sppColumn="species",
                                siteColumn="site", predData=envTab)

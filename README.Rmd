@@ -296,7 +296,7 @@ library(colorRamps)
 
 ```{r predictTimeGDM, warning=FALSE, message=FALSE, fig.height=4, fig.width=4, fig.cap="Predicted magnitude of biological change through time"}
 timePred <- predict(gdm.rast, swBioclims, time=TRUE, predRasts=futRasts)
-terra::plot(timePred, col=rgb.tables(1000))
+terra::plot(timePred, col=colorRamps::rgb.tables(1000))
 ```
 
 ##  Transforming spatial predictor layers using a fitted GDM
@@ -314,7 +314,7 @@ We then use the `gdm.transform` function to rescale the rasters.
 
 ```{r transformGDM, warning=FALSE, message=FALSE}
 transRasts <- gdm.transform(model=gdmRastMod, data=swBioclims)
-terra::plot(transRasts, col=rgb.tables(1000))
+terra::plot(transRasts, col=colorRamps::rgb.tables(1000))
 ```
 
 ## Visualizing multi-dimensional biological patterns
