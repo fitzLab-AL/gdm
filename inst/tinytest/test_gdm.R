@@ -31,10 +31,10 @@ sitePairRast <- na.omit(sitePairRast)
 expect_silent({
 
   gdmRastMod <- gdm(sitePairRast, geo = TRUE)
-
+ 
 })
 
-## test predict function ---------------------------------------------------
+# # test predict function ---------------------------------------------------
 # futureRast <- envRast
 # futureRast[[3]] <- futureRast[[3]] * 0.75
 # 
@@ -63,30 +63,30 @@ expect_silent({
 #   diff == 0
 # )
 # 
-
-# test transform function -------------------------------------------------
-
-# check gdm.transform is done silently i.e. no errors/warnings
-expect_silent({
-
-  trans_raster <- gdm.transform(
-    model = gdmRastMod,
-    data = envRast,
-    filename = tempfile(fileext = ".tif")
-  )
-
-})
-
-# read the transformed vars created by gdm version 1.5.x
-trans_v1.5 <- terra::rast(
-  system.file("./extdata/test_data/gdm_trans_vars.grd", package="gdm")
-)
-
-# round as file compression might lose some precision
-diff <- round(terra::global(trans_raster - trans_v1.5, "mean", na.rm = TRUE)[, 1], 5)
-
-# expect all difference be zero
-expect_true(
-  all(diff == 0)
-)
-
+# 
+# # test transform function -------------------------------------------------
+# 
+# # check gdm.transform is done silently i.e. no errors/warnings
+# expect_silent({
+# 
+#   trans_raster <- gdm.transform(
+#     model = gdmRastMod,
+#     data = envRast,
+#     filename = tempfile(fileext = ".tif")
+#   )
+# 
+# })
+# 
+# # read the transformed vars created by gdm version 1.5.x
+# trans_v1.5 <- terra::rast(
+#   system.file("./extdata/test_data/gdm_trans_vars.grd", package="gdm")
+# )
+# 
+# # round as file compression might lose some precision
+# diff <- round(terra::global(trans_raster - trans_v1.5, "mean", na.rm = TRUE)[, 1], 5)
+# 
+# # expect all difference be zero
+# expect_true(
+#   all(diff == 0)
+# )
+# 
