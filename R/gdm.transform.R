@@ -91,46 +91,21 @@ gdm.transform <- function(model, data, filename = "", ...){
   # checks rather geo was T or F in the model object
   geo <- model$geo
 
-  # create a general predict function to benefit from terra::predict function
-  # does this need xy min and max?
-  gdm_trans <- function(mod, dat, ...){
-
-    nr <- nrow(dat)
-    nc <- ncol(dat)
-    nm <- colnames(dat)
-
-    z <- .C( "GDM_TransformFromTable",
-             as.integer(nr),
-             as.integer(nc),
-             as.integer(mod$geo),
-             as.integer(length(mod$predictors)),
-             as.integer(mod$splines),
-             as.double(mod$knots),
-             as.double(mod$coefficients),
-             as.matrix(dat),
-             trandata = as.double(matrix(0, nr, nc)),
-             PACKAGE = "gdm")
-
-    transformed <- matrix(z$trandata, nrow = nr, byrow = FALSE)
-    colnames(transformed) <- nm
-
-    return(
-      transformed
-    )
-  }
-
-
   # produce outputs
   if (.is_raster(data)) {
     # transform the env data using gdm model and terra package
     # if geo, use interpolate to get xy; otherwise use predict without xy
     if (geo) {
+      # get the extent to pass it to the function for correcting the transformed XY coords
+      rast_ext <- terra::ext(data[[1]])[1:4]
+
       output <- terra::interpolate(
         object = data,
         model = model,
         fun = gdm_trans,
+        xy_range = rast_ext,
         xyNames = c("xCoord", "yCoord"),
-        na.rm = TRUE,
+        na.rm = FALSE,
         filename = filename,
         ...
       )
@@ -139,7 +114,7 @@ gdm.transform <- function(model, data, filename = "", ...){
         object = data,
         model = model,
         fun = gdm_trans,
-        na.rm = TRUE,
+        na.rm = FALSE,
         filename = filename,
         ...
       )
@@ -183,3 +158,60 @@ gdm.transform <- function(model, data, filename = "", ...){
   }
 
 }
+
+
+# create a general predict function to benefit from terra::predict function
+gdm_trans <- function(mod, dat, xy_range = NULL, ...) {
+  # check for NAs
+  has_na <- anyNA(dat)
+  nm <- colnames(dat)
+
+  if (has_na) {
+    # output matrix
+    out <- matrix(NA, nrow(dat), ncol(dat))
+    colnames(out) <- nm
+    # get the complete case and filter the data
+    cc <- which(stats::complete.cases(dat))
+    dat <- dat[cc, ]
+
+    if (nrow(dat) < 1) {
+      return(out)
+    }
+  }
+
+  # Use the XY range to correctly calculate transformed XY coords in chunks
+  # only for model with geo = true
+  if (!is.null(xy_range)) {
+    # get the first row twice in case there's only one row
+    endrows <- dat[c(1, 1), ]
+    endrows$xCoord <- xy_range[1:2]
+    endrows$yCoord <- xy_range[3:4]
+    # add the two row at the end of the data.frame
+    dat <- rbind(dat, endrows)
+  }
+
+  nr <- nrow(dat)
+  nc <- ncol(dat)
+
+  z <- .C("GDM_TransformFromTable", as.integer(nr), as.integer(nc),
+          as.integer(mod$geo), as.integer(length(mod$predictors)),
+          as.integer(mod$splines), as.double(mod$knots), as.double(mod$coefficients),
+          as.matrix(dat), trandata = as.double(matrix(0.0, nr, nc)), PACKAGE = "gdm")
+
+  # prepare the output matrix
+  transformed <- matrix(z$trandata, nrow = nr, byrow = FALSE)
+  colnames(transformed) <- nm
+
+  # remove the xy range if it's a model with geo
+  if (!is.null(xy_range)) {
+    transformed <- transformed[1:(nr - 2), ]
+  }
+
+  if (has_na) {
+    out[cc, ] <- transformed
+    return(out)
+  } else {
+    return(transformed)
+  }
+}
+
