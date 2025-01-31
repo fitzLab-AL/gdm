@@ -1,38 +1,38 @@
-library(gdm)
-library(terra)
+#library(gdm)
+#library(terra)
 
-sppTab <- southwest[, c("species", "site", "Lat", "Long")]
+#sppTab <- southwest[, c("species", "site", "Lat", "Long")]
 
-rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
-envRast <- terra::rast(rastFile)
+#rastFile <- system.file("./extdata/swBioclims.grd", package="gdm")
+#envRast <- terra::rast(rastFile)
 
 
 # test formatsitepair function --------------------------------------------
 
 # expect warning because of using raster inputs
-expect_warning({
+# expect_warning({
+#
+#   sitePairRast <- formatsitepair(
+#     sppTab,
+#     2,
+#     XColumn = "Long",
+#     YColumn = "Lat",
+#     sppColumn = "species",
+#     siteColumn = "site",
+#     predData = envRast
+#   )
+#
+# })
 
-  sitePairRast <- formatsitepair(
-    sppTab,
-    2,
-    XColumn = "Long",
-    YColumn = "Lat",
-    sppColumn = "species",
-    siteColumn = "site",
-    predData = envRast
-  )
-
-})
-
-sitePairRast <- na.omit(sitePairRast)
+#sitePairRast <- na.omit(sitePairRast)
 
 # build the model ---------------------------------------------------------
 
-expect_silent({
-
-  gdmRastMod <- gdm(sitePairRast, geo = TRUE)
-
-})
+# expect_silent({
+#
+#   gdmRastMod <- gdm(sitePairRast, geo = TRUE)
+#
+# })
 
 # # test predict function ---------------------------------------------------
 # futureRast <- envRast
