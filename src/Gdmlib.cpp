@@ -53,12 +53,17 @@ std::string safeStringCat(const std::string& dest, const std::string& src, size_
   return result;
 }
 
-std::string safeStrlCpy(const std::string& src, size_t size) {
-  if (size == 0) {
-    return "";
-  }
-  size_t len = std::min(src.length(), size - 1);
-  return src.substr(0, len);
+size_t strlcpy_replacement(char *dst, const char *src, size_t size) {
+  size_t srclen = strlen(src);
+
+  if (size == 0)
+    return srclen;
+
+  size_t n = std::min(size - 1, srclen);
+  strncpy(dst, src, n);
+  dst[n] = '\0';
+
+  return srclen;
 }
 
 
