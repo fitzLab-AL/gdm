@@ -9,6 +9,7 @@
 #include "Message.h"
 
 #include <algorithm>
+#include <cstring>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,13 +53,14 @@ std::string safeStringCat(const std::string& dest, const std::string& src, size_
   return result;
 }
 
-std::string strlcpy_cpp(const std::string& src, size_t size) {
+std::string safeStrlCpy(const std::string& src, size_t size) {
   if (size == 0) {
     return "";
   }
   size_t len = std::min(src.length(), size - 1);
   return src.substr(0, len);
 }
+
 
 #if defined _M_X64
 
