@@ -8,9 +8,6 @@
 
 #include "Message.h"
 
-#include <algorithm>
-#include <cstring>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -38,34 +35,84 @@ void GetWordSize(int *p1)
 	*p1 = (int)(sizeof(int *));
 }
 
-std::string safeStringCat(const std::string& dest, const std::string& src, size_t size) {
-  std::string result = dest;
-  size_t destLen = dest.length();
+#ifndef HAVE_STRLCAT
+/*
+ * '_cups_strlcat()' - Safely concatenate two strings.
+ */
 
-  if (size <= destLen + 1) {
-    return result;
-  }
+size_t                  /* O - Length of string */
+strlcat(char       *dst,        /* O - Destination string */
+              const char *src,      /* I - Source string */
+          size_t     size)      /* I - Size of destination string buffer */
+{
+  size_t    srclen;         /* Length of source string */
+  size_t    dstlen;         /* Length of destination string */
 
-  size_t availableSpace = size - destLen - 1;
-  std::string srcToAppend = src.substr(0, availableSpace);
 
-  result += srcToAppend;
-  return result;
+ /*
+  * Figure out how much room is left...
+  */
+
+  dstlen = strlen(dst);
+  size   -= dstlen + 1;
+
+  if (!size)
+    return (dstlen);        /* No room, return immediately... */
+
+ /*
+  * Figure out how much room is needed...
+  */
+
+  srclen = strlen(src);
+
+ /*
+  * Copy the appropriate amount...
+  */
+
+  if (srclen > size)
+    srclen = size;
+
+  memcpy(dst + dstlen, src, srclen);
+  dst[dstlen + srclen] = '\0';
+
+  return (dstlen + srclen);
 }
+#endif /* !HAVE_STRLCAT */
 
-size_t strlcpy_replacement(char *dst, const char *src, size_t size) {
-  size_t srclen = strlen(src);
+#ifndef HAVE_STRLCPY
+/*
+ * '_cups_strlcpy()' - Safely copy two strings.
+ */
 
-  if (size == 0)
-    return srclen;
+size_t                  /* O - Length of string */
+strlcpy(char       *dst,        /* O - Destination string */
+              const char *src,      /* I - Source string */
+          size_t      size)     /* I - Size of destination string buffer */
+{
+  size_t    srclen;         /* Length of source string */
 
-  size_t n = std::min(size - 1, srclen);
-  strncpy(dst, src, n);
-  dst[n] = '\0';
 
-  return srclen;
+ /*
+  * Figure out how much room is needed...
+  */
+
+  size --;
+
+  srclen = strlen(src);
+
+ /*
+  * Copy the appropriate amount...
+  */
+
+  if (srclen > size)
+    srclen = size;
+
+  memcpy(dst, src, srclen);
+  dst[srclen] = '\0';
+
+  return (srclen);
 }
-
+#endif /* !HAVE_STRLCPY */
 
 #if defined _M_X64
 
