@@ -35,15 +35,7 @@ void GetWordSize(int *p1)
 	*p1 = (int)(sizeof(int *));
 }
 
-#if !defined(HAVE_STRLCAT) && (!defined(__linux__) || defined(__ANDROID__)) && \
-(defined(_WIN32) || defined(__APPLE__) || defined(__ANDROID__) || defined(__sun) || defined(__CYGWIN__))
-/*
- * Fallback implementations for platforms where strlcat/strlcpy are missing,
- * such as Windows and some versions of macOS (if not using BSD libc).
- */
-
-#include <string.h>
-
+#if !defined(HAVE_STRLCAT)
 size_t strlcat(char *dst, const char *src, size_t size)
 {
   size_t dstlen = strlen(dst);
@@ -59,17 +51,17 @@ size_t strlcat(char *dst, const char *src, size_t size)
 
   return dstlen + srclen;
 }
+#endif
 
+#if !defined(HAVE_STRLCPY)
 size_t strlcpy(char *dst, const char *src, size_t size)
 {
   size_t srclen = strlen(src);
-
   if (size > 0) {
     size_t copylen = (srclen >= size) ? size - 1 : srclen;
     memcpy(dst, src, copylen);
     dst[copylen] = '\0';
   }
-
   return srclen;
 }
 #endif
