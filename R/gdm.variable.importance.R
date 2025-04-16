@@ -258,7 +258,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   nVars <- (ncol(spTable)-6)/2
   # create vector of variable names
   varNames <- colnames(spTable[c(7:(6+nVars))])
-  varNames <- sapply(strsplit(varNames, "s1."), "[[", 2)
+  varNames <- sapply(strsplit(varNames, "s1\\."), "[[", 2)
   if(geo==TRUE){
     nVars <- nVars + 1
     varNames <- c("Geographic", varNames)
@@ -310,8 +310,8 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
     for(z in zeroSum){
       ##select variable columns to be removed from original site-pair table
-      testVarCols1 <- grep(paste("^s1.", z, "$", sep=""), colnames(spTable))
-      testVarCols2 <- grep(paste("^s2.", z, "$", sep=""), colnames(spTable))
+      testVarCols1 <- grep(paste("^s1\\.", z, "$", sep=""), colnames(spTable))
+      testVarCols2 <- grep(paste("^s2\\.", z, "$", sep=""), colnames(spTable))
       spTable <- spTable[,-c(testVarCols1, testVarCols2)]
     }
   }
@@ -320,7 +320,7 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
   nVars <- (ncol(spTable)-6)/2
   # create vector of variable names
   varNames <- colnames(spTable[c(7:(6+nVars))])
-  varNames <- sapply(strsplit(varNames, "s1."), "[[", 2)
+  varNames <- sapply(strsplit(varNames, "s1\\."), "[[", 2)
   if(geo==TRUE){
     nVars <- nVars + 1
     varNames <- c("Geographic", varNames)
@@ -387,12 +387,12 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
     siteRow <- exBySite[[i]]
     if(i %in% outSite){
       ##extracts the data from the site-pair table by site
-      siteRow <- siteRow[grep("s2.", colnames(siteRow))]
-      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s2."), "[[", 2)
+      siteRow <- siteRow[grep("s2\\.", colnames(siteRow))]
+      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s2\\."), "[[", 2)
     }else{
       ##extracts the data from the site-pair table by site
-      siteRow <- siteRow[grep("s1.", colnames(siteRow))]
-      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s1."), "[[", 2)
+      siteRow <- siteRow[grep("s1\\.", colnames(siteRow))]
+      colnames(siteRow) <- sapply(strsplit(colnames(siteRow), "s1\\."), "[[", 2)
     }
     exBySite[[i]] <- siteRow
   }
@@ -516,8 +516,8 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
                               if(varNames.x[k]!="Geographic"){
                                 # permute a single variable
                                 lll <- lapply(permSpt, function(x, spt=currSitePair){
-                                  idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
-                                  idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
+                                  idx1 <- grep(paste("^s1\\.", varNames.x[k], "$", sep=""), colnames(x))
+                                  idx2 <- grep(paste("^s2\\.", varNames.x[k], "$", sep=""), colnames(x))
                                   spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
                                   return(spt)
                                 })}
@@ -559,8 +559,8 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
           message(paste0("Assessing importance of ", varNames.x[k], "..."))
           # permute a single variable
           lll <- lapply(permSpt, function(x, spt=currSitePair){
-            idx1 <- grep(paste("^s1.", varNames.x[k], "$", sep=""), colnames(x))
-            idx2 <- grep(paste("^s2.", varNames.x[k], "$", sep=""), colnames(x))
+            idx1 <- grep(paste("^s1\\.", varNames.x[k], "$", sep=""), colnames(x))
+            idx2 <- grep(paste("^s2\\.", varNames.x[k], "$", sep=""), colnames(x))
             spt[,c(idx1, idx2)] <- x[,c(idx1, idx2)]
             return(spt)
           })}
@@ -611,8 +611,8 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
       if(var!="Geographic"){
         ##select variable columns to be removed from original site-pair table
-        testVarCols1 <- grep(paste("^s1.", var, "$", sep=""), colnames(currSitePair))
-        testVarCols2 <- grep(paste("^s2.", var, "$", sep=""), colnames(currSitePair))
+        testVarCols1 <- grep(paste("^s1\\.", var, "$", sep=""), colnames(currSitePair))
+        testVarCols2 <- grep(paste("^s2\\.", var, "$", sep=""), colnames(currSitePair))
         testSitePair <- currSitePair[,-c(testVarCols1, testVarCols2)]
         ##run gdm for the missing variable
         noVarGDM <- gdm(testSitePair, geo=geo, splines=splines[-1], knots=knots)
@@ -643,8 +643,8 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
       if(names(elimVar)!="Geographic"){
         ##select variable columns to be removed from original site-pair table
-        remVarCols1 <- grep(paste("^s1.", names(elimVar), "$", sep=""), colnames(currSitePair))
-        remVarCols2 <- grep(paste("^s2.", names(elimVar), "$", sep=""), colnames(currSitePair))
+        remVarCols1 <- grep(paste("^s1\\.", names(elimVar), "$", sep=""), colnames(currSitePair))
+        remVarCols2 <- grep(paste("^s2\\.", names(elimVar), "$", sep=""), colnames(currSitePair))
 
         # remove columns from site-pair table
         currSitePair <- currSitePair[,-c(remVarCols1, remVarCols2)]
