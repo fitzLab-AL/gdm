@@ -35,84 +35,119 @@ void GetWordSize(int *p1)
 	*p1 = (int)(sizeof(int *));
 }
 
-#ifndef HAVE_STRLCAT
+#ifdef _WIN32
 /*
- * '_cups_strlcat()' - Safely concatenate two strings.
+ * Windows doesn't have strlcat/strlcpy — define safe versions
  */
 
-size_t                  /* O - Length of string */
-strlcat(char       *dst,        /* O - Destination string */
-              const char *src,      /* I - Source string */
-          size_t     size)      /* I - Size of destination string buffer */
+size_t strlcat(char *dst, const char *src, size_t size)
 {
-  size_t    srclen;         /* Length of source string */
-  size_t    dstlen;         /* Length of destination string */
+  size_t dstlen = strlen(dst);
+  size_t srclen = strlen(src);
 
+  if (dstlen >= size) return size + srclen;
 
- /*
-  * Figure out how much room is left...
-  */
+  size_t copylen = size - dstlen - 1;
+  if (copylen > srclen) copylen = srclen;
 
-  dstlen = strlen(dst);
-  size   -= dstlen + 1;
+  memcpy(dst + dstlen, src, copylen);
+  dst[dstlen + copylen] = '\0';
 
-  if (!size)
-    return (dstlen);        /* No room, return immediately... */
-
- /*
-  * Figure out how much room is needed...
-  */
-
-  srclen = strlen(src);
-
- /*
-  * Copy the appropriate amount...
-  */
-
-  if (srclen > size)
-    srclen = size;
-
-  memcpy(dst + dstlen, src, srclen);
-  dst[dstlen + srclen] = '\0';
-
-  return (dstlen + srclen);
+  return dstlen + srclen;
 }
-#endif /* !HAVE_STRLCAT */
 
-#ifndef HAVE_STRLCPY
-/*
- * '_cups_strlcpy()' - Safely copy two strings.
- */
-
-size_t                  /* O - Length of string */
-strlcpy(char       *dst,        /* O - Destination string */
-              const char *src,      /* I - Source string */
-          size_t      size)     /* I - Size of destination string buffer */
+size_t strlcpy(char *dst, const char *src, size_t size)
 {
-  size_t    srclen;         /* Length of source string */
+  size_t srclen = strlen(src);
 
+  if (size > 0) {
+    size_t copylen = (srclen >= size) ? size - 1 : srclen;
+    memcpy(dst, src, copylen);
+    dst[copylen] = '\0';
+  }
 
- /*
-  * Figure out how much room is needed...
-  */
-
-  size --;
-
-  srclen = strlen(src);
-
- /*
-  * Copy the appropriate amount...
-  */
-
-  if (srclen > size)
-    srclen = size;
-
-  memcpy(dst, src, srclen);
-  dst[srclen] = '\0';
-
-  return (srclen);
+  return srclen;
 }
-#endif /* !HAVE_STRLCPY */
+#endif
+
+// #ifndef HAVE_STRLCAT
+// /*
+//  * '_cups_strlcat()' - Safely concatenate two strings.
+//  */
+//
+// size_t                  /* O - Length of string */
+// strlcat(char       *dst,        /* O - Destination string */
+//               const char *src,      /* I - Source string */
+//           size_t     size)      /* I - Size of destination string buffer */
+// {
+//   size_t    srclen;         /* Length of source string */
+//   size_t    dstlen;         /* Length of destination string */
+//
+//
+//  /*
+//   * Figure out how much room is left...
+//   */
+//
+//   dstlen = strlen(dst);
+//   size   -= dstlen + 1;
+//
+//   if (!size)
+//     return (dstlen);        /* No room, return immediately... */
+//
+//  /*
+//   * Figure out how much room is needed...
+//   */
+//
+//   srclen = strlen(src);
+//
+//  /*
+//   * Copy the appropriate amount...
+//   */
+//
+//   if (srclen > size)
+//     srclen = size;
+//
+//   memcpy(dst + dstlen, src, srclen);
+//   dst[dstlen + srclen] = '\0';
+//
+//   return (dstlen + srclen);
+// }
+// #endif /* !HAVE_STRLCAT */
+//
+// #ifndef HAVE_STRLCPY
+// /*
+//  * '_cups_strlcpy()' - Safely copy two strings.
+//  */
+//
+// size_t                  /* O - Length of string */
+// strlcpy(char       *dst,        /* O - Destination string */
+//               const char *src,      /* I - Source string */
+//           size_t      size)     /* I - Size of destination string buffer */
+// {
+//   size_t    srclen;         /* Length of source string */
+//
+//
+//  /*
+//   * Figure out how much room is needed...
+//   */
+//
+//   size --;
+//
+//   srclen = strlen(src);
+//
+//  /*
+//   * Copy the appropriate amount...
+//   */
+//
+//   if (srclen > size)
+//     srclen = size;
+//
+//   memcpy(dst, src, srclen);
+//   dst[srclen] = '\0';
+//
+//   return (srclen);
+// }
+// #endif /* !HAVE_STRLCPY */
 
 #if defined _M_X64
 
