@@ -1,5 +1,8 @@
 <!-- See http://style.tidyverse.org/news.html for advice on writing news -->
 
+# gdm 1.6.0-7
+* Fix minor issue with C++ code
+
 # gdm 1.6.0-6
 * Incremental update to package testing scripts.
 

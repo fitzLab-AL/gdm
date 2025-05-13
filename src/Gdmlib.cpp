@@ -1,3 +1,77 @@
+extern "C" {
+    #include <string.h>
+    #include <stddef.h>
+}
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+#ifndef HAVE_STRLCPY
+#define HAVE_STRLCPY
+
+size_t
+strlcpy(char *dst, const char *src, size_t siz)
+{
+    const char *s = src;
+    size_t left = siz;
+
+    if (left != 0) {
+        while (--left != 0) {
+            if ((*dst++ = *s++) == '\0')
+                break;
+        }
+    }
+
+    if (left == 0) {
+        if (siz != 0)
+            *dst = '\0';
+        while (*s++)
+            ;
+    }
+
+    return s - src - 1;
+}
+
+#endif /* HAVE_STRLCPY */
+
+#ifndef HAVE_STRLCAT
+#define HAVE_STRLCAT
+
+size_t
+strlcat(char *dst, const char *src, size_t siz)
+{
+    char *d = dst;
+    const char *s = src;
+    size_t n = siz;
+    size_t dlen;
+
+    while (n-- != 0 && *d != '\0')
+        d++;
+    dlen = d - dst;
+    n = siz - dlen;
+
+    if (n == 0)
+        return(dlen + strlen(s));
+    while (*s != '\0') {
+        if (n != 1) {
+            *d++ = *s;
+            n--;
+        }
+        s++;
+    }
+    *d = '\0';
+
+    return(dlen + (s - src));
+}
+
+#endif /* HAVE_STRLCAT */
+
+#if defined(__cplusplus)
+}
+#endif
+
+
 //
 // GdmTabLib
 //
