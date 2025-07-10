@@ -542,6 +542,9 @@ gdm.varImp <- function(spTable, geo, splines=NULL, knots=NULL, predSelect=FALSE,
 
                               ##extracts deviance of permuted gdms
                               permModelDev <- sapply(gdmPermVar, function(mod){mod$gdmdeviance})
+                              if(is.list(permModelDev)){
+                                permModelDev <- unlist(permModelDev)
+                              }
                               return(permModelDev)
                             }
 
