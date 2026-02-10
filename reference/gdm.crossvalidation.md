@@ -1,0 +1,64 @@
+# Cross-Validation Assessment of a Fitted GDM
+
+Undertake a cross-validation assessment of a GDM fit using all the
+predictors included in the formatted GDM input site-pair table
+(spTable). The cross-validation is run using a specified proportion
+(train.proportion) of the randomly selected sites included in spTable to
+train the model, with the remaining sites being used to test the
+performance of the model predictions. The test is repeated a specified
+number of times (n.crossvalid.tests), with a unique random sample taken
+each time. Outputs are a number of cross-validation test metrics.
+
+## Usage
+
+``` r
+gdm.crossvalidation(spTable, train.proportion=0.9, n.crossvalid.tests=1,
+geo=FALSE, splines=NULL, knots=NULL)
+```
+
+## Arguments
+
+- spTable:
+
+  (dataframe) A dataframe holding the GDM input table for model fitting.
+
+- train.proportion:
+
+  (float) The proportion of sites in 'spTable' to use in training the
+  GDM, with the remaining proportion used to test the model. (default =
+  0.9)
+
+- n.crossvalid.tests:
+
+  (integer) The number of cross-validation sets to use in testing the
+  GDM. (default = 1)
+
+- geo:
+
+  (boolean) Geographic distance to be used in model fitting (default =
+  FALSE).
+
+- splines:
+
+  (vector) An optional vector of the number of I-spline basis functions
+  to be used for each predictor in fitting the model.
+
+- knots:
+
+  (vector) An optional vector of knots in units of the predictor
+  variables to be used in the fitting process.
+
+## Value
+
+List, providing cross-validation statistics. These are metrics that
+describe how well the model fit using the sitepair training table
+predicts the dissimilarities in the site-pair testing table. Metrics
+provided include: 'Train.Deviance.Explained' (the deviance explained for
+the training data); 'Test.Deviance.Explained' (the deviance explained
+for the test data); 'Mean.Error'; 'Mean.Absolute.Error';
+'Root.Mean.Square.Error'; 'Obs.Pred.Correlation' (Pearson's correlation
+coefficient between observed and predicted values); 'Equalized.RMSE'
+(the average root mean square error across bands of observed
+dissimilarities (0.05 dissimilarity units)); 'Error.by.Observed.Value'
+(the average root mean square error and number of observations within
+bands of observed dissimilarities (0.05 dissimilarity units)).
